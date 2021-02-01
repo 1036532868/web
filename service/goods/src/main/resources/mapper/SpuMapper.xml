@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.goods.mapper.SpuMapper">
+  <resultMap id="BaseResultMap" type="com.example.goodsApi.domain.Spu">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sn" jdbcType="VARCHAR" property="sn" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="caption" jdbcType="VARCHAR" property="caption" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="category1_id" jdbcType="INTEGER" property="category1Id" />
+    <result column="category2_id" jdbcType="INTEGER" property="category2Id" />
+    <result column="category3_id" jdbcType="INTEGER" property="category3Id" />
+    <result column="template_id" jdbcType="INTEGER" property="templateId" />
+    <result column="freight_id" jdbcType="INTEGER" property="freightId" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="images" jdbcType="VARCHAR" property="images" />
+    <result column="sale_service" jdbcType="VARCHAR" property="saleService" />
+    <result column="spec_items" jdbcType="VARCHAR" property="specItems" />
+    <result column="para_items" jdbcType="VARCHAR" property="paraItems" />
+    <result column="sale_num" jdbcType="INTEGER" property="saleNum" />
+    <result column="comment_num" jdbcType="INTEGER" property="commentNum" />
+    <result column="is_marketable" jdbcType="CHAR" property="isMarketable" />
+    <result column="is_enable_spec" jdbcType="CHAR" property="isEnableSpec" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+    <result column="status" jdbcType="CHAR" property="status" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.goodsApi.domain.Spu">
+    <result column="introduction" jdbcType="LONGVARCHAR" property="introduction" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, sn, name, caption, brand_id, category1_id, category2_id, category3_id, template_id, 
+    freight_id, image, images, sale_service, spec_items, para_items, sale_num, comment_num, 
+    is_marketable, is_enable_spec, is_delete, status
+  </sql>
+  <sql id="Blob_Column_List">
+    introduction
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_spu
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from tb_spu
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.goodsApi.domain.Spu">
+    insert into tb_spu (id, sn, name, 
+      caption, brand_id, category1_id, 
+      category2_id, category3_id, template_id, 
+      freight_id, image, images, 
+      sale_service, spec_items, para_items, 
+      sale_num, comment_num, is_marketable, 
+      is_enable_spec, is_delete, status, 
+      introduction)
+    values (#{id,jdbcType=BIGINT}, #{sn,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{caption,jdbcType=VARCHAR}, #{brandId,jdbcType=INTEGER}, #{category1Id,jdbcType=INTEGER}, 
+      #{category2Id,jdbcType=INTEGER}, #{category3Id,jdbcType=INTEGER}, #{templateId,jdbcType=INTEGER}, 
+      #{freightId,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR}, #{images,jdbcType=VARCHAR}, 
+      #{saleService,jdbcType=VARCHAR}, #{specItems,jdbcType=VARCHAR}, #{paraItems,jdbcType=VARCHAR}, 
+      #{saleNum,jdbcType=INTEGER}, #{commentNum,jdbcType=INTEGER}, #{isMarketable,jdbcType=CHAR}, 
+      #{isEnableSpec,jdbcType=CHAR}, #{isDelete,jdbcType=CHAR}, #{status,jdbcType=CHAR}, 
+      #{introduction,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Spu">
+    insert into tb_spu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sn != null">
+        sn,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="caption != null">
+        caption,
+      </if>
+      <if test="brandId != null">
+        brand_id,
+      </if>
+      <if test="category1Id != null">
+        category1_id,
+      </if>
+      <if test="category2Id != null">
+        category2_id,
+      </if>
+      <if test="category3Id != null">
+        category3_id,
+      </if>
+      <if test="templateId != null">
+        template_id,
+      </if>
+      <if test="freightId != null">
+        freight_id,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="images != null">
+        images,
+      </if>
+      <if test="saleService != null">
+        sale_service,
+      </if>
+      <if test="specItems != null">
+        spec_items,
+      </if>
+      <if test="paraItems != null">
+        para_items,
+      </if>
+      <if test="saleNum != null">
+        sale_num,
+      </if>
+      <if test="commentNum != null">
+        comment_num,
+      </if>
+      <if test="isMarketable != null">
+        is_marketable,
+      </if>
+      <if test="isEnableSpec != null">
+        is_enable_spec,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="introduction != null">
+        introduction,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sn != null">
+        #{sn,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="caption != null">
+        #{caption,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null">
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="category1Id != null">
+        #{category1Id,jdbcType=INTEGER},
+      </if>
+      <if test="category2Id != null">
+        #{category2Id,jdbcType=INTEGER},
+      </if>
+      <if test="category3Id != null">
+        #{category3Id,jdbcType=INTEGER},
+      </if>
+      <if test="templateId != null">
+        #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="freightId != null">
+        #{freightId,jdbcType=INTEGER},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="images != null">
+        #{images,jdbcType=VARCHAR},
+      </if>
+      <if test="saleService != null">
+        #{saleService,jdbcType=VARCHAR},
+      </if>
+      <if test="specItems != null">
+        #{specItems,jdbcType=VARCHAR},
+      </if>
+      <if test="paraItems != null">
+        #{paraItems,jdbcType=VARCHAR},
+      </if>
+      <if test="saleNum != null">
+        #{saleNum,jdbcType=INTEGER},
+      </if>
+      <if test="commentNum != null">
+        #{commentNum,jdbcType=INTEGER},
+      </if>
+      <if test="isMarketable != null">
+        #{isMarketable,jdbcType=CHAR},
+      </if>
+      <if test="isEnableSpec != null">
+        #{isEnableSpec,jdbcType=CHAR},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="introduction != null">
+        #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Spu">
+    update tb_spu
+    <set>
+      <if test="sn != null">
+        sn = #{sn,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="caption != null">
+        caption = #{caption,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null">
+        brand_id = #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="category1Id != null">
+        category1_id = #{category1Id,jdbcType=INTEGER},
+      </if>
+      <if test="category2Id != null">
+        category2_id = #{category2Id,jdbcType=INTEGER},
+      </if>
+      <if test="category3Id != null">
+        category3_id = #{category3Id,jdbcType=INTEGER},
+      </if>
+      <if test="templateId != null">
+        template_id = #{templateId,jdbcType=INTEGER},
+      </if>
+      <if test="freightId != null">
+        freight_id = #{freightId,jdbcType=INTEGER},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="images != null">
+        images = #{images,jdbcType=VARCHAR},
+      </if>
+      <if test="saleService != null">
+        sale_service = #{saleService,jdbcType=VARCHAR},
+      </if>
+      <if test="specItems != null">
+        spec_items = #{specItems,jdbcType=VARCHAR},
+      </if>
+      <if test="paraItems != null">
+        para_items = #{paraItems,jdbcType=VARCHAR},
+      </if>
+      <if test="saleNum != null">
+        sale_num = #{saleNum,jdbcType=INTEGER},
+      </if>
+      <if test="commentNum != null">
+        comment_num = #{commentNum,jdbcType=INTEGER},
+      </if>
+      <if test="isMarketable != null">
+        is_marketable = #{isMarketable,jdbcType=CHAR},
+      </if>
+      <if test="isEnableSpec != null">
+        is_enable_spec = #{isEnableSpec,jdbcType=CHAR},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="introduction != null">
+        introduction = #{introduction,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.goodsApi.domain.Spu">
+    update tb_spu
+    set sn = #{sn,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      caption = #{caption,jdbcType=VARCHAR},
+      brand_id = #{brandId,jdbcType=INTEGER},
+      category1_id = #{category1Id,jdbcType=INTEGER},
+      category2_id = #{category2Id,jdbcType=INTEGER},
+      category3_id = #{category3Id,jdbcType=INTEGER},
+      template_id = #{templateId,jdbcType=INTEGER},
+      freight_id = #{freightId,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR},
+      images = #{images,jdbcType=VARCHAR},
+      sale_service = #{saleService,jdbcType=VARCHAR},
+      spec_items = #{specItems,jdbcType=VARCHAR},
+      para_items = #{paraItems,jdbcType=VARCHAR},
+      sale_num = #{saleNum,jdbcType=INTEGER},
+      comment_num = #{commentNum,jdbcType=INTEGER},
+      is_marketable = #{isMarketable,jdbcType=CHAR},
+      is_enable_spec = #{isEnableSpec,jdbcType=CHAR},
+      is_delete = #{isDelete,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR},
+      introduction = #{introduction,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Spu">
+    update tb_spu
+    set sn = #{sn,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      caption = #{caption,jdbcType=VARCHAR},
+      brand_id = #{brandId,jdbcType=INTEGER},
+      category1_id = #{category1Id,jdbcType=INTEGER},
+      category2_id = #{category2Id,jdbcType=INTEGER},
+      category3_id = #{category3Id,jdbcType=INTEGER},
+      template_id = #{templateId,jdbcType=INTEGER},
+      freight_id = #{freightId,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR},
+      images = #{images,jdbcType=VARCHAR},
+      sale_service = #{saleService,jdbcType=VARCHAR},
+      spec_items = #{specItems,jdbcType=VARCHAR},
+      para_items = #{paraItems,jdbcType=VARCHAR},
+      sale_num = #{saleNum,jdbcType=INTEGER},
+      comment_num = #{commentNum,jdbcType=INTEGER},
+      is_marketable = #{isMarketable,jdbcType=CHAR},
+      is_enable_spec = #{isEnableSpec,jdbcType=CHAR},
+      is_delete = #{isDelete,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

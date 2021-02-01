@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.goods.mapper.TemplateMapper">
+  <resultMap id="BaseResultMap" type="com.example.goodsApi.domain.Template">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="spec_num" jdbcType="INTEGER" property="specNum" />
+    <result column="para_num" jdbcType="INTEGER" property="paraNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, spec_num, para_num
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_template
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_template
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.goodsApi.domain.Template">
+    insert into tb_template (id, name, spec_num, 
+      para_num)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{specNum,jdbcType=INTEGER}, 
+      #{paraNum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Template">
+    insert into tb_template
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="specNum != null">
+        spec_num,
+      </if>
+      <if test="paraNum != null">
+        para_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="specNum != null">
+        #{specNum,jdbcType=INTEGER},
+      </if>
+      <if test="paraNum != null">
+        #{paraNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Template">
+    update tb_template
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="specNum != null">
+        spec_num = #{specNum,jdbcType=INTEGER},
+      </if>
+      <if test="paraNum != null">
+        para_num = #{paraNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Template">
+    update tb_template
+    set name = #{name,jdbcType=VARCHAR},
+      spec_num = #{specNum,jdbcType=INTEGER},
+      para_num = #{paraNum,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

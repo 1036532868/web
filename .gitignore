@@ -1,0 +1,7 @@
+# 项目排除路径
+/common/service-api/content-api/target/
+/common/service-api/goods-api/target/
+/common/service-api/order-api/target/
+/common/service-api/seckill-api/target/
+/common/service-api/user-api/target/
+/common/util/target/
