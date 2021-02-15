@@ -2,6 +2,8 @@ package com.example.goods.mapper;
 
 import com.example.goodsApi.domain.Spec;
 
+import java.util.List;
+
 public interface SpecMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface SpecMapper {
     int updateByPrimaryKeySelective(Spec record);
 
     int updateByPrimaryKey(Spec record);
+
+    List<Spec> selectByTemplateId(Integer templateId);
 }

@@ -18,6 +18,19 @@
         <spring-cloud.version>2020.0.0</spring-cloud.version>
     </properties>
     <dependencies>
+        <!--FastDFS java客户端依赖, 此jar包中集成的 log4j 和springboot的 logback 冲突-->
+        <dependency>
+            <groupId>org.csource</groupId>
+            <artifactId>fastdfs-client-java</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+            <version>1.29-SNAPSHOT</version>
+        </dependency>
+
         <!--工具类依赖-->
         <dependency>
             <groupId>org.example</groupId>

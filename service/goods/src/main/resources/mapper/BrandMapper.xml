@@ -14,21 +14,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_brand
+    from web_goods.tb_brand
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_brand
+    delete from web_goods.tb_brand
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.example.goodsApi.domain.Brand">
-    insert into tb_brand (id, name, image, 
+    insert into web_goods.tb_brand (id, name, image,
       letter, seq)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
       #{letter,jdbcType=CHAR}, #{seq,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Brand">
-    insert into tb_brand
+    insert into web_goods.tb_brand
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -65,7 +65,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Brand">
-    update tb_brand
+    update web_goods.tb_brand
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -83,11 +83,21 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Brand">
-    update tb_brand
+    update web_goods.tb_brand
     set name = #{name,jdbcType=VARCHAR},
       image = #{image,jdbcType=VARCHAR},
       letter = #{letter,jdbcType=CHAR},
       seq = #{seq,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByCategoryId" resultMap="BaseResultMap">
+    select *
+    from web_goods.tb_brand
+    where id in(select brand_id
+                from web_goods.tb_category_brand
+                where category_id = #{id})
+
+
+  </select>
 </mapper>

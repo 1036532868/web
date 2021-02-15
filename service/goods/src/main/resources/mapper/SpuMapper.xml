@@ -44,11 +44,11 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_spu
+    delete from web_goods.tb_spu
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.example.goodsApi.domain.Spu">
-    insert into tb_spu (id, sn, name, 
+    insert into web_goods.tb_spu (id, sn, name,
       caption, brand_id, category1_id, 
       category2_id, category3_id, template_id, 
       freight_id, image, images, 
@@ -66,7 +66,7 @@
       #{introduction,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Spu">
-    insert into tb_spu
+    insert into web_goods.tb_spu
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -205,7 +205,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Spu">
-    update tb_spu
+    update web_goods.tb_spu
     <set>
       <if test="sn != null">
         sn = #{sn,jdbcType=VARCHAR},
@@ -274,7 +274,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.goodsApi.domain.Spu">
-    update tb_spu
+    update web_goods.tb_spu
     set sn = #{sn,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       caption = #{caption,jdbcType=VARCHAR},
@@ -299,7 +299,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Spu">
-    update tb_spu
+    update web_goods.tb_spu
     set sn = #{sn,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       caption = #{caption,jdbcType=VARCHAR},
@@ -322,4 +322,59 @@
       status = #{status,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectSelective" resultType="java.util.HashMap">
+    select
+        spu.id,
+        spu.sn,
+        spu.name,
+        spu.caption,
+        brand.name brand_name,
+        spu.category1_id,
+        spu.category2_id,
+        spu.category3_id,
+        spu.template_id,
+        spu.freight_id,
+        spu.image,
+        spu.images,
+        spu.sale_service,
+        spu.introduction,
+        spu.spec_items,
+        spu.para_items,
+        spu.sale_num,
+        spu.comment_num,
+        spu.is_marketable,
+        spu.is_enable_spec,
+        spu.is_delete,
+        spu.status
+    from web_goods.tb_spu spu
+    left join web_goods.tb_brand brand
+    on spu.brand_id = brand.id
+    <where>
+      <if test="nameSn != null and nameSn != ''">
+        spu.name like '%' #{nameSn} '%' or sn like '%' #{nameSn} '%'
+      </if>
+      <if test="category3Id != null and category3Id != ''">
+        and spu.category3_id = #{category3Id}
+      </if>
+      <if test="templateId != null and templateId != ''">
+        and spu.template_id = #{templateId}
+      </if>
+      <if test="brandId != null and brandId != ''">
+        and spu.brand_id = #{brandId}
+      </if>
+      <if test="isMarketable != null and isMarketable != ''">
+        and spu.is_marketable = #{isMarketable}
+      </if>
+      <if test="isDelete != null and isDelete != ''">
+        and spu.is_delete = #{isDelete}
+      </if>
+      <if test="status != null and status != ''">
+        and spu.status = #{status}
+      </if>
+    </where>
+    <if test="orderBy != null and orderBy != ''">
+      order by spu.${orderBy}
+    </if>
+  </select>
 </mapper>

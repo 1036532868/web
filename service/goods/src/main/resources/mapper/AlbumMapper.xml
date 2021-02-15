@@ -24,17 +24,17 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_album
+    delete from web_goods.tb_album
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.example.goodsApi.domain.Album">
-    insert into tb_album (id, title, image, 
+    insert into web_goods.tb_album (id, title, image,
       image_items)
     values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
       #{imageItems,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Album">
-    insert into tb_album
+    insert into web_goods.tb_album
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -65,7 +65,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Album">
-    update tb_album
+    update web_goods.tb_album
     <set>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
@@ -80,14 +80,14 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.goodsApi.domain.Album">
-    update tb_album
+    update web_goods.tb_album
     set title = #{title,jdbcType=VARCHAR},
       image = #{image,jdbcType=VARCHAR},
       image_items = #{imageItems,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Album">
-    update tb_album
+    update web_goods.tb_album
     set title = #{title,jdbcType=VARCHAR},
       image = #{image,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

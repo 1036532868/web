@@ -1,4 +1,4 @@
-package com.example.goods.Service;
+package com.example.goods.service;
 
 import com.example.exception.CRUDException;
 import com.example.goodsApi.domain.Category;
@@ -13,5 +13,5 @@ import java.util.List;
  */
 public interface CategoryService {
 
-    List<Category> selectByParentId(int[] parentIds) throws CRUDException;
+    List<Category> selectByParentId(Integer[] parentIds) throws CRUDException;
 }

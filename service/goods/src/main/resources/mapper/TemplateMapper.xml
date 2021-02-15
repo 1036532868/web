@@ -13,21 +13,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_template
+    from web_goods.tb_template
     where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_template
+    delete from web_goods.tb_template
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.example.goodsApi.domain.Template">
-    insert into tb_template (id, name, spec_num, 
+    insert into web_goods.tb_template (id, name, spec_num,
       para_num)
     values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{specNum,jdbcType=INTEGER}, 
       #{paraNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Template">
-    insert into tb_template
+    insert into web_goods.tb_template
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -58,7 +58,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Template">
-    update tb_template
+    update web_goods.tb_template
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
@@ -73,7 +73,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Template">
-    update tb_template
+    update web_goods.tb_template
     set name = #{name,jdbcType=VARCHAR},
       spec_num = #{specNum,jdbcType=INTEGER},
       para_num = #{paraNum,jdbcType=INTEGER}

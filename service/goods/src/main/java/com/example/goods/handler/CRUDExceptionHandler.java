@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class CRUDExceptionHandler {
 
     @ExceptionHandler(CRUDException.class)
-    public Result crudExceptionHandler(Throwable t){
-
-        return new Result(false, StatusCode.ERROR, t.getMessage());
+    public Result crudExceptionHandler(Exception e){
+        e.printStackTrace();
+        return new Result(false, StatusCode.ERROR, e.getMessage());
 
     }
 
     @ExceptionHandler
-    public Result handleAll(Throwable t){
-
-        return new Result(false, StatusCode.ERROR, t.getMessage());
+    public Result handleAll(Exception e){
+        e.printStackTrace();
+        return new Result(false, StatusCode.ERROR, e.getMessage());
 
     }
 }

@@ -127,11 +127,11 @@
   </update>
 
   <select id="selectByParentId" resultMap="BaseResultMap">
-    select id,name,parent_id from web_goods.tb_category where parent_id = #{parentId} and is_show = '1' and is_menu = '1'
+    select <include refid="Base_Column_List"/> from web_goods.tb_category where parent_id = #{parentId} and is_show = '1' and is_menu = '1'
   </select>
 
   <select id="selectByParentIds" resultMap="BaseResultMap">
-    select id,name,parent_id from web_goods.tb_category where is_show = '1' and is_menu = '1' and parent_id in
+    select <include refid="Base_Column_List"/> from web_goods.tb_category where is_show = '1' and is_menu = '1' and parent_id in
     <foreach collection="parentIds" open="(" close=")" item="parentId" separator=",">
       #{parentId}
     </foreach>
