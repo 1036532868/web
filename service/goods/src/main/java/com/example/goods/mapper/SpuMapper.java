@@ -1,10 +1,10 @@
 package com.example.goods.mapper;
 
 import com.example.goodsApi.domain.Spu;
-import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface SpuMapper {
     int deleteByPrimaryKey(Long id);
@@ -22,4 +22,6 @@ public interface SpuMapper {
     int updateByPrimaryKey(Spu record);
 
     List<Map<String, Object>> selectSelective(Map param);
+
+    List<Spu> selectByIds(Set<Long> spuIds);
 }

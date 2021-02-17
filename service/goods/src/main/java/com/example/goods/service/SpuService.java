@@ -18,4 +18,5 @@ public interface SpuService {
     PageInfo<Map<String, Object>> pageList(Map param);
 
     void audit(Long[] id, String status) throws CRUDException;
+
 }

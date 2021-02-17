@@ -3,6 +3,7 @@ package com.example.goods.mapper;
 import com.example.goodsApi.domain.Category;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CategoryMapper {
     int deleteByPrimaryKey(Integer id);
@@ -20,5 +21,7 @@ public interface CategoryMapper {
     List<Category> selectByParentId(Integer i);
 
     List<Category> selectByParentIds(Integer[] parentIds);
+
+    List<Category> selectByIds(Set<Integer> category3Ids);
 }
 

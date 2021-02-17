@@ -29,15 +29,15 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_sku
+    from web_goods.tb_sku
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from tb_sku
+    delete from web_goods.tb_sku
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.example.goodsApi.domain.Sku">
-    insert into tb_sku (id, sn, name, 
+    insert into web_goods.tb_sku (id, sn, name,
       price, num, alert_num, 
       image, images, weight, 
       create_time, update_time, spu_id, 
@@ -53,7 +53,7 @@
       #{status,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.goodsApi.domain.Sku">
-    insert into tb_sku
+    insert into web_goods.tb_sku
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -174,7 +174,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.example.goodsApi.domain.Sku">
-    update tb_sku
+    update web_goods.tb_sku
     <set>
       <if test="sn != null">
         sn = #{sn,jdbcType=VARCHAR},
@@ -234,7 +234,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.example.goodsApi.domain.Sku">
-    update tb_sku
+    update web_goods.tb_sku
     set sn = #{sn,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       price = #{price,jdbcType=INTEGER},
@@ -255,4 +255,58 @@
       status = #{status,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <!--根据关键字搜索-->
+  <select id="searchByName" resultMap="BaseResultMap">
+    select *
+    from web_goods.tb_sku
+
+    <where>
+    <if test="name != null and name != ''">
+        name like '%' #{name} '%'
+        or category_name like '%' #{name} '%'
+        or brand_name like '%' #{name} '%'
+        or spec like '%' #{name} '%'
+    </if>
+
+    <if test="status != null and status != ''">
+        and status = #{status}
+    </if>
+    </where>
+  </select>
+
+  <!--根据分类搜索-->
+  <select id="searchByCategory" resultType="com.example.goodsApi.domain.Sku">
+    select
+      sku.id,
+      sku.sn,
+      sku.name,
+      sku.price,
+      sku.num,
+      sku.alert_num,
+      sku.image,
+      sku.images,
+      sku.weight,
+      sku.create_time,
+      sku.update_time,
+      sku.spu_id,
+      sku.category_id,
+      sku.category_name,
+      sku.brand_name,
+      sku.spec,
+      sku.sale_num,
+      sku.comment_num,
+      sku.status
+    from web_goods.tb_sku sku
+    join web_goods.tb_spu spu
+    on sku.spu_id = spu.id
+    where
+      (spu.category1_id = #{categoryId}
+      or spu.category2_id = #{categoryId}
+      or spu.category3_id = #{categoryId})
+    <if test="status != null and status != ''">
+      and sku.status = #{status}
+    </if>
+  </select>
+
 </mapper>

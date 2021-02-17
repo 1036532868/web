@@ -100,4 +100,12 @@
 
 
   </select>
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from web_goods.tb_brand
+    where id in
+    <foreach collection="brandIds" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
+  </select>
 </mapper>

@@ -3,6 +3,7 @@ package com.example.goods.mapper;
 import com.example.goodsApi.domain.Brand;
 
 import java.util.List;
+import java.util.Set;
 
 public interface BrandMapper {
     int deleteByPrimaryKey(Integer id);
@@ -18,4 +19,6 @@ public interface BrandMapper {
     int updateByPrimaryKey(Brand record);
 
     List<Brand> selectByCategoryId(Long id);
+
+    List<Brand> selectByIds(Set<Integer> brandIds);
 }

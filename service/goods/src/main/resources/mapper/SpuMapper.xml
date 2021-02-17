@@ -346,7 +346,8 @@
         spu.is_marketable,
         spu.is_enable_spec,
         spu.is_delete,
-        spu.status
+        spu.status,
+        spu.introduction
     from web_goods.tb_spu spu
     left join web_goods.tb_brand brand
     on spu.brand_id = brand.id
@@ -376,5 +377,13 @@
     <if test="orderBy != null and orderBy != ''">
       order by spu.${orderBy}
     </if>
+  </select>
+  <select id="selectByIds" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/>
+    from web_goods.tb_spu
+    where id in
+    <foreach collection="spuIds" item="id" separator="," open="(" close=")">
+      #{id}
+    </foreach>
   </select>
 </mapper>

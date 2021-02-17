@@ -18,6 +18,7 @@
         <option value="$PROJECT_DIR$/service/seckill/pom.xml" />
         <option value="$PROJECT_DIR$/service/user/pom.xml" />
         <option value="$PROJECT_DIR$/common/zuul/pom.xml" />
+        <option value="$PROJECT_DIR$/service/web-search/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

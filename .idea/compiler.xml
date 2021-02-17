@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="seckill" />
+        <module name="web-search" />
         <module name="goods" />
         <module name="pay" />
         <module name="zuul" />
@@ -42,6 +43,7 @@
       <module name="pay" options="-parameters" />
       <module name="seckill" options="-parameters" />
       <module name="user" options="-parameters" />
+      <module name="web-search" options="-parameters" />
       <module name="zuul" options="-parameters" />
     </option>
   </component>
