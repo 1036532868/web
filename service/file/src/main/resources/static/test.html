@@ -1,0 +1,51 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/4 13:35
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/file/resources/js/jQuery-3.5.1.js"></script>
+</head>
+<body>
+    <input id="file" type="file"/>
+    <input type="button" onclick="upload()" value="确认"/>
+
+    <script type="text/javascript">
+        function upload() {
+            var formData = new FormData();
+            formData.append("file", $("#file").prop("files")[0]);
+
+
+            $.ajax({
+                url: "http://127.0.0.1:9011/file/upload", /*接口域名地址*/
+                type: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success:function(res){
+                    alert(res.data);
+                }
+            })
+
+            /*$.ajax({
+                type : "post",
+                data : formData,
+                url : "http://127.0.0.1:9011/file/upload",
+                dataType : "json",
+                success : function(res){
+                    if (!res.flag){
+                        alert(res.message);
+                        return;
+                    }
+
+                    alert(res.data);
+                }
+            })*/
+        }
+    </script>
+
+</body>
+</html>
