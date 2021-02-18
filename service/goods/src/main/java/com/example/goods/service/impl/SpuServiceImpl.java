@@ -81,7 +81,8 @@ public class SpuServiceImpl implements SpuService {
             sku.setBrandName(brand.getName());
 
             String spec = sku.getSpec();
-            String fullName = spu.getName() + " ";
+            StringBuilder fullName = new StringBuilder();
+            fullName.append(spu.getName());
             if (spec != null && !"".equals(spec)) {
 
                 try {
@@ -89,7 +90,8 @@ public class SpuServiceImpl implements SpuService {
                     Map<String, String> map = objectMapper.readValue(spec, Map.class);
                     Set<String> keys = map.keySet();
                     for (String key : keys) {
-                        fullName += key + map.get(key);
+                        fullName.append(" ");
+                        fullName.append(map.get(key));
                     }
 
                 } catch (JsonProcessingException e) {
@@ -97,7 +99,7 @@ public class SpuServiceImpl implements SpuService {
                     throw new CRUDException("商品的规格json参数转换异常");
                 }
             }
-            sku.setName(fullName);
+            sku.setName(fullName.toString());
 
             if (skuMapper.insertSelective(sku) != 1) throw new CRUDException("商品信息添加失败");
                 //throw new CRUDException(flag ? "商品信息添加失败":"商品信息修改失败");

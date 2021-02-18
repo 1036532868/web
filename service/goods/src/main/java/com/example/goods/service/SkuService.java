@@ -9,7 +9,5 @@ import java.util.Map;
  * @since 1.0.0
  */
 public interface SkuService {
-    Map<String, Object> searchByName(Map<String, Object> params);
-
-    Map<String, Object> searchByCategoryId(Map<String, Object> params);
+    Map<String, Object> search(Map<String, Object> params);
 }

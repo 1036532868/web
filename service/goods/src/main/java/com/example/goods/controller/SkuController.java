@@ -25,9 +25,9 @@ public class SkuController {
     private SkuService skuService;
 
     /**
-     * @param params <pre>name: 查询 品牌名、类型名、商品名  like name 的sku</pre>
+     * @param params <pre>name: 查询 品牌名、类型名、商品名  like name之一 的sku 格式"name1, name2"</pre>
      *               <pre>spec: 规格, String -> "spec1, spec2, ..."</pre>
-     *               <pre>categoryId 根据分类查询sku, name 和 categoryId 不能共存</pre>
+     *               <pre>categoryId 根据分类查询sku</pre>
      *               <pre>status sku.status 1-正常，2-下架，3-删除</pre>
      *               <pre>pageNum</pre>
      *               <pre>pageSize</pre>
@@ -46,11 +46,12 @@ public class SkuController {
     public Result<Map<String, Object>> search(@RequestBody Map<String, Object> params) {
 
         String name = (String)params.get("name");
-        Map<String, Object> result = null;
-        if (name != null && !"".equals(name)) result = skuService.searchByName(params);
-
         Integer categoryId = (Integer) params.get("categoryId");
-        if (categoryId != null) result = skuService.searchByCategoryId(params);
+
+        Map<String, Object> result = null;
+        if ((name != null && !"".equals(name)) || categoryId != null) {
+            result = skuService.search(params);
+        }
 
         return new Result<>(true, StatusCode.OK, "", result);
     }

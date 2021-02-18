@@ -30,12 +30,15 @@ public class SkuServiceImpl implements SkuService {
     private CategoryMapper categoryMapper;
 
     @Override
-    public Map<String, Object> searchByName(Map<String, Object> params) {
+    public Map<String, Object> search(Map<String, Object> params) {
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
 
+        String name = (String) params.get("name");
+        String[] nameArray = name.split(",");
+        params.put("name", nameArray);
 
-        List<Sku> firstSkuList = skuMapper.searchByName(params);
+        List<Sku> firstSkuList = skuMapper.search(params);
 
         List<Sku> skuList = filterSkuList(params, firstSkuList);
 
@@ -71,18 +74,6 @@ public class SkuServiceImpl implements SkuService {
 
         }
         return skuList;
-    }
-
-
-    @Override
-    public Map<String, Object> searchByCategoryId(Map<String, Object> params) {
-        Integer pageNum = (Integer) params.get("pageNum");
-        Integer pageSize = (Integer) params.get("pageSize");
-
-        List<Sku> skuList = skuMapper.searchByCategoryId(params);
-
-        return getSearchOption(pageNum, pageSize, skuList);
-
     }
 
     /**
