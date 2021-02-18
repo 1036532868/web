@@ -115,24 +115,22 @@ public class SkuServiceImpl implements SkuService {
             List<Spu> spuList = spuMapper.selectByIds(spuIds);
 
             //取出并去重Spu的 brandId 和 Category2Id
-            Set<Integer> brandIdsSet = new HashSet<>();
-            Set<Integer> category2IdsSet = new HashSet<>();
+            Set<Integer> brandIds = new HashSet<>();
+            Set<Integer> category2Ids = new HashSet<>();
             for (Spu spu : spuList) {
-                brandIdsSet.add(spu.getBrandId());
-                category2IdsSet.add(spu.getCategory2Id());
+                brandIds.add(spu.getBrandId());
+                category2Ids.add(spu.getCategory2Id());
             }
 
             //根据brandIds取出所有相关品牌
-            List<Integer> brandIds =  new ArrayList<>(brandIdsSet);
-
             List<Brand> brandList = brandMapper.selectByIds(brandIds);
             result.put("brandList", brandList);
 
-            if (category2IdsSet.size() > 1){
+            if (category2Ids.size() > 1){
 
                 //二级分类数量大于1时, 找出所有对应的三级分类的spu, 二级分类id为K, 三级分类ids为V, 存入map中
                 Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
-                for (Integer category2Id : category2IdsSet) {
+                for (Integer category2Id : category2Ids) {
 
                     Set<Integer> category3Ids = new HashSet<>();
                     for (Spu spu : spuList) {
@@ -150,7 +148,7 @@ public class SkuServiceImpl implements SkuService {
                 Map<String, List<Category>> categoryMap = convertCategoryIdMap(categoryIdMap);
                 result.put("categoryMap", categoryMap);
 
-            } else if (category2IdsSet.size() == 1){
+            } else if (category2Ids.size() == 1){
 
                 //二级分类数量等于1时, 找出所有对应的三级分类, 检查三级分类的数量, 同一个二级分类, category2Id只有一个
                 Set<Integer> category3Ids = new HashSet<>();
@@ -161,7 +159,7 @@ public class SkuServiceImpl implements SkuService {
                 if (category3Ids.size() > 1){
                     //三级分类数量大于1时, 二级分类id为K, 三级分类ids为V, 存入map中
                     Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
-                    for (Integer category2Id : category2IdsSet) {
+                    for (Integer category2Id : category2Ids) {
                         categoryIdMap.put(category2Id, category3Ids);
                     }
 
@@ -214,8 +212,7 @@ public class SkuServiceImpl implements SkuService {
         for (Integer key : keys) {
             Category category2 = categoryMapper.selectByPrimaryKey(key);
 
-            Set<Integer> category3IdsSet = categoryIdMap.get(key);
-            List<Integer> category3Ids = new ArrayList<>(category3IdsSet);
+            Set<Integer> category3Ids = categoryIdMap.get(key);
 
             List<Category> category3List = categoryMapper.selectByIds(category3Ids);
 
