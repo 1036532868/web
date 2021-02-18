@@ -19,6 +19,12 @@ function pagination(o){
     var maxPageSize = o.maxPageSize;
     // *页码按钮数量
     var buttonCount = o.buttonCount;
+
+    // 启用pageSize, 不启用时隐藏
+    var enablePageSize = o.enablePageSize;
+    // 启用跳转功能, 不启用时不生成
+    var enableJump = o.enableJump;
+
     // *回调函数
     callback = function(currentPageNum){
         // 以 input[id=currentPageSize] 的 value 为准
@@ -137,13 +143,20 @@ function pagination(o){
 
 
     // 结尾部分(固定), 最后一页时不显示
-    if (currentPage)
-        target.append(
-            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
-            "显示<input id='currentPageSize' class='enter' type='text' value='"+ pageSize +"'/>条" +
-            "&nbsp;&nbsp;" +
-            "跳转到<input id='jump' class='enter' type='text' maxlength='20'/>页" +
-            "<input onclick='jump()' type='button' value='确定'/>")
+    if (currentPage) {
+        if (enablePageSize){
+            target.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
+                "显示<input id='currentPageSize' class='enter' type='text' value='" + pageSize + "'/>条" +
+                "&nbsp;&nbsp;")
+        } else{
+            target.append("<input style='display: none' id='currentPageSize' class='enter' type='text' value='" + pageSize + "'/>")
+        }
+
+        if (enableJump) {
+            target.append("跳转到<input id='jump' class='enter' type='text' maxlength='20'/>页" +
+                "<input onclick='jump()' type='button' value='确定'/>")
+        }
+    }
 }
 
 // 跳转

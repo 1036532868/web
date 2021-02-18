@@ -53,6 +53,8 @@ public class SkuController {
             result = skuService.search(params);
         }
 
+        System.err.println(result);
+
         return new Result<>(true, StatusCode.OK, "", result);
     }
 }

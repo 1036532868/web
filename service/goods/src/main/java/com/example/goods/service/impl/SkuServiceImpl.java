@@ -72,7 +72,12 @@ public class SkuServiceImpl implements SkuService {
                 }
             }
 
+        } else {
+            //如果没有规格, 直接返回初始skuList
+            skuList = firstSkuList;
         }
+
+        System.err.println("数量-------"+ skuList.size());
         return skuList;
     }
 
@@ -110,22 +115,24 @@ public class SkuServiceImpl implements SkuService {
             List<Spu> spuList = spuMapper.selectByIds(spuIds);
 
             //取出并去重Spu的 brandId 和 Category2Id
-            Set<Integer> brandIds = new HashSet<>();
-            Set<Integer> category2Ids = new HashSet<>();
+            Set<Integer> brandIdsSet = new HashSet<>();
+            Set<Integer> category2IdsSet = new HashSet<>();
             for (Spu spu : spuList) {
-                brandIds.add(spu.getBrandId());
-                category2Ids.add(spu.getCategory2Id());
+                brandIdsSet.add(spu.getBrandId());
+                category2IdsSet.add(spu.getCategory2Id());
             }
 
             //根据brandIds取出所有相关品牌
+            List<Integer> brandIds =  new ArrayList<>(brandIdsSet);
+
             List<Brand> brandList = brandMapper.selectByIds(brandIds);
             result.put("brandList", brandList);
 
-            if (category2Ids.size() > 1){
+            if (category2IdsSet.size() > 1){
 
                 //二级分类数量大于1时, 找出所有对应的三级分类的spu, 二级分类id为K, 三级分类ids为V, 存入map中
                 Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
-                for (Integer category2Id : category2Ids) {
+                for (Integer category2Id : category2IdsSet) {
 
                     Set<Integer> category3Ids = new HashSet<>();
                     for (Spu spu : spuList) {
@@ -143,7 +150,7 @@ public class SkuServiceImpl implements SkuService {
                 Map<String, List<Category>> categoryMap = convertCategoryIdMap(categoryIdMap);
                 result.put("categoryMap", categoryMap);
 
-            } else if (category2Ids.size() == 1){
+            } else if (category2IdsSet.size() == 1){
 
                 //二级分类数量等于1时, 找出所有对应的三级分类, 检查三级分类的数量, 同一个二级分类, category2Id只有一个
                 Set<Integer> category3Ids = new HashSet<>();
@@ -154,7 +161,7 @@ public class SkuServiceImpl implements SkuService {
                 if (category3Ids.size() > 1){
                     //三级分类数量大于1时, 二级分类id为K, 三级分类ids为V, 存入map中
                     Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
-                    for (Integer category2Id : category2Ids) {
+                    for (Integer category2Id : category2IdsSet) {
                         categoryIdMap.put(category2Id, category3Ids);
                     }
 
@@ -183,6 +190,13 @@ public class SkuServiceImpl implements SkuService {
 
         List<Sku> limitSkuList = skuList.subList(startIndex, endIndex);
         PageInfo<Sku> pageInfo = new PageInfo<>(limitSkuList);
+        // 手动设置pageInfo数据, 没有使用startPage, 数据不正确
+        pageInfo.setTotal(skuList.size());
+        pageInfo.setPageNum(pageNum);
+        pageInfo.setSize(pageSize);
+        pageInfo.setStartRow(startIndex);
+        pageInfo.setEndRow(endIndex);
+
         result.put("pageInfo", pageInfo);
 
         return result;
@@ -200,7 +214,9 @@ public class SkuServiceImpl implements SkuService {
         for (Integer key : keys) {
             Category category2 = categoryMapper.selectByPrimaryKey(key);
 
-            Set<Integer> category3Ids = categoryIdMap.get(key);
+            Set<Integer> category3IdsSet = categoryIdMap.get(key);
+            List<Integer> category3Ids = new ArrayList<>(category3IdsSet);
+
             List<Category> category3List = categoryMapper.selectByIds(category3Ids);
 
             categoryMap.put(category2.getName(), category3List);

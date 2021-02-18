@@ -33,12 +33,11 @@ $(".time").datetimepicker({
     pickerPosition: "bottom-left"/"top-left"
 });
 ------------------------------------------------------------
-//自己写的分页插件
+<!--自己写的分页插件-->
 <script type="text/javascript" src="/goods/resources/js/pagination.js"></script>
 <link type="text/css" rel="stylesheet" href="/goods/resources/js/pagination.css"/>
 
 //自己写的分页插件
-//分页插件
 pagination({
     target: "#pagination",
     currentPage: pageNum,
@@ -48,7 +47,10 @@ pagination({
     buttonCount: 5,
     callback: function (pageNum, pageSize) {
         pageList(pageNum, pageSize);
-    }
+    },
+
+    enablePageSize: true,
+    enableJump: true
 })
 
 $(".checkAll").prop("checked", false);

@@ -5,11 +5,11 @@
  * @since 1.0.0
  */
 
-/* 输入域 样式*/
+/* 输入域 样式 */
 .enter{
     width: 25px;
 }
-/* 当前页 页码按钮样式*/
+/* 当前页 页码按钮样式 */
 .currentPageNum{
     color: red;
 }

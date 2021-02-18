@@ -7,10 +7,432 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/js/vue.js"></script>
+
+    <!--自己写的分页插件-->
+    <script type="text/javascript" src="/js/component/pagination/pagination.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/component/pagination/pagination.css"/>
+
+    <style type="text/css">
+        .page {
+            position: absolute;
+            left: 150px;
+            top: 0px;
+            width: 1630px;
+        }
+        a{
+            text-decoration:none;
+        }
+        a:hover{
+            text-decoration:none;
+        }
+
+        /*head*/
+        .pageHead {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .optionArea {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 1630px;
+            height: 25px;
+        }
+        .optionDiv{
+            position: absolute;
+            right: 50px;
+            top: 0px;
+            height: 25px;
+        }
+        .logo{
+            position: absolute;
+            top: 25px;
+            left: 0px;
+            width: 115px;
+        }
+        .searchArea{
+            position: absolute;
+            top: 45px;
+            left: 800px;
+        }
+        #searchInput{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 300px;
+            height: 30px;
+        }
+        .searchButton{
+            position: absolute;
+            left: 310px;
+            top: 0px;
+            height: 35px;
+            width: 80px;
+        }
+        .headHr{
+            position: absolute;
+            left: 0px;
+            top: 90px;
+            width: 1630px;
+            color: #66afe9;
+        }
+
+        /*body*/
+        .pageBody{
+            position: absolute;
+            left: 0px;
+            top: 100px;
+            width: 1630px;
+        }
+        .underOptionDiv{
+            position: absolute;
+            top: 90px;
+            left: 0px;
+            /*width: 1630px;
+            height: 100px;
+            background: #8a6d3b;*/
+        }
+        #skuArea{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+        .brandImg{
+            width: 102px;
+            height: 36px;
+        }
+        .skuSpan{
+            width: 240px;
+            height: 444px;
+            /*background: #66afe9;*/
+        }
+        .skuSpanItem{
+            width: 220px;
+        }
+        .skuImg{
+            width: 220px;
+            height: 220px;
+        }
+        .price{
+            color: red;
+        }
+        #pagination{
+            position: absolute;
+            top: 0px;
+            left: 330px;
+            width: 1000px;
+        }
+
+
+    </style>
 </head>
 <body>
-    <div th:text="spec.option">
+<div class="page">
+
+    <div class="pageHead">
+
+        <div class="optionArea">
+            <!--引导-->
+            <span class="optionDiv">
+                <a href="/user/login.html">你好，请登录</a>
+                &nbsp;
+                <a href="/user/registry.html" style="color: red">免费注册</a>
+                &nbsp;
+                <a href="/order/cart.html" target="main">我的购物车</a>
+                &nbsp;
+                <a href="/manage/businessManagement.html" target="main">商家管理界面</a>
+            </span>
+        </div>
+
+        <img class="logo" src="/img/logo.png"/>
+
+        <div class="searchArea">
+            <input id="searchInput" type="text" maxlength="30"/>
+            <input class="searchButton" type="button" value="搜索"/>
+        </div>
+
+        <hr class="headHr">
 
     </div>
+
+    <div class="pageBody">
+        <table>
+            <thead>
+                <tr>
+                    <td colspan="2">
+                            <a href="javascript:void(0)">全部结果</a>
+                            <font id="keyword"></font>
+                    </td>
+                </tr>
+                <tr th:if="${brandList != null} ">
+                    <td>品牌</td>
+                    <td>
+                        <a th:each="brand:${brandList}" href="javascript:void(0)"><img class="brandImg" th:src="${brand.image}"/></a>
+                    </td>
+                </tr>
+            </thead>
+
+            <!--分类列表/规格列表-->
+            <tbody id="searchOption">
+
+            </tbody>
+
+        </table>
+
+        <div class="underOptionDiv">
+            <!--商品陈列区-->
+            <table id="skuArea">
+                <!--<tr>
+                    <td>
+                        <span class="skuSpan">
+                            <div class='skuSpanItem' style='position: absolute; top: trCount * 455px; left: (i % 5) * 250px;'>
+                                <img src="" class="skuImg"/>
+                            </div>
+                            <div class='skuSpanItem'>
+                                <h3 class="price">￥价格</h3>
+                            </div>
+                            <div class='skuSpanItem'>
+                                <a>名称</a>
+                            </div>
+                            <div class='skuSpanItem'>
+                                <font>0</font>条评价
+                            </div>
+                            <div class='skuSpanItem'>
+                                <font>品牌</font>
+                            </div>
+                        </span>
+                    </td>
+                </tr>-->
+            </table>
+
+            <!--分页插件-->
+            <div id="pagination">
+            </div>
+
+       </div>
+
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+    /*动态更改某个div的top属性
+    * target 获得目标元素的表达式
+    * value 每行的高度
+    * rowNum 行数*/
+    function changeTop(target, value, rowNum) {
+        var top = target.css("top");
+
+        if (top === "auto"){
+            top = "0px";
+        }
+
+        top = parseInt(top.replace("px"));
+
+        top += rowNum * value;
+        top += "px";
+        target.css("top", top);
+    }
+
+    function pageList(pageNum, pageSize){
+        alert(pageNum);
+    }
+
+    function initBrandList(){
+        var rowNum = Math.ceil(v.brandList.length/10);
+        changeTop($(".underOptionDiv"), 36, rowNum);
+
+    }
+
+    function initCategoryMap() {
+        if (v.categoryMap != null){
+            var searchOption = $("#searchOption");
+            searchOption.empty();
+
+            var rowNum = 0;
+            for (var key in v.categoryMap){
+
+                var category3List = v.categoryMap[key];
+                var html = "";
+
+                html += "<tr id='tr"+ key +"'>";
+                html += "<td>"+ key +"</td>";
+                html += "<td>";
+                for (var i = 0; i < category3List.length; i++){
+                    var currentTr = $("tr"+ key);
+                    if (currentTr.css("width") >　1630){
+                        break;
+                    }
+                    html += ("&nbsp;&nbsp;<a href='javascript:void(0)' " +
+                        "onclick='checkCategoryCondition("+ category3List[i].id +")'>"+ category3List[i].name +"</a>");
+                }
+                html += "</td>";
+                html += "</tr>";
+
+                searchOption.append(html);
+                rowNum++;
+            }
+
+            changeTop($(".underOptionDiv"), 23, rowNum);
+        }
+    }
+
+    function initSpecList() {
+        if (v.specList != null){
+            var searchOption = $("#searchOption");
+            searchOption.empty();
+
+            for(var i = 0; i < v.specList.length; i++){
+                var html = "";
+                html += "<tr>";
+                html += "<td>"+ v.specList[i].name +"</td>";
+                html += "<td>";
+
+                var specOptions = v.specList[i].options;
+                specOptions = specOptions.split(",");
+                for(var i2 = 0; i2 < specOptions.length; i2++){
+                    html += "&nbsp;&nbsp;";
+                    html += "<a href='javascript:void(0)' onclick='checkSpecCondition(\""+ specOptions[i2] +"\")'>"+ specOptions[i2] +"</a>";
+                }
+
+                html += "</td>";
+                html += "</tr>";
+
+                searchOption.append(html);
+            }
+
+        }
+    }
+
+    function initSkuList() {
+        v.skuList = v.pageInfo.list;
+        var skuArea = $("#skuArea");
+        skuArea.empty();
+
+        var trCount = 0;
+        html = "";
+        html += "<tr>";
+        html += "   <td>";
+        for(var i = 0; i < v.skuList.length; i++){
+            var sku = v.skuList[i];
+
+            html += "<span class='skuSpan' style='position: absolute; top: "+ trCount * 455 +"px; left: "+ (i % 5) * 250 +"px;'>";
+            html += "    <div class='skuSpanItem'>";
+            html += "        <img src='"+ sku.image +"' class=\"skuImg\"/>";
+            html += "    </div>";
+            html += "    <div class='skuSpanItem'>";
+            html += "        <h3 class=\"price\">￥"+ sku.price +"</h3>";
+            html += "    </div>";
+            html += "    <div class='skuSpanItem'>";
+            html += "        <a>"+ sku.name +"</a>";
+            html += "    </div>";
+            html += "    <div class='skuSpanItem'>";
+            html += "        <font>"+ sku.commentNum +"</font>条评价";
+            html += "    </div>";
+            html += "    <div class='skuSpanItem'>";
+            html += "        <font>"+ sku.brandName +"</font>";
+            html += "    </div>";
+            html += "</span>";
+
+            if (i > 0 && i % 5 === 4){
+                html += "</td></tr>";
+                html += "<tr><td>";
+                trCount++;
+            }
+
+        }
+
+
+        html += "    </td>";
+        html += "</tr>";
+
+        skuArea.append(html);
+
+        changeTop($("#pagination"), 455, trCount);
+    }
+
+    function initPagination() {
+        //自己写的分页插件
+        pagination({
+            target: "#pagination",
+            currentPage: v.pageNum,
+            total: v.pageInfo.total,
+            pageSize: v.pageSize,
+            maxPageSize: 20,
+            buttonCount: 5,
+            callback: function (pageNum, pageSize) {
+                pageList(pageNum, pageSize);
+            },
+
+            enablePageSize: false,
+            enableJump: false
+        })
+    }
+
+    /*初始化已选择的条件*/
+    function initCondition(){
+        var keyword = $("#keyword")
+        keyword.text("> \""+ v.name +"\"");
+
+        var specArray = v.spec.split(",");
+        for (var i = 0; i < specArray.length; i++){
+            keyword.before("<input type='button'/>")
+        }
+    }
+
+    /*初始化品牌、分类列表/规格列表、商品陈列区、分页插件、已选择条件*/
+    function init(){
+        initBrandList();
+        initCategoryMap();
+        initSpecList();
+        initSkuList();
+        initPagination();
+        initCondition();
+    }
+
+    /*点击分类按钮后*/
+    function checkCategoryCondition(categoryId){
+        alert(categoryId);
+    }
+
+    /*点击规格按钮后*/
+    function checkSpecCondition(specName){
+        alert(specName);
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            pageNum: [[${pageNum}]],
+            pageSize: [[${pageSize}]],
+            name: [[${name}]],
+            spec: [[${spec}]],
+            categoryId: [[${categoryId}]],
+
+            brandList: [[${brandList}]],
+            categoryMap: [[${categoryMap}]],
+            specList: [[${specList}]],
+            pageInfo: [[${pageInfo}]],
+            skuList: []
+            //categoryMap: {"2":[{name: "3", id:3}, {name: "3", id:3}], "2a":[{name: "3", id:3}, {name: "3", id:3}]},
+            //specList:　[{"id":27,"name":"\u7F51\u7EDC","options":"\u8054\u901A2G,\u8054\u901A3G,\u8054\u901A4G,\u79FB\u52A84G,\u8054\u901A3G\/\u79FB\u52A84G,\u7535\u4FE14G","seq":null,"templateId":42},{"id":28,"name":"\u624B\u673A\u5C4F\u5E55\u5C3A\u5BF8","options":"5\u5BF8,5.5\u5BF8","seq":null,"templateId":42}],
+            //pageInfo: {"total":1,"list":[{"id":1148478169645326336,"sn":"246113da2c67438eb67358804115166","name":"\u624B\u673A\u914D\u4EF6 \u6897\u8865  5.5\u5BF8  \u7535\u4FE14G  \u767D  \u5B9E\u65BD  128G  64G  800\u4E07\u50CF\u7D20","price":421,"num":200,"alertNum":1,"image":"http:\/\/img10.360buyimg.com\/n8\/jfs\/t1\/59268\/34\/3382\/122779\/5d1349eaEa1ff3003\/0f26e3a1f142ba00.jpg","images":"http:\/\/img12.360buyimg.com\/n7\/jfs\/t1\/2186\/34\/688\/145171\/5b9246e5Ee83b63cd\/bd6f4345da3ddc9f.jpg,http:\/\/img10.360buyimg.com\/n7\/jfs\/t1\/4522\/8\/12858\/225377\/5bd52796E0ead8fc5\/9a3c6379a353aafe.jpg,http:\/\/img11.360buyimg.com\/n7\/jfs\/t26053\/226\/1746531202\/221888\/c26bda62\/5bbc08c0N2a24122f.jpg,http:\/\/img14.360buyimg.com\/n8\/jfs\/t1\/33227\/20\/10569\/196375\/5ccef0bdEaaf9ee64\/5996f1d6b44c6d2d.jpg","weight":2019,"createTime":1562646308000,"updateTime":1562646308000,"spuId":1148478095867518976,"categoryId":11156,"categoryName":"\u624B\u673A\u914D\u4EF6","brandName":"\u624B\u673A\u914D\u4EF6","spec":"{\"\u624B\u673A\u5C4F\u5E55\u5C3A\u5BF8\":\"5.5\u5BF8\",\"\u7F51\u7EDC\":\"\u7535\u4FE14G\",\"\u989C\u8272\":\"\u767D\",\"\u6D4B\u8BD5\":\"\u5B9E\u65BD\",\"\u673A\u8EAB\u5185\u5B58\":\"128G\",\"\u5B58\u50A8\":\"64G\",\"\u50CF\u7D20\":\"800\u4E07\u50CF\u7D20\"}","saleNum":24,"commentNum":9217,"status":"0"}],"pageNum":1,"pageSize":1,"size":1,"startRow":0,"endRow":0,"pages":1,"prePage":0,"nextPage":0,"isFirstPage":true,"isLastPage":true,"hasPreviousPage":false,"hasNextPage":false,"navigatePages":8,"navigatepageNums":[1],"navigateFirstPage":1,"navigateLastPage":1}
+        },
+        methods:{
+
+        },
+        mounted(){
+            v = this;
+
+            init();
+        }
+    })
+
+</script>
+
 </body>
 </html>

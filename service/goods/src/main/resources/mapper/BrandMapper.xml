@@ -98,7 +98,6 @@
                 from web_goods.tb_category_brand
                 where category_id = #{id})
 
-
   </select>
   <select id="selectByIds" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
