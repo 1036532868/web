@@ -26,7 +26,7 @@ public class SkuController {
 
     /**
      * @param params <pre>name: 查询 品牌名、类型名、商品名  like name之一 的sku 格式"name1, name2"</pre>
-     *               <pre>spec: 规格, String -> "spec1, spec2, ..."</pre>
+     *               <pre>spec: 规格, String -> "\"s1Name\":\"s1\",\"s2Name\":\"s2\",..."</pre>
      *               <pre>categoryId 根据分类查询sku</pre>
      *               <pre>status sku.status 1-正常，2-下架，3-删除</pre>
      *               <pre>pageNum</pre>

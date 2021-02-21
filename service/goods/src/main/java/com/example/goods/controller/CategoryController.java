@@ -7,9 +7,11 @@ import com.example.util.Result;
 import com.example.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +30,23 @@ public class CategoryController {
     @Autowired
     private RedisTemplate<Object, Object> redis;
 
+    @GetMapping("/{id}")
+    public Result<Category> selectById(@PathVariable("id") Integer id){
+
+        String key = "category_"+ id;
+        Category category = (Category) redis.opsForValue().get(key);
+        if (category == null){
+            category = categoryService.selectById(id);
+
+            redis.opsForValue().set(key, category);
+            if (category == null){
+                redis.expire(key, 30, TimeUnit.SECONDS);
+            }
+        }
+
+        return new Result<>(true, StatusCode.OK, "", category);
+    }
+
     /**
      * @param parentIds
      * @Description TODO 返回所有 parentId 为参数数组 元素 的 Category对象
@@ -44,7 +63,7 @@ public class CategoryController {
         if (parentIds == null || parentIds.length == 0) throw new CRUDException("没有得到任何parentId");
 
         //从redis中查数据
-        String key = "category_";
+        String key = "categoryParentId_";
         for (int i : parentIds) {
             key += i;
         }

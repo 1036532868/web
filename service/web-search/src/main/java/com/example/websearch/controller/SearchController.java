@@ -30,19 +30,19 @@ public class SearchController {
     * @description TODO 调用goods服务获得数据, 然后渲染到thymeleaf返回, 可以防止百度等搜索引擎抓取页面时出现未渲染的页面
     * @param pageNum pageSize 固定为60
     *        name  搜索栏输入的内容
-    *        spec  选中的规格, "s1,s2,s3,..."
-    *        categoryId
+    *        spec  选中的规格, "name1:s1","name2:s1、s2",...
+    *        categoryId "id,name"
     * @return String
     * @author gong_da_kai
     * @date 2021/2/17 20:52
     * @since 1.0.0
     */
     @GetMapping
-    public String search(Integer pageNum, String name, String spec, Integer categoryId,  Model model){
+    public String search(Integer pageNum, String name, String spec, String categoryId,  Model model){
         String[] nameArray = name.split("\\s");
         StringBuilder newName = new StringBuilder();
         for (int i = 0; i < nameArray.length; i++) {
-            newName.append(i);
+            newName.append(nameArray[i]);
             if (i < nameArray.length - 1){
                 newName.append(",");
             }
@@ -53,7 +53,9 @@ public class SearchController {
         params.put("pageSize", 60);
         params.put("name", newName.toString());
         params.put("spec", spec);
-        params.put("categoryId", categoryId);
+        if (categoryId != null && !"".equals(categoryId)) {
+            params.put("categoryId", Integer.valueOf(categoryId.split(",")[0]));
+        }
         params.put("status", "1");
 
         Result<Map<String, Object>> result = skuFeign.search(params);
@@ -67,6 +69,8 @@ public class SearchController {
 
         if (result.isFlag()) model.addAllAttributes(resultMap);
 
+        // 将 param 中的某些参数还原, 在页面上使用
+        params.put("categoryId", categoryId);
         params.put("name", name);
         model.addAllAttributes(params);
         return "search";

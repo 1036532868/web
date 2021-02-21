@@ -8,12 +8,27 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
+    <!--<script type="text/javascript" src="../static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../static/js/vue.js"></script>
+
+    &lt;!&ndash;自己写的分页插件&ndash;&gt;
+    <script type="text/javascript" src="../static/js/component/pagination/pagination.js"></script>
+    <link type="text/css" rel="stylesheet" href="../static/js/component/pagination/pagination.css"/>
+
+    &lt;!&ndash;自己写的选项卡插件&ndash;&gt;
+    <script type="text/javascript" src="../static/js/component/searchOption/searchOption.js"></script>
+    <link type="text/css" rel="stylesheet" href="../static/js/component/searchOption/searchOption.css"/>-->
+
     <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
     <script type="text/javascript" src="/js/vue.js"></script>
 
     <!--自己写的分页插件-->
     <script type="text/javascript" src="/js/component/pagination/pagination.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/component/pagination/pagination.css"/>
+
+    <!--自己写的选项卡插件-->
+    <script type="text/javascript" src="/js/component/searchOption/searchOption.js"></script>
+    <link type="text/css" rel="stylesheet" href="/js/component/searchOption/searchOption.css"/>
 
     <style type="text/css">
         .page {
@@ -22,11 +37,13 @@
             top: 0px;
             width: 1630px;
         }
-        a{
-            text-decoration:none;
+
+        a {
+            text-decoration: none;
         }
-        a:hover{
-            text-decoration:none;
+
+        a:hover {
+            text-decoration: none;
         }
 
         /*head*/
@@ -35,6 +52,7 @@
             left: 0px;
             top: 0px;
         }
+
         .optionArea {
             position: absolute;
             left: 0px;
@@ -42,38 +60,44 @@
             width: 1630px;
             height: 25px;
         }
-        .optionDiv{
+
+        .optionDiv {
             position: absolute;
             right: 50px;
             top: 0px;
             height: 25px;
         }
-        .logo{
+
+        .logo {
             position: absolute;
             top: 25px;
             left: 0px;
             width: 115px;
         }
-        .searchArea{
+
+        .searchInput {
             position: absolute;
             top: 45px;
             left: 800px;
         }
-        #searchInput{
+
+        #searchInput {
             position: absolute;
             left: 0px;
             top: 0px;
             width: 300px;
             height: 30px;
         }
-        .searchButton{
+
+        .searchButton {
             position: absolute;
             left: 310px;
             top: 0px;
             height: 35px;
             width: 80px;
         }
-        .headHr{
+
+        .headHr {
             position: absolute;
             left: 0px;
             top: 90px;
@@ -82,46 +106,76 @@
         }
 
         /*body*/
-        .pageBody{
+        .pageBody {
             position: absolute;
             left: 0px;
             top: 100px;
             width: 1630px;
         }
-        .underOptionDiv{
+
+        .searchArea {
             position: absolute;
-            top: 90px;
             left: 0px;
-            /*width: 1630px;
+            top: 0px;
+            width: 1630px;
+            /*background: red;*/
+        }
+
+        .searchAreaTitle {
+            position: absolute;
+            left: 0px;
+            width: 150px;
+            background: #66afe9;
+        }
+
+        .searchAreaOption {
+            position: absolute;
+            left: 150px;
+            top: 0px;
+            width: 1480px;
+            background: #f7ecb5;
+        }
+
+        .underOptionDiv {
+            position: absolute;
+            top: 46px;
+            left: 235px;
+            /*width: 1400px;
             height: 100px;
             background: #8a6d3b;*/
         }
-        #skuArea{
+
+        #skuArea {
             position: absolute;
             left: 0px;
             top: 0px;
         }
 
-        .brandImg{
+        .brandImg {
             width: 102px;
             height: 36px;
         }
-        .skuSpan{
+
+        .skuSpan {
             width: 240px;
             height: 444px;
             /*background: #66afe9;*/
         }
-        .skuSpanItem{
+
+        .skuSpanItem {
             width: 220px;
         }
-        .skuImg{
+
+        .skuImg {
             width: 220px;
             height: 220px;
         }
-        .price{
+
+        .price {
             color: red;
         }
-        #pagination{
+
+        #pagination {
             position: absolute;
             top: 0px;
             left: 330px;
@@ -132,6 +186,7 @@
     </style>
 </head>
 <body>
+
 <div class="page">
 
     <div class="pageHead">
@@ -151,7 +206,7 @@
 
         <img class="logo" src="/img/logo.png"/>
 
-        <div class="searchArea">
+        <div class="searchInput">
             <input id="searchInput" type="text" maxlength="30"/>
             <input class="searchButton" type="button" value="搜索"/>
         </div>
@@ -161,28 +216,46 @@
     </div>
 
     <div class="pageBody">
-        <table>
-            <thead>
-                <tr>
-                    <td colspan="2">
-                            <a href="javascript:void(0)">全部结果</a>
-                            <font id="keyword"></font>
-                    </td>
-                </tr>
-                <tr th:if="${brandList != null} ">
-                    <td>品牌</td>
-                    <td>
-                        <a th:each="brand:${brandList}" href="javascript:void(0)"><img class="brandImg" th:src="${brand.image}"/></a>
-                    </td>
-                </tr>
-            </thead>
 
-            <!--分类列表/规格列表-->
-            <tbody id="searchOption">
+        <!--搜索条件区-->
+        <div class="searchArea">
+            <!--已选择条件陈列区-->
+            <div class="conditionArea">
 
-            </tbody>
+                <div id="allResult" class="searchAreaTitle h21px">
+                    <a href="javascript:void(0)">全部结果</a>
+                </div>
 
-        </table>
+                <div id="conditionArea" class="searchAreaOption h21px">
+
+                    <!--用户在搜索栏输入的关键字-->
+                    <font id="keyword"></font>
+                </div>
+            </div>
+
+            <!--选项卡区-->
+            <div class="searchArea" style="top: 21px">
+                <!--品牌区-->
+                <div th:if="${brandList != null}">
+                    <div class="searchAreaTitle">
+                        品牌
+                    </div>
+
+                    <div class="h21px searchAreaOption">
+                        <a th:each="brand:${brandList}" href="javascript:void(0)">
+                            <img class="brandImg" th:src="${brand.image}"/>
+                        </a>
+                    </div>
+                </div>
+
+                <!--分类/规格选项卡区-->
+                <div id="searchOption" class="searchArea" style="top: 5px">
+                    <div class="h21px searchAreaOption"></div>
+
+                </div>
+            </div>
+
+        </div>
 
         <div class="underOptionDiv">
             <!--商品陈列区-->
@@ -214,97 +287,198 @@
             <div id="pagination">
             </div>
 
-       </div>
+        </div>
 
     </div>
 </div>
 
 <script type="text/javascript" th:inline="javascript">
-    /*动态更改某个div的top属性
-    * target 获得目标元素的表达式
-    * value 每行的高度
-    * rowNum 行数*/
-    function changeTop(target, value, rowNum) {
-        var top = target.css("top");
 
-        if (top === "auto"){
-            top = "0px";
-        }
-
-        top = parseInt(top.replace("px"));
-
-        top += rowNum * value;
-        top += "px";
-        target.css("top", top);
-    }
-
-    function pageList(pageNum, pageSize){
+    function pageList(pageNum, pageSize) {
         alert(pageNum);
     }
 
-    function initBrandList(){
-        var rowNum = Math.ceil(v.brandList.length/10);
-        changeTop($(".underOptionDiv"), 36, rowNum);
+    //点击分类选项
+    function checkCategoryOption(categoryId) {
+        //找到对应id的分类的名称, 以 "id,name" 的形式发出参数
+        v.categoryId = categoryId;
+        for (var title in v.categoryMap) {
+            var list = v.categoryMap[title];
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].id === parseInt(categoryId)) {
+                    v.categoryId += "," + list[i].name;
+                    break;
+                }
+            }
+        }
+        search();
+    }
+
+    //点击规格选项
+    function checkSpecOption(spec) {
+        // title:spec
+        spec = '"'+ spec + '"';
+        if (v.spec == null) {
+            v.spec = spec;
+        } else {
+            var specArray = v.spec.split(",");
+            specArray.push(spec);
+            v.spec = specArray.join(",");
+        }
+
+        search();
+    }
+
+    //多选规格选项
+    function multiSpecOption(spec) {
+        spec = '"'+ spec + '"';
+        if (v.spec === null) {
+            v.spec = spec;
+        } else {
+            var specArray = v.spec.split(",");
+            specArray.push(spec);
+            v.spec = specArray.join(",");
+        }
+
+        search();
+    }
+
+    // 根据现有条件进行搜索
+    function search() {
+        var url = "/search?";
+        url += "pageNum=1";
+        if (v.name !== null) url += "&name=" + v.name;
+        if (v.spec !== null) url += "&spec=" + v.spec;
+        if (v.categoryId !== null) url += "&categoryId=" + v.categoryId
+
+        //url += "&name=手机";
+        //url += '&spec="电视音响效果:立体声、双声道"';
+        //url += "&categoryId=1";
+
+        window.location = url;
+    }
+
+    function cancelCategoryId() {
+        v.categoryId = null;
+        search();
+    }
+
+    function cancelSpecCondition(spec) {
+        spec = '"'+ spec + '"';
+        // "title:spec"
+        var specArray = v.spec.split(",");
+        // 将spec 转换为数组, 将被取消的规格删除
+        for (var i = 0; i < specArray.length; i++) {
+            if (specArray[i] === spec) {
+                specArray.splice(i, 1);
+            }
+        }
+        v.spec = specArray.join(",");
+
+        //如果是最后一个规格
+        if (v.spec === "") v.spec = null;
+
+        search();
+    }
+
+    //初始化已选择的条件
+    function initCondition() {
+        // 搜索栏输入内容
+        if (v.name !== null || v.name !== "") {
+
+            var keyword = $("#keyword")
+            keyword.text("> \"" + v.name + "\"");
+        }
+        // 分类
+        if (v.categoryId !== null) {
+            keyword.before("<input type='button' value='" + v.categoryId.split(",")[1] + "' onclick='cancelCategoryId()'/>&nbsp;")
+        }
+
+        // 规格
+        if (v.spec !== null) {
+
+            var specArray = v.spec.split(",");
+            var checkedSpec = [];
+            for (var i = 0; i < specArray.length; i++) {
+                var spec = specArray[i].replaceAll('"', "");
+
+                var width = getContentWidth(spec, 0);
+                var text = spec;
+                if (width > 270) text = spec.split("、")[0] +" ...";
+
+                keyword.before("<input id='" + specArray[i] + "' type='button' value='" + text + "' onclick='cancelSpecCondition(\"" + spec + "\")'/>&nbsp;")
+                checkedSpec.push(spec.split(":")[0]);
+            }
+
+            if (v.specList !== null) {
+                // 去除 参数列表 中已经被选中过的值
+                for (var i = 0; i < v.specList.length; i++) {
+                    if (checkedSpec.includes(v.specList[i].name)) {
+                        v.specList.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+    }
+
+    function initBrandList() {
+        var rowNum = Math.ceil(v.brandList.length / 9);
+
+        changeTop("#searchOption", 36, rowNum);
+        changeTop(".underOptionDiv", 36, rowNum);
 
     }
 
     function initCategoryMap() {
-        if (v.categoryMap != null){
-            var searchOption = $("#searchOption");
-            searchOption.empty();
-
-            var rowNum = 0;
-            for (var key in v.categoryMap){
-
-                var category3List = v.categoryMap[key];
-                var html = "";
-
-                html += "<tr id='tr"+ key +"'>";
-                html += "<td>"+ key +"</td>";
-                html += "<td>";
-                for (var i = 0; i < category3List.length; i++){
-                    var currentTr = $("tr"+ key);
-                    if (currentTr.css("width") >　1630){
-                        break;
-                    }
-                    html += ("&nbsp;&nbsp;<a href='javascript:void(0)' " +
-                        "onclick='checkCategoryCondition("+ category3List[i].id +")'>"+ category3List[i].name +"</a>");
+        var map = v.categoryMap;
+        if (map != null) {
+            insertOption({
+                // 基本属性
+                target: "#searchOption",
+                data: map,
+                type: "map",
+                spaceNum: 5,
+                alertWidth: 1280,
+                moreDivWidth: 1480,
+                rowHeight: 23,
+                below: [".underOptionDiv"],
+                enableMulti: true,
+                // 选项卡点击回调函数
+                optionCallback: function (id) {
+                    checkCategoryOption(id);
+                },
+                // 多选框回调函数
+                multiCallback: function (resStr) {
+                    checkSpecOption(resStr);
                 }
-                html += "</td>";
-                html += "</tr>";
-
-                searchOption.append(html);
-                rowNum++;
-            }
-
-            changeTop($(".underOptionDiv"), 23, rowNum);
+            });
         }
     }
 
     function initSpecList() {
-        if (v.specList != null){
-            var searchOption = $("#searchOption");
-            searchOption.empty();
+        if (v.specList != null) {
+            insertOption({
+                // 基本属性
+                target: "#searchOption",
+                data: v.specList,
+                type: "list",
+                spaceNum: 5,
+                alertWidth: 1280,
+                moreDivWidth: 1480,
+                rowHeight: 23,
+                enableMulti: true,
+                below: [".underOptionDiv"],
 
-            for(var i = 0; i < v.specList.length; i++){
-                var html = "";
-                html += "<tr>";
-                html += "<td>"+ v.specList[i].name +"</td>";
-                html += "<td>";
-
-                var specOptions = v.specList[i].options;
-                specOptions = specOptions.split(",");
-                for(var i2 = 0; i2 < specOptions.length; i2++){
-                    html += "&nbsp;&nbsp;";
-                    html += "<a href='javascript:void(0)' onclick='checkSpecCondition(\""+ specOptions[i2] +"\")'>"+ specOptions[i2] +"</a>";
+                // 选项卡点击回调函数
+                optionCallback: function (res) {
+                    checkSpecOption(res);
+                },
+                // 多选框回调函数
+                multiCallback: function (res) {
+                    multiSpecOption(res);
                 }
-
-                html += "</td>";
-                html += "</tr>";
-
-                searchOption.append(html);
-            }
-
+            });
         }
     }
 
@@ -314,31 +488,31 @@
         skuArea.empty();
 
         var trCount = 0;
-        html = "";
+        var html = "";
         html += "<tr>";
         html += "   <td>";
-        for(var i = 0; i < v.skuList.length; i++){
+        for (var i = 0; i < v.skuList.length; i++) {
             var sku = v.skuList[i];
 
-            html += "<span class='skuSpan' style='position: absolute; top: "+ trCount * 455 +"px; left: "+ (i % 5) * 250 +"px;'>";
+            html += "<span class='skuSpan' style='position: absolute; top: " + trCount * 455 + "px; left: " + (i % 5) * 250 + "px;'>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <img src='"+ sku.image +"' class=\"skuImg\"/>";
+            html += "        <img src='" + sku.image + "' class=\"skuImg\"/>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <h3 class=\"price\">￥"+ sku.price +"</h3>";
+            html += "        <h3 class=\"price\">￥" + sku.price + "</h3>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a>"+ sku.name +"</a>";
+            html += "        <a>" + sku.name + "</a>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <font>"+ sku.commentNum +"</font>条评价";
+            html += "        <font>" + sku.commentNum + "</font>条评价";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <font>"+ sku.brandName +"</font>";
+            html += "        <font>" + sku.brandName + "</font>";
             html += "    </div>";
             html += "</span>";
 
-            if (i > 0 && i % 5 === 4){
+            if (i > 0 && i % 5 === 4) {
                 html += "</td></tr>";
                 html += "<tr><td>";
                 trCount++;
@@ -352,14 +526,14 @@
 
         skuArea.append(html);
 
-        changeTop($("#pagination"), 455, trCount);
+        changeTop("#pagination", 455, trCount);
     }
 
     function initPagination() {
         //自己写的分页插件
         pagination({
             target: "#pagination",
-            currentPage: v.pageNum,
+            pageNum: v.pageNum,
             total: v.pageInfo.total,
             pageSize: v.pageSize,
             maxPageSize: 20,
@@ -373,36 +547,17 @@
         })
     }
 
-    /*初始化已选择的条件*/
-    function initCondition(){
-        var keyword = $("#keyword")
-        keyword.text("> \""+ v.name +"\"");
-
-        var specArray = v.spec.split(",");
-        for (var i = 0; i < specArray.length; i++){
-            keyword.before("<input type='button'/>")
-        }
-    }
-
     /*初始化品牌、分类列表/规格列表、商品陈列区、分页插件、已选择条件*/
-    function init(){
-        initBrandList();
-        initCategoryMap();
-        initSpecList();
-        initSkuList();
-        initPagination();
+    function init() {
         initCondition();
+        if (v.brandList !== null) initBrandList();
+        if (v.categoryMap !== null) initCategoryMap();
+        if (v.specList !== null) initSpecList();
+        if (v.skuList !== null) initSkuList();
+        initPagination();
+
     }
 
-    /*点击分类按钮后*/
-    function checkCategoryCondition(categoryId){
-        alert(categoryId);
-    }
-
-    /*点击规格按钮后*/
-    function checkSpecCondition(specName){
-        alert(specName);
-    }
 
     var vue = new Vue({
         el: ".page",
@@ -410,6 +565,7 @@
             pageNum: [[${pageNum}]],
             pageSize: [[${pageSize}]],
             name: [[${name}]],
+            //title:e1,e2,e3
             spec: [[${spec}]],
             categoryId: [[${categoryId}]],
 
@@ -417,15 +573,14 @@
             categoryMap: [[${categoryMap}]],
             specList: [[${specList}]],
             pageInfo: [[${pageInfo}]],
-            skuList: []
-            //categoryMap: {"2":[{name: "3", id:3}, {name: "3", id:3}], "2a":[{name: "3", id:3}, {name: "3", id:3}]},
-            //specList:　[{"id":27,"name":"\u7F51\u7EDC","options":"\u8054\u901A2G,\u8054\u901A3G,\u8054\u901A4G,\u79FB\u52A84G,\u8054\u901A3G\/\u79FB\u52A84G,\u7535\u4FE14G","seq":null,"templateId":42},{"id":28,"name":"\u624B\u673A\u5C4F\u5E55\u5C3A\u5BF8","options":"5\u5BF8,5.5\u5BF8","seq":null,"templateId":42}],
+            skuList: [],
+            //spec: "",
+            //categoryMap: {"2":[{name: "一是大概多少古代三国", id:3},{name: "安妃按时发生发", id:3},{name: "的是个根深蒂固", id:3},{name: "啥的还是说人话人人", id:3},{name: "爱上比特网BTV额外1", id:3},{name: "爱上比特网BTV额外2", id:3},{name: "爱上比特网BTV额外3", id:3},{name: "爱上比特网BTV额外4", id:3},{name: "爱上比特网BTV额外5", id:3},{name: "爱上比特网BTV额外6", id:3},{name: "爱上比特网BTV额外7", id:3}]},
+            //specList:　[{"id":27,"name":"\u7F51\u7EDC","options":"一是大概多少古代三国1,一是大概多少古代三国2,一是大概多少古代三国3,一是大概多少古代三国4,一是大概多少古代三国5,一是大概多少古代三国6,一是大概多少古代三国7,一是大概多少古代三国8,一是大概多少古代三国9"},{"id":28,"name":"row2","options":"1,2,3"}],
             //pageInfo: {"total":1,"list":[{"id":1148478169645326336,"sn":"246113da2c67438eb67358804115166","name":"\u624B\u673A\u914D\u4EF6 \u6897\u8865  5.5\u5BF8  \u7535\u4FE14G  \u767D  \u5B9E\u65BD  128G  64G  800\u4E07\u50CF\u7D20","price":421,"num":200,"alertNum":1,"image":"http:\/\/img10.360buyimg.com\/n8\/jfs\/t1\/59268\/34\/3382\/122779\/5d1349eaEa1ff3003\/0f26e3a1f142ba00.jpg","images":"http:\/\/img12.360buyimg.com\/n7\/jfs\/t1\/2186\/34\/688\/145171\/5b9246e5Ee83b63cd\/bd6f4345da3ddc9f.jpg,http:\/\/img10.360buyimg.com\/n7\/jfs\/t1\/4522\/8\/12858\/225377\/5bd52796E0ead8fc5\/9a3c6379a353aafe.jpg,http:\/\/img11.360buyimg.com\/n7\/jfs\/t26053\/226\/1746531202\/221888\/c26bda62\/5bbc08c0N2a24122f.jpg,http:\/\/img14.360buyimg.com\/n8\/jfs\/t1\/33227\/20\/10569\/196375\/5ccef0bdEaaf9ee64\/5996f1d6b44c6d2d.jpg","weight":2019,"createTime":1562646308000,"updateTime":1562646308000,"spuId":1148478095867518976,"categoryId":11156,"categoryName":"\u624B\u673A\u914D\u4EF6","brandName":"\u624B\u673A\u914D\u4EF6","spec":"{\"\u624B\u673A\u5C4F\u5E55\u5C3A\u5BF8\":\"5.5\u5BF8\",\"\u7F51\u7EDC\":\"\u7535\u4FE14G\",\"\u989C\u8272\":\"\u767D\",\"\u6D4B\u8BD5\":\"\u5B9E\u65BD\",\"\u673A\u8EAB\u5185\u5B58\":\"128G\",\"\u5B58\u50A8\":\"64G\",\"\u50CF\u7D20\":\"800\u4E07\u50CF\u7D20\"}","saleNum":24,"commentNum":9217,"status":"0"}],"pageNum":1,"pageSize":1,"size":1,"startRow":0,"endRow":0,"pages":1,"prePage":0,"nextPage":0,"isFirstPage":true,"isLastPage":true,"hasPreviousPage":false,"hasNextPage":false,"navigatePages":8,"navigatepageNums":[1],"navigateFirstPage":1,"navigateLastPage":1}
         },
-        methods:{
-
-        },
-        mounted(){
+        methods: {},
+        mounted() {
             v = this;
 
             init();

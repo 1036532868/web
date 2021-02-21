@@ -1,0 +1,58 @@
+--------------------------------------------------------------------------------
+选项卡插件
+
+<!--自己写的选项卡插件-->
+    <script type="text/javascript" src="../static/js/component/searchOption/searchOption.js"></script>
+    <link type="text/css" rel="stylesheet" href="../static/js/component/searchOption/searchOption.css"/>
+
+// 自己写的选项卡插件
+insertOption({
+    // 基本属性
+    target: "#searchOption",
+    data: map,
+    type: "map",
+    spaceNum: 5,
+    alertWidth: 1280,
+    moreDivWidth: 1480,
+    rowHeight: 23,
+    enableMulti: true,
+    below: [".underOptionDiv"],
+
+    // 选项卡点击回调函数
+    optionCallback: function (id) {
+        checkCategoryCondition(id);
+    },
+    // 多选框回调函数
+    multiCallback:function(resStr){
+        checkSpecCondition(resStr);
+    }
+});
+
+-----------------------------------------------------------------------------------------------------------
+分页插件
+<!--自己写的分页插件-->
+<script type="text/javascript" src="/goods/resources/js/pagination.js"></script>
+<link type="text/css" rel="stylesheet" href="/goods/resources/js/pagination.css"/>
+
+//自己写的分页插件
+pagination({
+    target: "#pagination",
+    total: data.data.total,
+    pageNum: pageNum,
+    pageSize: pageSize,
+    maxPageSize: 20,
+    buttonCount: 5,
+    callback: function (pageNum, pageSize) {
+        pageList(pageNum, pageSize);
+    },
+
+    enablePageSize: true,
+    enableJump: true
+})
+
+$(".checkAll").prop("checked", false);
+
+//第一个参数,操作后停留在当前页
+//第二个参数,维持已经设置好的pageSize
+pageList(parseInt($("#currentPageNum").val())
+        ,parseInt($("#currentPageSize").val()));

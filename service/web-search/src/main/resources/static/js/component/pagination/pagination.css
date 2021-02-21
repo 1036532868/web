@@ -6,10 +6,10 @@
  */
 
 /* 输入域 样式 */
-.enter{
+.pagination_enter{
     width: 25px;
 }
 /* 当前页 页码按钮样式 */
-.currentPageNum{
+.pagination_currentPageNum{
     color: red;
 }

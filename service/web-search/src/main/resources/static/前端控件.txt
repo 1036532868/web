@@ -33,34 +33,6 @@ $(".time").datetimepicker({
     pickerPosition: "bottom-left"/"top-left"
 });
 ------------------------------------------------------------
-<!--自己写的分页插件-->
-<script type="text/javascript" src="/goods/resources/js/pagination.js"></script>
-<link type="text/css" rel="stylesheet" href="/goods/resources/js/pagination.css"/>
-
-//自己写的分页插件
-pagination({
-    target: "#pagination",
-    currentPage: pageNum,
-    total: data.data.total,
-    pageSize: pageSize,
-    maxPageSize: 20,
-    buttonCount: 5,
-    callback: function (pageNum, pageSize) {
-        pageList(pageNum, pageSize);
-    },
-
-    enablePageSize: true,
-    enableJump: true
-})
-
-$(".checkAll").prop("checked", false);
-
-//第一个参数,操作后停留在当前页
-//第二个参数,维持已经设置好的pageSize
-pageList(parseInt($("#currentPageNum").val())
-        ,parseInt($("#currentPageSize").val()));
-
-
 
 <link rel="stylesheet" type="text/css" href="../../../static/resources/js/component/bs_pagination/jquery.bs_pagination.min.css">
 <script type="text/javascript" src="../../../static/resources/js/component/bs_pagination/jquery.bs_pagination.min.js"></script>
@@ -123,3 +95,5 @@ $("#create-customerName").typeahead({
     // 输入完毕,xxx毫秒之后开始查询
     delay: 1500
 });
+
+-----------------------------------------------------------------------------------------

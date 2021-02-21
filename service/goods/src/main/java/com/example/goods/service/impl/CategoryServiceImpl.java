@@ -1,8 +1,8 @@
 package com.example.goods.service.impl;
 
 import com.example.exception.CRUDException;
-import com.example.goods.service.CategoryService;
 import com.example.goods.mapper.CategoryMapper;
+import com.example.goods.service.CategoryService;
 import com.example.goodsApi.domain.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -10,9 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @version 1.0.0
@@ -78,6 +76,11 @@ public class CategoryServiceImpl implements CategoryService {
 
         }
         return l;
+    }
+
+    @Override
+    public Category selectById(Integer id) {
+        return categoryMapper.selectByPrimaryKey(id);
     }
 
 }

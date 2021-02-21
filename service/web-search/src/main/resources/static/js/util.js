@@ -5,20 +5,33 @@
  * @since 1.0.0
  */
 
-/*动态在目标div的原本top属性的基础上增加数值
-    * target 目标元素
-    * value 每行的高度
-    * rowNum 行数*/
-function changeTop(target, value, rowNum) {
-    var top = target.css("top");
-
-    if (top === "auto"){
-        top = "0px";
+/** 动态在目标div的原本top属性的基础上增加数值
+ * @param target 目标元素: "#target"
+ * @param value 每行的高度
+ * @param rowNum 行数
+ * @param isArray 是否是数组
+ * */
+function changeTop(target, value, rowNum, isArray) {
+    if (isArray){
+        for(var i = 0; i < target.length; i++){
+            exec(target[i]);
+        }
+    } else{
+        exec(target);
     }
 
-    top = parseInt(top.replace("px"));
 
-    top += rowNum * value;
-    top += "px";
-    target.css("top", top);
+    function exec(string) {
+        var target = $(string);
+        var top = target.css("top");
+        if (top === "auto") {
+            top = "0px";
+        }
+
+        top = parseInt(top.replace("px"));
+
+        top += rowNum * value;
+        top += "px";
+        target.css("top", top);
+    }
 }
