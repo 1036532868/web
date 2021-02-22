@@ -139,4 +139,11 @@ public class SpuServiceImpl implements SpuService {
 
     }
 
+    @Override
+    public Goods goods(Long spuId) {
+
+        return new Goods();
+
+    }
+
 }

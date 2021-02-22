@@ -1,13 +1,11 @@
 package com.example.goods.controller;
 
 import com.example.goods.service.SkuService;
+import com.example.goodsApi.domain.Sku;
 import com.example.util.Result;
 import com.example.util.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -25,14 +23,16 @@ public class SkuController {
     private SkuService skuService;
 
     /**
-     * @param params <pre>name: 查询 品牌名、类型名、商品名  like name之一 的sku 格式"name1, name2"</pre>
-     *               <pre>spec: 规格, String -> "\"s1Name\":\"s1\",\"s2Name\":\"s2\",..."</pre>
+     * @param params <pre>pageNum</pre>
+     *               <pre>pageSize</pre>
+     *               <pre>name: 查询 品牌名、类型名、商品名  like name之一 的sku 格式"name1, name2"</pre>
+     *               <pre>spec: 规格, String -> "t1:e、e、e,t2:e、e、e"</pre>
+     *               <pre>brandName: 品牌名称</pre>
      *               <pre>categoryId 根据分类查询sku</pre>
      *               <pre>status sku.status 1-正常，2-下架，3-删除</pre>
-     *               <pre>pageNum</pre>
-     *               <pre>pageSize</pre>
      *
-     * @return com.example.util.Result<java.util.Map < java.lang.String, java.lang.Object>>
+     *
+     * @return com.example.util.Result(Map (String, Object))
      * <pre>"pageInfo" : PageInfo(Sku)</pre>
      * <pre>"brandList" : List(Brand)</pre>
      * <pre>"categoryMap"/"specList" : 分类Map(String, List(Category)) 或 specList(Spec), 不会共存</pre>
@@ -53,8 +53,14 @@ public class SkuController {
             result = skuService.search(params);
         }
 
-        System.err.println(result);
+        //System.err.println(result);
 
         return new Result<>(true, StatusCode.OK, "", result);
+    }
+
+    @GetMapping("/{skuId}")
+    public Result<Sku> selectById(@PathVariable("skuId") Long skuId){
+        Sku sku = skuService.selectById(skuId);
+        return new Result<>(true, StatusCode.OK, "", sku);
     }
 }

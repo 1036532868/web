@@ -1,5 +1,7 @@
 package com.example.goods.service;
 
+import com.example.goodsApi.domain.Sku;
+
 import java.util.Map;
 
 /**
@@ -10,4 +12,6 @@ import java.util.Map;
  */
 public interface SkuService {
     Map<String, Object> search(Map<String, Object> params);
+
+    Sku selectById(Long skuId);
 }

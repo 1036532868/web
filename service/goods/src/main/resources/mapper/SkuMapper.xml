@@ -299,6 +299,10 @@
                 </foreach>
             </if>
 
+            <if test="brandName != null and brandName != ''">
+                and sku.brand_name = #{brandName}
+            </if>
+
             <if test="status != null and status != ''">
                 and sku.status = #{status}
             </if>
