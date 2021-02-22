@@ -14,8 +14,11 @@
  * *maxPageSize: 最大记录条数
  * *buttonCount: 页码按钮数量
  *
- * enablePageSize: 是否启用 由用户自由指定pageSize
- * enableJump: 是否启用 跳转功能
+ * aroundTotalFont: 总记录数 两边的文字                 默认 -> ["共", "条记录"];
+ * aroundPageFont: 页数 两边的文字                     默认 -> ["共", "页"];
+ *
+ * enablePageSize: 启用 由用户自由指定pageSize       默认 -> true
+ * enableJump: 启用 跳转功能                        默认 -> false
  * </pre>
  */
 function pagination(o){
@@ -32,10 +35,19 @@ function pagination(o){
     // *页码按钮数量
     var buttonCount = o.buttonCount;
 
+    // 总记录数 两边的文字
+    var aroundTotalFont = o.aroundTotalFont;
+    // 页数 两边的文字
+    var aroundPageFont = o.aroundPageFont;
+    if (aroundTotalFont === undefined) aroundTotalFont = ["共", "条记录"];
+    if (aroundPageFont === undefined) aroundPageFont = ["共", "页"];
+
     // 启用pageSize, 不启用时隐藏
     var enablePageSize = o.enablePageSize;
+    if (enablePageSize === undefined) enablePageSize = true;
     // 启用跳转功能, 不启用时不生成
     var enableJump = o.enableJump;
+    if (enableJump === undefined) enableJump = false;
 
     // *回调函数
     callback = function(currentPageNum){
@@ -56,6 +68,8 @@ function pagination(o){
 
         o.callback(currentPageNum, currentPageSize);
     }
+
+
 
     // 总页数
     var pageCount = Math.ceil(total/pageSize);
@@ -91,9 +105,9 @@ function pagination(o){
     // 开头部分(固定), 不是第一页时显示
     target.append(
         "<span>" +
-        "    共<span id='total'>"+ total +"</span>条记录" +
+        "    "+ aroundTotalFont[0] +"<span id='total'>"+ total +"</span>"+ aroundTotalFont[1] +
         "    &nbsp;&nbsp;" +
-        "    共<span id='pageCount'>"+ pageCount +"</span>页" +
+        "    "+ aroundPageFont[0] +"<span id='pageCount'>"+ pageCount +"</span>"+ aroundPageFont[1] +
         "</span>" +
         "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 

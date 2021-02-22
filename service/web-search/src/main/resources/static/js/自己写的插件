@@ -42,6 +42,8 @@ pagination({
     pageSize: pageSize,
     maxPageSize: 20,
     buttonCount: 5,
+    aroundTotalFont: ["共", "条记录"],
+    aroundPageFont: ["共", "页"],
     callback: function (pageNum, pageSize) {
         pageList(pageNum, pageSize);
     },
