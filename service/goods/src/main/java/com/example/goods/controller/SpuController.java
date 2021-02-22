@@ -7,7 +7,10 @@ import com.example.util.Result;
 import com.example.util.StatusCode;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -69,13 +72,5 @@ public class SpuController {
     public Result audit(Long[] id, String status) throws CRUDException {
         spuService.audit(id, status);
         return new Result(true, StatusCode.OK, "1".equals(status) ? "审核通过" : "审核不通过");
-    }
-
-    @GetMapping("/goods/{spuId}")
-    public Result<Goods> searchGoods(@PathVariable("spuId") Long spuId){
-
-        Goods goods = spuService.goods(spuId);
-
-        return new Result<>(true, StatusCode.OK, "", goods);
     }
 }

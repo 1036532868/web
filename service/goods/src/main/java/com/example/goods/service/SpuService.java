@@ -19,5 +19,4 @@ public interface SpuService {
 
     void audit(Long[] id, String status) throws CRUDException;
 
-    Goods goods(Long spuId);
 }
