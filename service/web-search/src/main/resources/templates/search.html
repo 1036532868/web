@@ -6,7 +6,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>搜索</title>
+    <title>Title</title>
 
     <!--<script type="text/javascript" src="../static/js/jQuery-3.5.1.js"></script>
     <script type="text/javascript" src="../static/js/vue.js"></script>
@@ -171,10 +171,6 @@
             height: 220px;
         }
 
-        .skuFont{
-            color: black;
-        }
-
         .price {
             color: red;
         }
@@ -184,10 +180,6 @@
             top: 0px;
             left: 330px;
             width: 1000px;
-        }
-
-        .keyword{
-            color: red;
         }
 
 
@@ -212,11 +204,11 @@
             </span>
         </div>
 
-        <a><img class="logo" title="返回首页" src="/img/logo.png"/></a>
+        <img class="logo" src="/img/logo.png"/>
 
         <div class="searchInput">
-            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
-            <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
+            <input id="searchInput" type="text" maxlength="30"/>
+            <input class="searchButton" type="button" value="搜索"/>
         </div>
 
         <hr class="headHr">
@@ -231,10 +223,7 @@
             <div class="conditionArea">
 
                 <div id="allResult" class="searchAreaTitle h21px">
-                    <a id="allResultFont" href="javascript:void(0)"
-                       onclick="allResult()"
-                       onmouseover='overHref("allResultFont", "red")'
-                       onmouseleave='leaveHref("allResultFont", "black")'>全部结果</a>
+                    <a href="javascript:void(0)">全部结果</a>
                 </div>
 
                 <div id="conditionArea" class="searchAreaOption h21px">
@@ -247,13 +236,22 @@
             <!--选项卡区-->
             <div class="searchArea" style="top: 21px">
                 <!--品牌区-->
-                <div id="brandList"></div>
+                <div th:if="${brandList != null}">
+                    <div class="searchAreaTitle">
+                        品牌
+                    </div>
+
+                    <div class="h21px searchAreaOption">
+                        <a th:each="brand:${brandList}" href="javascript:void(0)">
+                            <img class="brandImg" th:src="${brand.image}"/>
+                        </a>
+                    </div>
+                </div>
 
                 <!--分类/规格选项卡区-->
                 <div id="searchOption" class="searchArea" style="top: 5px">
-                    <div class="h21px searchAreaOption">
+                    <div class="h21px searchAreaOption"></div>
 
-                    </div>
                 </div>
             </div>
 
@@ -296,94 +294,11 @@
 
 <script type="text/javascript" th:inline="javascript">
 
-    // onmouseover='overHref("+ id +", "+ red +")' onmouseleave='leaveHref("+ id +", "+ black +")'
-    var red = JSON.stringify("red");
-    var black = JSON.stringify("black");
-    var blue = JSON.stringify("blue");
-
-    // 鼠标悬停在条件按钮上
-    function overCondition(id){
-        var target = $("#"+ id);
-        target.css("color", "white");
-        target.css("background-color", "red");
-    }
-    // 鼠标离开条件按钮
-    function leaveCondition(id){
-        var target = $("#"+ id);
-        target.css("color", "red");
-        target.css("background-color", "white");
-    }
-
-
-    function Condition(){
-        var pageNum;
-        var pageSize;
-        var name;
-        var brandNAme;
-        var spec;
-        var categoryId;
-        var status;
-    }
-
     function pageList(pageNum, pageSize) {
-        var params = new Condition();
-        params.pageNum = pageNum;
-        params.pageSize= pageSize;
-        params.name = v.name;
-        params.brandName = v.brandName;
-        params.spec = v.spec;
-        params.categoryId = v.categoryId;
-        params.status = "1";
-
-        $.ajax({
-            url: "/goods/sku/search",
-            type: "post",
-            data: JSON.stringify(params),
-            contentType: "application/json;charset=utf-8",
-            success: function(res){
-                if (!res.flag){
-                    alert(res.message);
-                    return;
-                }
-                var data = res.data;
-                v.skuList = data.skuList;
-
-                v.pageNum = pageNum;
-
-                initSkuList();
-                initPagination();
-                initSkuName();
-            }
-
-        })
+        alert(pageNum);
     }
 
-    // 点击搜索, 清空所有条件, 只以 userIn 和分页数据 查询
-    function searchButton(){
-        var val = $.trim($("#searchInput").val());
-        if (val === "") return;
-
-        v.userIn = val;
-        v.brandName = null;
-        v.spec = null;
-        v.categoryId = null;
-
-        search();
-    }
-    // 搜索输入域点击回车
-    function searchKeyDown(event){
-        if (event.keyCode === 13){
-            $("#searchButton").click();
-        }
-    }
-
-
-    // 点击品牌
-    function checkBrand(brandName){
-        v.brandName = brandName;
-        search();
-    }
-    // 点击分类选项
+    //点击分类选项
     function checkCategoryOption(categoryId) {
         //找到对应id的分类的名称, 以 "id,name" 的形式发出参数
         v.categoryId = categoryId;
@@ -398,9 +313,11 @@
         }
         search();
     }
-    // 点击规格选项
+
+    //点击规格选项
     function checkSpecOption(spec) {
         // title:spec
+        spec = '"'+ spec + '"';
         if (v.spec == null) {
             v.spec = spec;
         } else {
@@ -411,8 +328,10 @@
 
         search();
     }
-    // 多选规格选项
+
+    //多选规格选项
     function multiSpecOption(spec) {
+        spec = '"'+ spec + '"';
         if (v.spec === null) {
             v.spec = spec;
         } else {
@@ -423,26 +342,29 @@
 
         search();
     }
+
     // 根据现有条件进行搜索
     function search() {
         var url = "/search?";
         url += "pageNum=1";
-        if (v.userIn !== null) url += "&userIn=" + v.userIn;
-        if (v.brandName !== null) url += "&brandName="+ v.brandName;
+        if (v.name !== null) url += "&name=" + v.name;
         if (v.spec !== null) url += "&spec=" + v.spec;
         if (v.categoryId !== null) url += "&categoryId=" + v.categoryId
 
+        //url += "&name=手机";
+        //url += '&spec="电视音响效果:立体声、双声道"';
+        //url += "&categoryId=1";
+
         window.location = url;
     }
-    function cancelBrandName(){
-        v.brandName = null;
-        search();
-    }
+
     function cancelCategoryId() {
         v.categoryId = null;
         search();
     }
+
     function cancelSpecCondition(spec) {
+        spec = '"'+ spec + '"';
         // "title:spec"
         var specArray = v.spec.split(",");
         // 将spec 转换为数组, 将被取消的规格删除
@@ -458,73 +380,34 @@
 
         search();
     }
-    // 点击"全部结果", 去除除了 name 以外的所有条件
-    function allResult(){
-        v.spec = null;
-        v.categoryId = null;
 
-        search();
-    }
-
-
-    /**
-     * 初始化品牌、分类列表/规格列表、商品陈列区、分页插件、已选择条件*/
-    function init() {
-        initCondition();
-        if (v.brandList !== null) initBrandList();
-        if (v.categoryMap !== null) initCategoryMap();
-        if (v.specList !== null) initSpecList();
-        if (v.skuList !== null) {
-            initSkuList();
-            initSkuName()
-        }
-        initPagination();
-
-    }
-    // 初始化已选择的条件
+    //初始化已选择的条件
     function initCondition() {
         // 搜索栏输入内容
-        if (v.userIn !== null || v.userIn !== "") {
+        if (v.name !== null || v.name !== "") {
+
             var keyword = $("#keyword")
-            keyword.text("> \"" + v.userIn + "\"");
+            keyword.text("> \"" + v.name + "\"");
         }
-
-        // 品牌
-        if (v.brandName !== null){
-            var delId = JSON.stringify("del" + v.brandName);
-
-            keyword.before("<input type='button' value='品牌: " + v.brandName + "' " +
-                "onclick='cancelBrandName()' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>" +
-            "<input id="+ delId +" type='button' value='×' " +
-                "onclick='cancelBrandName()' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>&nbsp;")
-        }
-
-        // 分类 "id,name"
+        // 分类
         if (v.categoryId !== null) {
-            var delId = JSON.stringify("del" + v.categoryId.split(",")[0]);
-
-            keyword.before("<input type='button' value='" + v.categoryId.split(",")[1] + "' " +
-                "onclick='cancelCategoryId()' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>" +
-            "<input id="+ delId +" type='button' value='×' " +
-                "onclick='cancelCategoryId()' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>&nbsp;")
+            keyword.before("<input type='button' value='" + v.categoryId.split(",")[1] + "' onclick='cancelCategoryId()'/>&nbsp;")
         }
 
         // 规格
         if (v.spec !== null) {
+
             var specArray = v.spec.split(",");
             var checkedSpec = [];
             for (var i = 0; i < specArray.length; i++) {
-                var width = getContentWidth(specArray[i], 0);
-                var text = specArray[i];
-                if (width > 270) text = specArray[i].split("、")[0] +" ...";
+                var spec = specArray[i].replaceAll('"', "");
 
-                var delId = JSON.stringify("del" + specArray[i].split(":")[0]);
-                keyword.before("<input id='" + specArray[i] + "' type='button' value='" + text + "' " +
-                        "onclick='cancelSpecCondition(\"" + specArray[i] + "\")' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>" +
-                    "<input id="+ delId +" type='button' value='×' " +
-                        "onclick='cancelSpecCondition(\"" + specArray[i] + "\")' onmouseover='overCondition("+ delId +")' onmouseleave='leaveCondition("+ delId +")'/>&nbsp;")
+                var width = getContentWidth(spec, 0);
+                var text = spec;
+                if (width > 270) text = spec.split("、")[0] +" ...";
 
-                checkedSpec.push(specArray[i].split(":")[0]);
+                keyword.before("<input id='" + specArray[i] + "' type='button' value='" + text + "' onclick='cancelSpecCondition(\"" + spec + "\")'/>&nbsp;")
+                checkedSpec.push(spec.split(":")[0]);
             }
 
             if (v.specList !== null) {
@@ -532,36 +415,21 @@
                 for (var i = 0; i < v.specList.length; i++) {
                     if (checkedSpec.includes(v.specList[i].name)) {
                         v.specList.splice(i, 1);
-                        i--;
                     }
                 }
             }
         }
 
     }
-    function initBrandList() {
-        var div = $("#brandList");
-        var html = "<div class='searchAreaTitle'>" +
-                        "品牌" +
-                    "</div>" +
-                    "<div class='h21px searchAreaOption'>";
-        for (var i = 0; i < v.brandList.length; i++){
-            var brand = v.brandList[i];
-            html += "<a href='javascript:void(0)' onclick='checkBrand(\""+ brand.name +"\")'>" +
-                "<img class='brandImg' src='"+ brand.image +"'/>" +
-                "</a>";
-            if (i & 9 ==- 0){
-                html += "<br>";
-            }
-        }
-        html += "</div>";
-        div.append(html);
 
+    function initBrandList() {
         var rowNum = Math.ceil(v.brandList.length / 9);
-        changeTop(["#searchOption"], 36, rowNum);
-        changeTop([".underOptionDiv"], 36, rowNum);
+
+        changeTop("#searchOption", 36, rowNum);
+        changeTop(".underOptionDiv", 36, rowNum);
 
     }
+
     function initCategoryMap() {
         var map = v.categoryMap;
         if (map != null) {
@@ -587,6 +455,7 @@
             });
         }
     }
+
     function initSpecList() {
         if (v.specList != null) {
             insertOption({
@@ -612,9 +481,9 @@
             });
         }
     }
+
     function initSkuList() {
         v.skuList = v.pageInfo.list;
-        var size = v.skuList.length;
         var skuArea = $("#skuArea");
         skuArea.empty();
 
@@ -622,46 +491,44 @@
         var html = "";
         html += "<tr>";
         html += "   <td>";
-        for (var i = 0; i < size; i++) {
+        for (var i = 0; i < v.skuList.length; i++) {
             var sku = v.skuList[i];
-            var skuNameId = JSON.stringify("skuName"+ i);
-            var brandNameId = JSON.stringify("brandName"+ i);
 
             html += "<span class='skuSpan' style='position: absolute; top: " + trCount * 455 + "px; left: " + (i % 5) * 250 + "px;'>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a href='/search/goods/"+ sku.id +"' ><img src='" + sku.image + "' title='"+ sku.name +"' class=\"skuImg\"/></a>";
+            html += "        <img src='" + sku.image + "' class=\"skuImg\"/>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
             html += "        <h3 class=\"price\">￥" + sku.price + "</h3>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a id="+ skuNameId +" onmouseover='overHref("+ skuNameId +","+ red +")' onmouseleave='leaveHref("+ skuNameId +","+ black +")' class='skuFont' href='/search/goods/"+ sku.id +"' name='skuName'>" + sku.name + "</a>";
+            html += "        <a>" + sku.name + "</a>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <font>" + sku.commentNum + "</font>&nbsp;条评价";
+            html += "        <font>" + sku.commentNum + "</font>条评价";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a id="+ brandNameId +" onmouseover='overHref("+ brandNameId +","+ red +")' onmouseleave='leaveHref("+ brandNameId +","+ black +")' class='skuFont' href='javascript:void(0)' onclick='checkBrand(\""+ sku.brandName +"\")'>" + sku.brandName + "</a>";
+            html += "        <font>" + sku.brandName + "</font>";
             html += "    </div>";
             html += "</span>";
 
-            if (i % 5 === 4) {
+            if (i > 0 && i % 5 === 4) {
                 html += "</td></tr>";
                 html += "<tr><td>";
                 trCount++;
             }
 
         }
-        // 最后一行不满五个时, 手动添加一行
-        if (size % 5 !== 0) trCount++;
+
 
         html += "    </td>";
         html += "</tr>";
 
         skuArea.append(html);
 
-        changeTop(["#pagination"], 455, trCount);
+        changeTop("#pagination", 455, trCount);
     }
+
     function initPagination() {
         //自己写的分页插件
         pagination({
@@ -679,38 +546,27 @@
             enableJump: false
         })
     }
-    /**
-     * 关键字标红
-     * 思路:
-     *      1. 获得所有商品的 innerHTML
-     *      2. 遍历 keyword
-     *      3. 将html中 可能存在的keyword 字段全部替换为 带有样式的字段
-     * */
-    function initSkuName(){
-        var a = $("a[name=skuName]");
-        for(var i = 0; i < a.length; i++){
-            var html = a[i].innerHTML;
 
-            var keywordList = v.name.split(",");
-            for (var i2 = 0; i2 < keywordList.length; i2++){
-                var keyword = keywordList[i2];
-                a[i].innerHTML = html.replaceAll(keyword, "<font class='keyword'>"+ keyword +"</font>")
-            }
-        }
+    /*初始化品牌、分类列表/规格列表、商品陈列区、分页插件、已选择条件*/
+    function init() {
+        initCondition();
+        if (v.brandList !== null) initBrandList();
+        if (v.categoryMap !== null) initCategoryMap();
+        if (v.specList !== null) initSpecList();
+        if (v.skuList !== null) initSkuList();
+        initPagination();
+
     }
 
 
     var vue = new Vue({
         el: ".page",
         data: {
-            userIn: [[${userIn}]],
-
             pageNum: [[${pageNum}]],
             pageSize: [[${pageSize}]],
             name: [[${name}]],
-            //[{title:e1,e2,e3}]
+            //title:e1,e2,e3
             spec: [[${spec}]],
-            brandName: [[${brandName}]],
             categoryId: [[${categoryId}]],
 
             brandList: [[${brandList}]],

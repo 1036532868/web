@@ -4,14 +4,6 @@
  * @date 2021/2/20 14:40
  * @since 1.0.0
  */
-a {
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: none;
-}
-
 .insertOption_titleDiv{
     position: absolute;
     left: 0px;

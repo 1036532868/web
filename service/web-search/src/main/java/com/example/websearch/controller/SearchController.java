@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
@@ -39,24 +38,21 @@ public class SearchController {
     * @since 1.0.0
     */
     @GetMapping
-    public String search(Integer pageNum, String userIn, String spec, String categoryId, String brandName,  Model model){
-        String[] nameArray = userIn.split("\\s");
-
-        Map<String, Object> params = new HashMap<>();
-        StringBuilder name = new StringBuilder();
+    public String search(Integer pageNum, String name, String spec, String categoryId,  Model model){
+        String[] nameArray = name.split("\\s");
+        StringBuilder newName = new StringBuilder();
         for (int i = 0; i < nameArray.length; i++) {
-            name.append(nameArray[i]);
-            if (i < nameArray.length - 1) {
-                name.append(",");
+            newName.append(nameArray[i]);
+            if (i < nameArray.length - 1){
+                newName.append(",");
             }
         }
 
-
+        Map<String, Object> params = new HashMap<>();
         params.put("pageNum", pageNum);
         params.put("pageSize", 60);
-        params.put("name", name.toString());
+        params.put("name", newName.toString());
         params.put("spec", spec);
-        params.put("brandName", brandName);
         if (categoryId != null && !"".equals(categoryId)) {
             params.put("categoryId", Integer.valueOf(categoryId.split(",")[0]));
         }
@@ -75,17 +71,9 @@ public class SearchController {
 
         // 将 param 中的某些参数还原, 在页面上使用
         params.put("categoryId", categoryId);
-        params.put("userIn", userIn);
+        params.put("name", name);
         model.addAllAttributes(params);
         return "search";
-
-    }
-
-
-    @GetMapping("/goods/{skuId}")
-    public void goods(@PathVariable("skuId") Long skuId){
-
-        System.err.println(skuId);
 
     }
 

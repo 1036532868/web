@@ -91,12 +91,6 @@ insertOption({
  */
 function insertOption(o) {
 
-    // onmouseover='overHref("+ skuNameId +", "+ red +")'
-    // onmouseleave='leaveHref("+ skuNameId +", "+ black +")'
-    var red = "\"red\"";
-    var black = "\"black\"";
-    var blue = "\"blue\"";
-
     var target = $(o.target);
     target.empty();
     var data = o.data;
@@ -163,7 +157,7 @@ function insertOption(o) {
             rowNum++
         }
 
-        changeTop(below, rowHeight, rowNum);
+        changeTop(below, rowHeight, rowNum, true);
     }
 
     if (type === "list"){
@@ -173,13 +167,13 @@ function insertOption(o) {
             rowNum++;
         }
 
-        changeTop(below, rowHeight, rowNum);
+
+        changeTop(below, rowHeight, rowNum, true);
     }
 
     /**
      * 生成一行div*/
     function insert(title, list) {
-
         var widthSum = 0;
         var hasMoreDiv = false;
         var moreDivRowNum = 0;
@@ -223,21 +217,16 @@ function insertOption(o) {
             //多选 多选框
             if (enableMulti) html += "<input id='checkbox"+ title + i +"' onclick='clickCheckbox(\""+ title +"\")' style='display: none;' type='checkbox' value='"+ val +"'/>";
 
-            var optionId = JSON.stringify("option" + title + i);
-            html += "<a id="+ optionId +" href='javascript:void(0)' class='"+ optionClass +"' " +
-                "onclick='optionCallback(\""+ title + i +"\",\"" + title + "\",\"" + val + "\")' " +
-                "onmouseover='overHref("+ optionId +","+ red +")' " +
-                "onmouseleave='leaveHref("+ optionId +","+ blue +")'>"+
-                text +
-                "</a>";
+            html += "<a href='javascript:void(0)' class='"+ optionClass +"' " +
+                "onclick='optionCallback(\""+ title + i +"\",\"" + title + "\",\"" + val + "\")'>"+ text +"</a>";
             for (var s = 0; s < spaceNum; s++) {
                 html += "&nbsp;";
             }
 
         }
 
-        // 到此依然没有 moreDiv, 并且数量大于1时, 添加一个moreDiv, 但不生成 "更多按钮"
-        if (!hasMoreDiv && enableMulti && list.length > 1) {
+        // 到此依然没有 moreDiv 时, 添加一个moreDiv, 但不生成 "更多按钮"
+        if (!hasMoreDiv && enableMulti) {
             moreDivRowNum = 0;
             html += "</div>";
             html += "<div id='moreDiv"+ title +"' class='"+ optionDivClass +"' style='top: "+ rowHeight +"px; display: none;'>";
@@ -247,14 +236,13 @@ function insertOption(o) {
         html += "</div>";
         target.append(html);
 
-        // 选项卡数量为1时, 不生成更多和多选相关内容
-        if (list.length < 2) return;
+        var moreDivHeight = rowHeight * moreDivRowNum;
+        var moreDiv = $("#moreDiv" + title);
 
         // 生成buttonDiv
         $("#optionDiv"+ title).append("<div id='buttonDiv" + title + "' class='"+ operationButtonDivClass +"'></div>");
         var buttonDiv = $("#buttonDiv" + title);
-        var moreDivHeight = rowHeight * moreDivRowNum;
-        var moreDiv = $("#moreDiv" + title);
+
 
         // 此隐藏域的值, 将用来表示 moreDiv/multiDiv 是否已经显示
         buttonDiv.append("<input id='showMore"+ title +"' type='hidden' value='0'/>");
@@ -302,7 +290,7 @@ function insertOption(o) {
         show ? height = moreDivHeight : height = parseInt("-"+ moreDivHeight);
 
         changeOtherOptionTop(title, height, data, type);
-        changeTop(below, height);
+        changeTop(below, height, 1, true);
     };
 
     // 每次点击"多选", 检查存放上一个 多选按钮 触发时使用的参数
@@ -414,23 +402,6 @@ function insertOption(o) {
 
 
 // 工具函数 ------------------------------------------------------------------------------
-// 样式控制
-// onmouseover='overHref("+ id +", "+ red +")' onmouseleave='leaveHref("+ id +", "+ black +")'
-var red = JSON.stringify("red");
-var black = JSON.stringify("black");
-var blue = JSON.stringify("blue");
-// 鼠标悬停在可点击的文字上
-function overHref(id, color){
-    //alert(id)
-    //alert($("#"+ id).length)
-    $("#"+ id).css("color", color);
-}
-// 鼠标离开可点击的文字
-function leaveHref(id, color){
-    //alert(id)
-    $("#"+ id).css("color", color);
-}
-
 /**
  * 根据字符串的内容判断 生成的超链接的长度, 包括在超链接之后的 spaceNum 个空格
  * @param text 文本
@@ -472,13 +443,16 @@ function getContentWidth(text, spaceNum, regex) {
  * @date 2021/2/18 18:30
  * @since 1.0.0
  * */
-function changeTop(target, value, rowNum) {
+function changeTop(target, value, rowNum, isArray) {
     if (typeof rowNum !== "number") rowNum = 1;
 
-    for(var i = 0; i < target.length; i++){
-        exec(target[i]);
+    if (isArray){
+        for(var i = 0; i < target.length; i++){
+            exec(target[i]);
+        }
+    } else{
+        exec(target);
     }
-
 
     function exec(string) {
         var target = $(string);
@@ -509,8 +483,8 @@ function changeOtherOptionTop(currentTitle, height, data, type) {
         for (var t in data){
 
             if (gotCurrentTitle){
-                changeTop(["#div"+ t], height);
-                if ($("#moreDiv"+ t)[0]) changeTop(["#moreDiv"+ t], height);
+                changeTop("#div"+ t, height);
+                if ($("#moreDiv"+ t)[0]) changeTop("#moreDiv"+ t, height);
             }
 
             if (t === currentTitle){
@@ -525,8 +499,8 @@ function changeOtherOptionTop(currentTitle, height, data, type) {
 
             if (gotCurrentTitle){
 
-                changeTop(["#div"+ t], height);
-                if ($("#moreDiv"+ t)[0]) changeTop(["#moreDiv"+ t], height);
+                changeTop("#div"+ t, height);
+                if ($("#moreDiv"+ t)[0]) changeTop("#moreDiv"+ t, height);
             }
 
             if (t === currentTitle){
