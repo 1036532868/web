@@ -143,7 +143,11 @@ public class SpuServiceImpl implements SpuService {
     public Goods goods(Long spuId) {
         Goods goods = new Goods();
         Spu spu =  spuMapper.selectByPrimaryKey(spuId);
-        List<Sku> skuList = skuMapper.selectBySpuId();
+        List<Sku> skuList = skuMapper.selectBySpuId(spuId);
+
+        for (Sku sku : skuList){
+            sku.setStringId(String.valueOf(sku.getId()));
+        }
 
         goods.setSpu(spu);
         goods.setSkuList(skuList);

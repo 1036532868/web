@@ -16,7 +16,7 @@
         </commentGenerator>
         <!--配置数据库连接信息-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.72.132:3306/web_goods"
+                        connectionURL="jdbc:mysql://192.168.72.132:3306/web_user"
                         userId="admin"
                         password="123456">
             <!--解决mysql8.0以后重复生成所有表的问题,原因为表名称格式不符合标准-->
@@ -25,84 +25,48 @@
         <!--生成 domain , targetPackage 指定目标包名,
         targetProject 指定生成的 domain 放在哪个项目下
         此处为相对路径 表示 当前目录的 src/main/java 下的目标包, 可以自动创建包-->
-        <javaModelGenerator targetPackage="com.example.goodsApi.domain"
+        <javaModelGenerator targetPackage="com.example.domain"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="false"/>
         </javaModelGenerator>
         <!--生成 mapper.xml-->
-        <sqlMapGenerator targetPackage="com.example.goods.mapper"
+        <sqlMapGenerator targetPackage="com.example.mapperX"
                          targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
         <!--生成 mapper 接口-->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.example.goods.mapper"
+                             targetPackage="com.example.mapper"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
         <!--数据库表名以及对应的 java domain类 名, 有几个表就要写几个-->
-        <table tableName="tb_album" domainObjectName="Album"
+        <table tableName="tb_address" domainObjectName="Address"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_brand" domainObjectName="Brand"
+        <table tableName="tb_areas" domainObjectName="Areas"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_category" domainObjectName="Category"
+        <table tableName="tb_cities" domainObjectName="Cities"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_category_brand" domainObjectName="CategoryBrand"
+        <table tableName="tb_provinces" domainObjectName="Provinces"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_para" domainObjectName="Para"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_pref" domainObjectName="Pref"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_sku" domainObjectName="Sku"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_spec" domainObjectName="Spec"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_spu" domainObjectName="Spu"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_stock_back" domainObjectName="StockBack"
-               enableCountByExample="false"
-               enableUpdateByExample="false"
-               enableDeleteByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false"/>
-        <table tableName="tb_template" domainObjectName="Template"
+        <table tableName="tb_user" domainObjectName="User"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

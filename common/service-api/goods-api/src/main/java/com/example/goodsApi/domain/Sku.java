@@ -42,6 +42,17 @@ public class Sku implements Serializable {
 
     private String status;
 
+    // id的String格式, 用来防止在页面上展示时出现数据不精准问题
+    private String stringId;
+
+    public String getStringId() {
+        return stringId;
+    }
+
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
+    }
+
     public Long getId() {
         return id;
     }

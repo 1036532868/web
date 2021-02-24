@@ -13,11 +13,11 @@
     <!--工具函数-->
     <script type="text/javascript" src="/js/util.js"></script>
 
-    <link href="/resources/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 
     <!--页面头部样式-->
-    <link type="text/css" rel="stylesheet" href="../static/css/pageHead.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/pageHead.css"/>
 
     <style type="text/css">
         .page {
@@ -32,8 +32,8 @@
             top: 100px;
             left: 0px;
             width: 1630px;
-            height: 200px;
-            background-color: #f7ecb5;
+            /*height: 200px;
+            background-color: #f7ecb5;*/
         }
         .category{
             position: absolute;
@@ -52,7 +52,7 @@
             width: 400px;
             background-color: #66afe9;
         }
-        .bigImg{
+        .mainImg{
             position: absolute;
             top: 0px;
             left: 0px;
@@ -60,7 +60,7 @@
             height: 400px;
             background-color: #c9e2b3;
         }
-        .imgList{
+        .imgListArea{
             position: absolute;
             top: 410px;
             left: 0px;
@@ -68,27 +68,92 @@
             height: 60px;
             background-color: #c9e2b3;
         }
+        .imgList{
+            position: absolute;
+            top: 0px;
+            left: 20px;
+            /*width: 360px;
+            height: 60px;
+            background-color: #ce8483;*/
+            /*margin: 0 auto;*/
+        }
+        .imgItem{
+            width: 60px;
+            height: 60px;
+        }
+        .leftImg{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 60px;
+            width: 10px;
+        }
+        .rightImg{
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            height: 60px;
+            width: 10px;
+        }
+        .pointer{
+            cursor: pointer;
+        }
+
+        /* 图片放大模态窗口*/
         .imgModal{
             position: absolute;
             display: none;
-            left: 415px;
-            width: 800px;
-            height: 800px;
+            top: 20px;
+            left: 365px;
+            width: 900px;
+            height: 900px;
             background-color: #2aabd2;
         }
+        .bigImg{
+            position: absolute;
+            left: 50px;
+            top: 20px;
+            width: 800px;
+            height: 800px;
+        }
+        .imgListModal{
+            position: absolute;
+            left: 270px;
+            top: 830px;
+            /*width: 360px;
+            height: 60px;
+            background-color: #66afe9;*/
+            /*margin: 0 auto;*/
+        }
+        .leftImgModal{
+            position: absolute;
+            left: 0px;
+            top: 300px;
+            height: 100px;
+            width: 50px;
+            size: 30px;
+        }
+        .rightImgModal{
+            position: absolute;
+            right: 0px;
+            top: 300px;
+            height: 100px;
+            width: 50px;
+            size: 30px;
+        }
 
-        /*信息区*/
+        /* 信息区*/
         .msg{
             position: absolute;
             top: 30px;
             left: 450px;
-            height: 500px;
+            /*height: 500px;*/
             width: 1180px;
             background-color: #f0ad4e;
         }
         .cart{
             position: absolute;
-            top: 1161px;
+            top: 120px;
             left: 450px;
             height: 50px;
             width: 800px;
@@ -103,6 +168,13 @@
         .price{
             color: red;
             size: 30px;
+        }
+        .currentSku{
+            color: white;
+            background-color: red;
+        }
+        .alertFont{
+            color: red;
         }
 
     </style>
@@ -125,7 +197,7 @@
             </span>
         </div>
 
-        <a href="/"><img class="logo" title="返回首页" src="../static/img/logo.png"/></a>
+        <a href="/"><img class="logo" title="返回首页" src="/img/logo.png"/></a>
 
         <div class="searchInput">
             <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
@@ -144,68 +216,129 @@
         <div class="img">
 
             <!--大图-->
-            <div class="bigImg">
-            </div>
+            <img class="mainImg pointer" onclick="showImgModal()"/>
+
             <!--图片列表-->
-            <div class="imgList">
+            <div class="imgListArea">
+
+                <input type="button" class="leftImg" value="<" onclick="toLeftImg()"/>
+                <div class="imgList">
+
+                </div>
+                <input type="button" class="rightImg" value=">" onclick="toRightImg()"/>
+
             </div>
         </div>
 
         <!--信息-->
         <div class="msg">
-            <table border="1px">
-                <tr>
-                    <td colspan="2">
-                        <span class="name">name</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td>价格&nbsp;</td>
-                    <td>
-                        <font color="red">￥&nbsp;</font>
-                        <font class="price">0.01</font>
-                    </td>
-                </tr>
-                <tr>
-                    <td>型号&nbsp;</td>
-                    <td id="skuList">
-                    </td>
-                </tr>
-            </table>
+            <div>
+                <div class="name"></div>
+            </div>
+
+            <div>
+                价格&nbsp;
+                <font color="red">￥&nbsp;</font>
+                <font class="price"></font>
+            </div>
+            <div>
+                型号&nbsp;
+                <div id="skuList">
+
+                </div>
+            </div>
+
         </div>
 
         <div class="cart">
-            <input type="button" value="-"/>
+            <input onclick="minus()" type="button" value="-"/>
             <input class="numInput" type="text" placeholder="数量" value="1" maxlength="10"/>
-            <input type="button" value="+"/>
+            <input onclick="add()" type="button" value="+"/>
             &nbsp;
             <input type="button" value="加入购物车"/>
+            <br>
+            <font class="alertFont"></font>
         </div>
     </div>
 
     <!--图片放大模态窗口-->
     <div class="imgModal modal-content">
+        <img class="bigImg"/>
+        <input type="button" class="leftImgModal" value="<" onclick="toLeftImgModal()"/>
+        <div class="imgListModal">
+
+        </div>
+        <input type="button" class="rightImgModal" value=">" onclick="toRightImgModal()"/>
     </div>
 </div>
 
 <script type="text/javascript" th:inline="javascript">
-    /* 找到被选中的sku*/
-    function findCurrentSku() {
-        for (var i = 0; i < v.skuList.length; i++) {
-            if (v.skuList[i].id === v.skuId) {
-                v.sku = v.skuList[i];
-                break;
-            }
-        }
-    }
+    // 根据现有条件进行搜索
+    function search() {
+        var url = "/search?";
+        url += "pageNum=1";
+        if (v.userIn !== null) url += "&userIn=" + v.userIn;
 
-    /* 更换sku*/
-    function changeSku(skuId){
-        alert(skuId)
+        window.location = url;
+    }
+    // 点击搜索以 userIn 和分页数据 查询
+    function searchButton(){
+        var val = $.trim($("#searchInput").val());
+        if (val === "") return;
+
+        v.userIn = val;
+
+        search();
+    }
+    // 搜索输入域点击回车
+    function searchKeyDown(event){
+        if (event.keyCode === 13){
+            $("#searchButton").click();
+        }
     }
 
     /* 渲染商品信息*/
     function initGoodsMsg() {
+        // 型号
+        var skuList = $("#skuList");
+        var widthCount = 0;
+        var rowNum = 0;
+        for (var i = 0; i < v.skuList.length; i++){
+            var isCurrentSku = v.skuList[i].stringId === v.skuId;
+
+            var spec = JSON.parse(v.skuList[i].spec);
+            var specStr = "";
+
+            for (var specKey in spec) {
+                specStr += spec[specKey] + " ";
+            }
+
+            if (isCurrentSku) {
+                specStr += " √";
+                v.sku = v.skuList[i];
+            }
+
+            var html = "";
+            widthCount += getContentWidth(specStr, 2);
+            if (widthCount > 1000){
+                html += "<br>";
+                widthCount = 0;
+                rowNum++;
+            }
+            // 当前sku不触发事件
+            if (isCurrentSku){
+                html += "<input class='currentSku' type='button' value='"+ specStr +"'/>&nbsp;&nbsp;"
+            } else {
+                html += "<a href='/search/goods/"+ v.skuList[i].stringId +"'>" +
+                    "<input type='button' value='" + specStr + "'/>" +
+                    "</a>&nbsp;&nbsp;"
+            }
+
+            skuList.append(html);
+        }
+        changeTop([".cart"], 26, rowNum);
+
+
         // 名字
         $(".name").text(v.sku.name);
         if (getContentWidth(v.sku.name) > 1180){
@@ -215,42 +348,181 @@
         // 价格
         $(".price").text(v.sku.price);
 
-        // 型号
-        var skuList = $("#skuList");
-        var widthCount = 0;
-        var rowNum = 0;
-        for (var i = 0; i < v.skuList.length; i++){
-            var isCurrentSku = v.skuList[i].id === v.skuId;
-            var spec = JSON.parse(v.skuList.spec);
-            var specStr = "";
+        // 页面标题
+        $("title").text(v.sku.name);
+    }
+    /* 初始化商品图片*/
+    function initGoodsImg() {
+        var big = $(".mainImg");
+        var list = $(".imgList");
+        var listModal = $(".imgListModal");
 
-            for (var specKey in spec) {
-                specStr += spec[specKey] + " ";
+        big.prop("src", v.sku.image);
+        v.images = v.sku.images.split(",");
+        for (var i = 0; i < v.images.length; i++){
+            list.append("<img onmouseover='changeMainImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>");
+            listModal.append("<img onclick='changeBigImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>")
+
+            if (i < v.images.length - 1) {
+                list.append("&nbsp;&nbsp;&nbsp;")
+                listModal.append("&nbsp;&nbsp;&nbsp;")
             }
 
-            if (isCurrentSku) specStr += " √";
-
-            var html = "";
-            widthCount += getContentWidth(specStr, 2);
-            if (widthCount > 900){
-                html += "<br>";
-                widthCount = 0;
-                rowNum++;
+            if (v.images[i] === v.sku.image){
+                v.currentImg = i;
             }
-            html += ("<input type='button' value='"+ specStr +"'"+
-                // 当前sku不触发事件
-                isCurrentSku ? "" : "onclick='changeSku("+ v.skuList[i].id +")' " +
-                "/>&nbsp;&nbsp;")
-
-            skuList.append(html);
         }
-        changeTop([".cart"], 23, rowNum);
 
+        imgInterval();
     }
 
+    /* 显示图片放大模态窗口*/
+    function showImgModal(){
+        var src = $(".mainImg").prop("src");
+
+        for (var i = 0; i < v.images.length; i++){
+            if (v.images[i] === src){
+                v.currentImgModal = i;
+                break;
+            }
+        }
+
+        $(".bigImg").prop("src", src);
+        $(".imgModal").modal("show");
+    }
+    /* 模态窗口 更换大图图片*/
+    function changeBigImg(src){
+        $(".bigImg").prop("src", src);
+    }
+    /* 模态窗口 显示左边的图片*/
+    function toLeftImgModal(){
+        var index = --v.currentImgModal;
+        if (index <= 0){
+            index = v.images.length - 1;
+            v.currentImgModal = index;
+        }
+        changeBigImg(v.images[index]);
+    }
+    /* 模态窗口 显示右边的图片*/
+    function toRightImgModal(){
+        var index = ++v.currentImgModal;
+        if (index >= v.images.length){
+            index = 0;
+            v.currentImgModal = index;
+        }
+        changeBigImg(v.images[index]);
+    }
+
+    /* 轮播图片定时任务*/
+    function imgInterval(){
+        /* 设置轮播定时任务*/
+        imgIntevalVal =  setInterval("aroundImages()", 5000);
+    }
+    /* 重置图片定时任务*/
+    function restartImgInterval(){
+        clearInterval(imgIntevalVal);
+        imgInterval();
+    }
+    /* 更换主图*/
+    function changeMainImg(src){
+        $(".mainImg").prop("src", src);
+
+        restartImgInterval();
+    }
+    /* 轮播图片*/
+    function aroundImages(){
+        var index = ++v.currentImg;
+        if (index >= v.images.length){
+            index = 0;
+            v.currentImg = index;
+        }
+        changeMainImg(v.images[index]);
+    }
+    /* 显示左边的图片*/
+    function toLeftImg(){
+        var index = --v.currentImg;
+        if (index <= 0){
+            index = v.images.length - 1;
+            v.currentImg = index;
+        }
+        changeMainImg(v.images[index]);
+
+        restartImgInterval();
+    }
+    /* 显示右边的图片*/
+    function toRightImg(){
+        aroundImages();
+
+        restartImgInterval();
+    }
+
+
+
+    /* 检查输入的数量是不是数字*/
+    function checkNumFormat(val){
+        var regex = /[0-9]+/;
+        return regex.test(val);
+    }
+    /* 加商品数量*/
+    function add(){
+        var input = $(".numInput");
+        var val = $.trim(input.val());
+        if (!checkNumFormat(val)) return;
+
+        var newVal = parseInt(val);
+        input.val(++newVal);
+    }
+    /* 减商品数量*/
+    function minus(){
+        var input = $(".numInput");
+        var val = $.trim(input.val());
+        if (!checkNumFormat(val)) return;
+
+        var newVal = parseInt(val);
+        if (newVal < 1) return;
+
+        input.val(--newVal);
+
+    }
+    /* 添加到购物车*/
+    function toCart(){
+        var val = $.trim($(".numInput").val());
+        var alert = $(".alertFont");
+        if (!checkNumFormat(val)){
+            alert.text("请输入正确的数量");
+            return;
+        }
+
+        var num = parseInt(val);
+        if (num < 1) {
+            alert.text("请输入正确的数量");
+            return;
+        }
+
+        $.ajax({
+            url: "/goods/cart/add",
+            type: "post",
+            data: {
+                "skuId": v.skuId,
+                "num": num
+            },
+            success: function(res) {
+                if (!res.flag){
+                    alert.text(res.message);
+                    return;
+                }
+
+                if (confirm("已成功添加到购物车, 是否立即前去结算")){
+                    window.location = "/goods/cart.html";
+                }
+            }
+        })
+    }
+
+
     function init(){
-        findCurrentSku();
         initGoodsMsg();
+        initGoodsImg();
     }
 
     var vue = new Vue({
@@ -259,7 +531,11 @@
             skuId: [[${skuId}]],
             spu: [[${goods.spu}]],
             skuList: [[${goods.skuList}]],
-            sku: undefined
+            sku: undefined,
+            images: [],
+            currentImg: 0,
+            currentImgModal: 0,
+            userIn: null
         },
         mounted(){
             v = this;

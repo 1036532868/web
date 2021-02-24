@@ -258,7 +258,7 @@
     </update>
 
     <!--根据关键字搜索-->
-    <select id="search" resultType="java.util.HashMap">
+    <select id="search" resultMap="BaseResultMap">
         select
         sku.id,
         sku.sn,

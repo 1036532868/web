@@ -16,6 +16,26 @@ function leaveHref(id, color){
     $("#"+ id).css("color", color);
 }
 
+
+//多选框被点击
+function clickCheckbox(){
+    var checkboxCount = $(":checkbox[name=checkbox]").length;
+    var checkedCheckboxCount = $(":checkbox[name=checkbox]:checked").length;
+    var checked = checkboxCount === checkedCheckboxCount;
+    $(".checkAll").prop("checked", checked);
+}
+//全选框被点击
+function clickCheckAll(id){
+
+    var status = $("#checkAll"+ id)[0].checked;
+
+    $(":checkbox[name=checkbox]").prop("checked", status);
+
+    //将另一个全选框的状态也更改了
+    $(".checkAll").prop("checked", status);
+
+}
+
 /**
  * 根据字符串的内容判断 生成的超链接的长度, 包括在超链接之后的 spaceNum 个空格
  * @param text 文本

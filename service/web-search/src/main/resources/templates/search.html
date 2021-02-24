@@ -302,6 +302,17 @@
         })
     }
 
+    // 根据现有条件进行搜索
+    function search() {
+        var url = "/search?";
+        url += "pageNum=1";
+        if (v.userIn !== null) url += "&userIn=" + v.userIn;
+        if (v.brandName !== null) url += "&brandName="+ v.brandName;
+        if (v.spec !== null) url += "&spec=" + v.spec;
+        if (v.categoryId !== null) url += "&categoryId=" + v.categoryId
+
+        window.location = url;
+    }
     // 点击搜索, 清空所有条件, 只以 userIn 和分页数据 查询
     function searchButton(){
         var val = $.trim($("#searchInput").val());
@@ -366,17 +377,6 @@
         }
 
         search();
-    }
-    // 根据现有条件进行搜索
-    function search() {
-        var url = "/search?";
-        url += "pageNum=1";
-        if (v.userIn !== null) url += "&userIn=" + v.userIn;
-        if (v.brandName !== null) url += "&brandName="+ v.brandName;
-        if (v.spec !== null) url += "&spec=" + v.spec;
-        if (v.categoryId !== null) url += "&categoryId=" + v.categoryId
-
-        window.location = url;
     }
     function cancelBrandName(){
         v.brandName = null;
@@ -574,13 +574,13 @@
 
             html += "<span class='skuSpan' style='position: absolute; top: " + trCount * 455 + "px; left: " + (i % 5) * 250 + "px;'>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a href='/search/goods/"+ sku.id +"' ><img src='" + sku.image + "' title='"+ sku.name +"' class=\"skuImg\"/></a>";
+            html += "        <a href='/search/goods/"+ sku.stringId +"' ><img src='" + sku.image + "' title='"+ sku.name +"' class=\"skuImg\"/></a>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
             html += "        <h3 class=\"price\">￥" + sku.price + "</h3>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
-            html += "        <a id="+ skuNameId +" onmouseover='overHref("+ skuNameId +","+ red +")' onmouseleave='leaveHref("+ skuNameId +","+ black +")' class='skuFont' href='/search/goods/"+ sku.id +"' name='skuName'>" + sku.name + "</a>";
+            html += "        <a id="+ skuNameId +" onmouseover='overHref("+ skuNameId +","+ red +")' onmouseleave='leaveHref("+ skuNameId +","+ black +")' class='skuFont' href='/search/goods/"+ sku.stringId +"' name='skuName'>" + sku.name + "</a>";
             html += "    </div>";
             html += "    <div class='skuSpanItem'>";
             html += "        <font>" + sku.commentNum + "</font>&nbsp;条评价";

@@ -104,14 +104,15 @@ public class SearchController {
 
         Result<Sku> res1 = skuFeign.selectById(skuId);
         if (!res1.isFlag()) throw new CRUDException(res1.getMessage());
-        System.err.println(res1.toString());
+
         Sku sku = res1.getData();
 
         Result<Goods> res2 = spuFeign.searchGoods(sku.getSpuId());
         if (!res2.isFlag()) throw new CRUDException(res2.getMessage());
 
-        model.addAttribute("skuId", skuId);
+        model.addAttribute("skuId", String.valueOf(skuId));
         model.addAttribute("goods", res2.getData());
+
         return "goods";
     }
 

@@ -18,7 +18,7 @@ public interface SkuMapper {
 
     int updateByPrimaryKey(Sku record);
 
-    List<Map<String, Object>> search(Map<String, Object> params);
+    List<Sku> search(Map<String, Object> params);
 
-    List<Sku> selectBySpuId();
+    List<Sku> selectBySpuId(Long spuId);
 }
