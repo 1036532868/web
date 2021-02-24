@@ -302,7 +302,9 @@
             <if test="brandName != null and brandName != ''">
                 and sku.brand_name = #{brandName}
             </if>
-
+            <if test="num != null and num != ''">
+                and sku.num > #{num}
+            </if>
             <if test="status != null and status != ''">
                 and sku.status = #{status}
             </if>
@@ -317,35 +319,13 @@
         </where>
     </select>
 
-    <!--根据分类搜索-->
-    <select id="searchByCategory" resultType="com.example.goodsApi.domain.Sku">
-        select
-        sku.id,
-        sku.sn,
-        sku.name,
-        sku.price,
-        sku.num,
-        sku.alert_num,
-        sku.image,
-        sku.images,
-        sku.weight,
-        sku.create_time,
-        sku.update_time,
-        sku.spu_id,
-        sku.category_id,
-        sku.category_name,
-        sku.brand_name,
-        sku.spec,
-        sku.sale_num,
-        sku.comment_num,
-        sku.status
-        from web_goods.tb_sku sku
-
-        where
-
-        <if test="status != null and status != ''">
-            and sku.status = #{status}
-        </if>
+    <!--根据spuId-->
+    <select id="selectBySpuId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from web_goods.tb_sku
+        where spu_id = #{spuId}
     </select>
+
+
 
 </mapper>

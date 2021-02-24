@@ -21,7 +21,10 @@
 
     <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
     <script type="text/javascript" src="/js/vue.js"></script>
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="/css/pageHead.css"/>
 
+    <script type="text/javascript" src="/js/util.js"></script>
     <!--自己写的分页插件-->
     <script type="text/javascript" src="/js/component/pagination/pagination.js"></script>
     <link type="text/css" rel="stylesheet" href="/js/component/pagination/pagination.css"/>
@@ -44,65 +47,6 @@
 
         a:hover {
             text-decoration: none;
-        }
-
-        /*head*/
-        .pageHead {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-        }
-
-        .optionArea {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            width: 1630px;
-            height: 25px;
-        }
-
-        .optionDiv {
-            position: absolute;
-            right: 50px;
-            top: 0px;
-            height: 25px;
-        }
-
-        .logo {
-            position: absolute;
-            top: 25px;
-            left: 0px;
-            width: 115px;
-        }
-
-        .searchInput {
-            position: absolute;
-            top: 45px;
-            left: 800px;
-        }
-
-        #searchInput {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            width: 300px;
-            height: 30px;
-        }
-
-        .searchButton {
-            position: absolute;
-            left: 310px;
-            top: 0px;
-            height: 35px;
-            width: 80px;
-        }
-
-        .headHr {
-            position: absolute;
-            left: 0px;
-            top: 90px;
-            width: 1630px;
-            color: #66afe9;
         }
 
         /*body*/
@@ -196,9 +140,8 @@
 <body>
 
 <div class="page">
-
+    <!--页面头部-->
     <div class="pageHead">
-
         <div class="optionArea">
             <!--引导-->
             <span class="optionDiv">
@@ -212,7 +155,7 @@
             </span>
         </div>
 
-        <a><img class="logo" title="返回首页" src="/img/logo.png"/></a>
+        <a hred="/"><img class="logo" title="返回首页" src="../static/img/logo.png"/></a>
 
         <div class="searchInput">
             <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
@@ -220,7 +163,6 @@
         </div>
 
         <hr class="headHr">
-
     </div>
 
     <div class="pageBody">
@@ -323,6 +265,7 @@
         var spec;
         var categoryId;
         var status;
+        var num;
     }
 
     function pageList(pageNum, pageSize) {
@@ -334,6 +277,7 @@
         params.spec = v.spec;
         params.categoryId = v.categoryId;
         params.status = "1";
+        params.num = 0;
 
         $.ajax({
             url: "/goods/sku/search",
@@ -614,6 +558,7 @@
     }
     function initSkuList() {
         v.skuList = v.pageInfo.list;
+
         var size = v.skuList.length;
         var skuArea = $("#skuArea");
         skuArea.empty();

@@ -1,0 +1,55 @@
+/*web项目 页面头部样式*/
+/*head*/
+.pageHead {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.optionArea {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 1630px;
+    height: 25px;
+}
+.optionDiv {
+    position: absolute;
+    right: 50px;
+    top: 0px;
+    height: 25px;
+}
+
+.logo {
+    position: absolute;
+    top: 25px;
+    left: 0px;
+    width: 115px;
+}
+.searchInput {
+    position: absolute;
+    top: 45px;
+    left: 800px;
+}
+#searchInput {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 300px;
+    height: 30px;
+}
+.searchButton {
+    position: absolute;
+    left: 310px;
+    top: 0px;
+    height: 35px;
+    width: 80px;
+}
+
+.headHr {
+    position: absolute;
+    left: 0px;
+    top: 90px;
+    width: 1630px;
+    color: #66afe9;
+}

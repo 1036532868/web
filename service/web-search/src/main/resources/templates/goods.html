@@ -1,0 +1,271 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/22 20:58
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品</title>
+
+    <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/js/vue.js"></script>
+    <!--工具函数-->
+    <script type="text/javascript" src="/js/util.js"></script>
+
+    <link href="/resources/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/resources/js/bootstrap.min.js"></script>
+
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="../static/css/pageHead.css"/>
+
+    <style type="text/css">
+        .page {
+            position: absolute;
+            left: 150px;
+            top: 0px;
+            width: 1630px;
+        }
+
+        .goods{
+            position: absolute;
+            top: 100px;
+            left: 0px;
+            width: 1630px;
+            height: 200px;
+            background-color: #f7ecb5;
+        }
+        .category{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 23px;
+            width: 1630px;
+            background-color: #ce8483;
+        }
+        /*图片区*/
+        .img{
+            position: absolute;
+            top: 30px;
+            left: 0px;
+            height: 470px;
+            width: 400px;
+            background-color: #66afe9;
+        }
+        .bigImg{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 400px;
+            height: 400px;
+            background-color: #c9e2b3;
+        }
+        .imgList{
+            position: absolute;
+            top: 410px;
+            left: 0px;
+            width: 400px;
+            height: 60px;
+            background-color: #c9e2b3;
+        }
+        .imgModal{
+            position: absolute;
+            display: none;
+            left: 415px;
+            width: 800px;
+            height: 800px;
+            background-color: #2aabd2;
+        }
+
+        /*信息区*/
+        .msg{
+            position: absolute;
+            top: 30px;
+            left: 450px;
+            height: 500px;
+            width: 1180px;
+            background-color: #f0ad4e;
+        }
+        .cart{
+            position: absolute;
+            top: 1161px;
+            left: 450px;
+            height: 50px;
+            width: 800px;
+            background-color: #f0ad4e;
+        }
+        .numInput{
+            width: 30px;
+        }
+        .name{
+            width: 1180px;
+        }
+        .price{
+            color: red;
+            size: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!--页面头部-->
+    <div class="pageHead">
+        <div class="optionArea">
+            <!--引导-->
+            <span class="optionDiv">
+                <a href="/user/login.html">你好，请登录</a>
+                &nbsp;
+                <a href="/user/registry.html" style="color: red">免费注册</a>
+                &nbsp;
+                <a href="/order/cart.html" target="main">我的购物车</a>
+                &nbsp;
+                <a href="/manage/businessManagement.html" target="main">商家管理界面</a>
+            </span>
+        </div>
+
+        <a href="/"><img class="logo" title="返回首页" src="../static/img/logo.png"/></a>
+
+        <div class="searchInput">
+            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
+        </div>
+
+        <hr class="headHr">
+    </div>
+
+    <div class="goods">
+        <!--分类查找-->
+        <div class="category">
+
+        </div>
+        <!--图片-->
+        <div class="img">
+
+            <!--大图-->
+            <div class="bigImg">
+            </div>
+            <!--图片列表-->
+            <div class="imgList">
+            </div>
+        </div>
+
+        <!--信息-->
+        <div class="msg">
+            <table border="1px">
+                <tr>
+                    <td colspan="2">
+                        <span class="name">name</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>价格&nbsp;</td>
+                    <td>
+                        <font color="red">￥&nbsp;</font>
+                        <font class="price">0.01</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td>型号&nbsp;</td>
+                    <td id="skuList">
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="cart">
+            <input type="button" value="-"/>
+            <input class="numInput" type="text" placeholder="数量" value="1" maxlength="10"/>
+            <input type="button" value="+"/>
+            &nbsp;
+            <input type="button" value="加入购物车"/>
+        </div>
+    </div>
+
+    <!--图片放大模态窗口-->
+    <div class="imgModal modal-content">
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+    /* 找到被选中的sku*/
+    function findCurrentSku() {
+        for (var i = 0; i < v.skuList.length; i++) {
+            if (v.skuList[i].id === v.skuId) {
+                v.sku = v.skuList[i];
+                break;
+            }
+        }
+    }
+
+    /* 更换sku*/
+    function changeSku(skuId){
+        alert(skuId)
+    }
+
+    /* 渲染商品信息*/
+    function initGoodsMsg() {
+        // 名字
+        $(".name").text(v.sku.name);
+        if (getContentWidth(v.sku.name) > 1180){
+            changeTop([".class"], 28);
+        }
+
+        // 价格
+        $(".price").text(v.sku.price);
+
+        // 型号
+        var skuList = $("#skuList");
+        var widthCount = 0;
+        var rowNum = 0;
+        for (var i = 0; i < v.skuList.length; i++){
+            var isCurrentSku = v.skuList[i].id === v.skuId;
+            var spec = JSON.parse(v.skuList.spec);
+            var specStr = "";
+
+            for (var specKey in spec) {
+                specStr += spec[specKey] + " ";
+            }
+
+            if (isCurrentSku) specStr += " √";
+
+            var html = "";
+            widthCount += getContentWidth(specStr, 2);
+            if (widthCount > 900){
+                html += "<br>";
+                widthCount = 0;
+                rowNum++;
+            }
+            html += ("<input type='button' value='"+ specStr +"'"+
+                // 当前sku不触发事件
+                isCurrentSku ? "" : "onclick='changeSku("+ v.skuList[i].id +")' " +
+                "/>&nbsp;&nbsp;")
+
+            skuList.append(html);
+        }
+        changeTop([".cart"], 23, rowNum);
+
+    }
+
+    function init(){
+        findCurrentSku();
+        initGoodsMsg();
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            skuId: [[${skuId}]],
+            spu: [[${goods.spu}]],
+            skuList: [[${goods.skuList}]],
+            sku: undefined
+        },
+        mounted(){
+            v = this;
+            init();
+        }
+    })
+</script>
+</body>
+</html>

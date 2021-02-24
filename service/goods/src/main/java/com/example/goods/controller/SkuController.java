@@ -58,6 +58,14 @@ public class SkuController {
         return new Result<>(true, StatusCode.OK, "", result);
     }
 
+    /**
+    * @description TODO 根据Id查单条
+    * @param skuId
+    * @return com.example.util.Result<com.example.goodsApi.domain.Sku>
+    * @author gong_da_kai
+    * @date 2021/2/22 20:49
+    * @since 1.0.0
+    */
     @GetMapping("/{skuId}")
     public Result<Sku> selectById(@PathVariable("skuId") Long skuId){
         Sku sku = skuService.selectById(skuId);

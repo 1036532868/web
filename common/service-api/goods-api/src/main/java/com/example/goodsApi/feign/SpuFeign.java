@@ -4,10 +4,7 @@ import com.example.goodsApi.domain.Goods;
 import com.example.util.Result;
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -54,5 +51,16 @@ public interface SpuFeign {
      */
     @PostMapping("/audit")
     Result audit(@RequestParam("id") Long[] id, @RequestParam("status") String status);
+
+    /**
+     * @description TODO 根据 spuId 查询出spu和对应的所有sku
+     * @param spuId
+     * @return com.example.util.Result<com.example.goodsApi.domain.Goods>
+     * @author gong_da_kai
+     * @date 2021/2/22 20:54
+     * @since 1.0.0
+     */
+    @GetMapping("/goods/{spuId}")
+    Result<Goods> searchGoods(@PathVariable("spuId") Long spuId);
 
 }

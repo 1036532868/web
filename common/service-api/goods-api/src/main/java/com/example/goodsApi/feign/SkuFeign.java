@@ -1,10 +1,9 @@
 package com.example.goodsApi.feign;
 
+import com.example.goodsApi.domain.Sku;
 import com.example.util.Result;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -38,4 +37,14 @@ public interface SkuFeign {
     @PostMapping("/search")
     Result<Map<String, Object>> search(@RequestBody Map<String, Object> params);
 
+    /**
+     * @description TODO 根据Id查单条
+     * @param skuId
+     * @return com.example.util.Result<com.example.goodsApi.domain.Sku>
+     * @author gong_da_kai
+     * @date 2021/2/22 20:49
+     * @since 1.0.0
+     */
+    @GetMapping("/{skuId}")
+    Result<Sku> selectById(@PathVariable("skuId") Long skuId);
 }

@@ -46,7 +46,7 @@ public class SkuServiceImpl implements SkuService {
      * @since 1.0.0
      */
     private List<Sku> filterSpec(List<Sku> firstSkuList, String spec) {
-        //如果没有规格, 直接返回初始skuList
+        // 如果没有规格, 直接返回初始skuList
         if (spec == null || "".equals(spec)) return firstSkuList;
 
         // 解析spec 为 LinkedMultiValueMap
@@ -115,11 +115,11 @@ public class SkuServiceImpl implements SkuService {
      * @param skuList
      * @return 结果集
      */
-    private Map<String, Object> getSearchOption(Integer pageNum, Integer pageSize, List<Sku> skuList) {
+    private Map<String, Object> getSearchOption(List<Sku> skuList, Integer pageNum, Integer pageSize) {
         Map<String, Object> result = new HashMap<>();
 
         if (skuList.size() > 0) {
-            //根据去重后的skuIds查询出对应的Spu
+            // 根据去重后的spuIds查询出对应的Spu
             Set<Long> spuIds = new HashSet<>();
             for (Sku sku : skuList) {
                 spuIds.add(sku.getSpuId());
@@ -127,7 +127,7 @@ public class SkuServiceImpl implements SkuService {
 
             List<Spu> spuList = spuMapper.selectByIds(spuIds);
 
-            //取出并去重Spu的 brandId 和 Category2Id
+            // 取出并去重Spu的 brandId 和 Category2Id
             Set<Integer> brandIds = new HashSet<>();
             Set<Integer> category2Ids = new HashSet<>();
             for (Spu spu : spuList) {
@@ -135,7 +135,7 @@ public class SkuServiceImpl implements SkuService {
                 category2Ids.add(spu.getCategory2Id());
             }
 
-            //根据brandIds取出所有相关品牌
+            // 根据brandIds取出所有相关品牌
             if (brandIds.size() > 1) {
                 List<Brand> brandList = brandMapper.selectByIds(brandIds);
                 result.put("brandList", brandList);
@@ -143,7 +143,7 @@ public class SkuServiceImpl implements SkuService {
 
             if (category2Ids.size() > 1) {
 
-                //二级分类数量大于1时, 找出所有对应的三级分类的spu, 二级分类id为K, 三级分类ids为V, 存入map中
+                // 二级分类数量大于1时, 找出所有对应的三级分类的spu, 二级分类id为K, 三级分类ids为V, 存入map中
                 Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
                 for (Integer category2Id : category2Ids) {
 
@@ -165,14 +165,14 @@ public class SkuServiceImpl implements SkuService {
 
             } else if (category2Ids.size() == 1) {
 
-                //二级分类数量等于1时, 找出所有对应的三级分类, 检查三级分类的数量, 同一个二级分类, category2Id只有一个
+                // 二级分类数量等于1时, 找出所有对应的三级分类, 检查三级分类的数量, 同一个二级分类, category2Id只有一个
                 Set<Integer> category3Ids = new HashSet<>();
                 for (Spu spu : spuList) {
                     category3Ids.add(spu.getCategory3Id());
                 }
 
                 if (category3Ids.size() > 1) {
-                    //三级分类数量大于1时, 二级分类id为K, 三级分类ids为V, 存入map中
+                    // 三级分类数量大于1时, 二级分类id为K, 三级分类ids为V, 存入map中
                     Map<Integer, Set<Integer>> categoryIdMap = new HashMap<>();
                     for (Integer category2Id : category2Ids) {
                         categoryIdMap.put(category2Id, category3Ids);
@@ -183,13 +183,12 @@ public class SkuServiceImpl implements SkuService {
 
                 } else if (category3Ids.size() == 1) {
 
-                    //三级分类数量等于1时, 根据templateId查询规格, 同一个三级分类, templateId只有一个
+                    // 三级分类数量等于1时, 根据templateId查询规格, 同一个三级分类, templateId只有一个
                     Integer templateId = spuList.get(0).getTemplateId();
                     List<Spec> specList = specMapper.selectByTemplateId(templateId);
                     result.put("specList", specList);
 
                 }
-
 
             }
 
@@ -250,7 +249,7 @@ public class SkuServiceImpl implements SkuService {
 
         List<Sku> skuList = filterSpec(firstSkuList, (String)params.get("spec"));
 
-        return getSearchOption(pageNum, pageSize, skuList);
+        return getSearchOption(skuList, pageNum, pageSize);
     }
 
     @Override

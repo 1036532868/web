@@ -141,9 +141,14 @@ public class SpuServiceImpl implements SpuService {
 
     @Override
     public Goods goods(Long spuId) {
+        Goods goods = new Goods();
+        Spu spu =  spuMapper.selectByPrimaryKey(spuId);
+        List<Sku> skuList = skuMapper.selectBySpuId();
 
-        return new Goods();
+        goods.setSpu(spu);
+        goods.setSkuList(skuList);
 
+        return goods;
     }
 
 }

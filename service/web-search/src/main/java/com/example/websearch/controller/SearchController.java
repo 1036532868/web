@@ -1,7 +1,11 @@
 package com.example.websearch.controller;
 
+import com.example.exception.CRUDException;
 import com.example.goodsApi.domain.Brand;
+import com.example.goodsApi.domain.Goods;
+import com.example.goodsApi.domain.Sku;
 import com.example.goodsApi.feign.SkuFeign;
+import com.example.goodsApi.feign.SpuFeign;
 import com.example.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +30,8 @@ public class SearchController {
 
     @Autowired
     private SkuFeign skuFeign;
+    @Autowired
+    private SpuFeign spuFeign;
 
     /**
     * @description TODO 调用goods服务获得数据, 然后渲染到thymeleaf返回, 可以防止百度等搜索引擎抓取页面时出现未渲染的页面
@@ -43,6 +49,7 @@ public class SearchController {
         String[] nameArray = userIn.split("\\s");
 
         Map<String, Object> params = new HashMap<>();
+        // 处理 userIn 为 name
         StringBuilder name = new StringBuilder();
         for (int i = 0; i < nameArray.length; i++) {
             name.append(nameArray[i]);
@@ -51,18 +58,20 @@ public class SearchController {
             }
         }
 
-
         params.put("pageNum", pageNum);
         params.put("pageSize", 60);
         params.put("name", name.toString());
         params.put("spec", spec);
         params.put("brandName", brandName);
+        params.put("num", 0);
         if (categoryId != null && !"".equals(categoryId)) {
             params.put("categoryId", Integer.valueOf(categoryId.split(",")[0]));
         }
         params.put("status", "1");
 
         Result<Map<String, Object>> result = skuFeign.search(params);
+
+        // 应有查询失败的处理方法
 
         Map<String, Object> resultMap = result.getData();
 
@@ -81,12 +90,29 @@ public class SearchController {
 
     }
 
-
+    /**
+    * @description TODO 根据skuId查对应的 Goods
+    * @param skuId
+    * @param model
+    * @return java.lang.String
+    * @author gong_da_kai
+    * @date 2021/2/22 21:04
+    * @since 1.0.0
+    */
     @GetMapping("/goods/{skuId}")
-    public void goods(@PathVariable("skuId") Long skuId){
+    public String goods(@PathVariable("skuId") Long skuId, Model model) throws CRUDException {
 
-        System.err.println(skuId);
+        Result<Sku> res1 = skuFeign.selectById(skuId);
+        if (!res1.isFlag()) throw new CRUDException(res1.getMessage());
+        System.err.println(res1.toString());
+        Sku sku = res1.getData();
 
+        Result<Goods> res2 = spuFeign.searchGoods(sku.getSpuId());
+        if (!res2.isFlag()) throw new CRUDException(res2.getMessage());
+
+        model.addAttribute("skuId", skuId);
+        model.addAttribute("goods", res2.getData());
+        return "goods";
     }
 
 }

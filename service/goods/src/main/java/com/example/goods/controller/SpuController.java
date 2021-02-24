@@ -71,6 +71,14 @@ public class SpuController {
         return new Result(true, StatusCode.OK, "1".equals(status) ? "审核通过" : "审核不通过");
     }
 
+    /**
+    * @description TODO 根据 spuId 查询出spu和对应的所有sku
+    * @param spuId
+    * @return com.example.util.Result<com.example.goodsApi.domain.Goods>
+    * @author gong_da_kai
+    * @date 2021/2/22 20:54
+    * @since 1.0.0
+    */
     @GetMapping("/goods/{spuId}")
     public Result<Goods> searchGoods(@PathVariable("spuId") Long spuId){
 
