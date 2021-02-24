@@ -45,7 +45,7 @@ public class SkuServiceImpl implements SkuService {
      * @date 2021/2/17 21:18
      * @since 1.0.0
      */
-    private List<Sku> filterSpec(List<Sku> firstSkuList, String spec) {
+    private List<Map<String, Object>> filterSpec(List<Map<String, Object>> firstSkuList, String spec) {
         // 如果没有规格, 直接返回初始skuList
         if (spec == null || "".equals(spec)) return firstSkuList;
 
@@ -67,8 +67,8 @@ public class SkuServiceImpl implements SkuService {
         // 遍历skuList
         int specNum = specList.length;
         for (int i = 0; i < firstSkuList.size(); i++) {
-            Sku sku = firstSkuList.get(i);
-            String skuSpec = sku.getSpec();
+            Map<String, Object> sku = firstSkuList.get(i);
+            String skuSpec = (String) sku.get("spec");
             int hasCount = 0;
 
             Set<String> keys = map.keySet();
@@ -115,14 +115,16 @@ public class SkuServiceImpl implements SkuService {
      * @param skuList
      * @return 结果集
      */
-    private Map<String, Object> getSearchOption(List<Sku> skuList, Integer pageNum, Integer pageSize) {
+    private Map<String, Object> getSearchOption(List<Map<String, Object>> skuList, Integer pageNum, Integer pageSize) {
         Map<String, Object> result = new HashMap<>();
 
         if (skuList.size() > 0) {
             // 根据去重后的spuIds查询出对应的Spu
             Set<Long> spuIds = new HashSet<>();
-            for (Sku sku : skuList) {
-                spuIds.add(sku.getSpuId());
+            for (Map<String, Object> sku : skuList) {
+                spuIds.add((Long) sku.get("spuId"));
+                // 将id转换为String, 防止在前端出现数据不精准问题
+                sku.put("id", sku.get("id").toString());
             }
 
             List<Spu> spuList = spuMapper.selectByIds(spuIds);
@@ -200,8 +202,8 @@ public class SkuServiceImpl implements SkuService {
         //防止sku数量少于endIndex时, 出现下标越界异常
         if (endIndex > skuList.size()) endIndex = skuList.size();
 
-        List<Sku> limitSkuList = skuList.subList(startIndex, endIndex);
-        PageInfo<Sku> pageInfo = new PageInfo<>(limitSkuList);
+        List<Map<String, Object>> limitSkuList = skuList.subList(startIndex, endIndex);
+        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(limitSkuList);
         // 手动设置pageInfo数据, 没有使用startPage, 数据不正确
         pageInfo.setTotal(skuList.size());
         pageInfo.setPageNum(pageNum);
@@ -245,9 +247,9 @@ public class SkuServiceImpl implements SkuService {
         String[] nameArray = name.split(",");
         params.put("name", nameArray);
 
-        List<Sku> firstSkuList = skuMapper.search(params);
+        List<Map<String, Object>> firstSkuList = skuMapper.search(params);
 
-        List<Sku> skuList = filterSpec(firstSkuList, (String)params.get("spec"));
+        List<Map<String, Object>> skuList = filterSpec(firstSkuList, (String)params.get("spec"));
 
         return getSearchOption(skuList, pageNum, pageSize);
     }
