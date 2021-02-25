@@ -1,0 +1,248 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/1 17:33
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../../js/axios.js"></script>
+
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        .body{
+            position: absolute;
+            left: 200px;
+            top: 0px;
+            width: 900px;
+            height: 1200px;
+        }
+
+        .step1 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 200px;
+            top: 108px;
+        }
+
+        .step2 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 600px;
+            top: 108px;
+        }
+
+        .step3 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 1000px;
+            top: 108px;
+        }
+
+        .main {
+            width: 1000px;
+            height: 600px;
+            position: absolute;
+            left: 200px;
+            top: 324px;
+            background: #66afe9;
+        }
+
+        .in {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+<div id="body" class="body">
+    <!--流程图-->
+    <div class="step1"><h2 align="center">①选择商品分类</h2></div>
+    <div style="position: absolute; left: 460px; top: 152px;width: 100px;">-----------></div>
+    <div class="step2"><h2 align="center">②填写商品信息</h2></div>
+    <div style="position: absolute; left: 860px; top: 152px;width: 100px;">-----------></div>
+    <div class="step3"><h2 align="center">③填写商品属性</h2></div>
+
+    <div class="main">
+
+        <table align="center">
+            <tr>
+                <td><font color="red">*</font>商品分类</td>
+                <td><font id="category"></font>&nbsp;<a href="/goods/manage/goods/addCategory.html">编辑</a></td>
+            </tr>
+            <tr>
+                <td><font color="red">*</font>商品名称</td>
+                <td><input v-model="name" class="in" type="text" maxlength="100"/></td>
+            </tr>
+            <tr>
+                <td><font color="red">*</font>副标题</td>
+                <td><input v-model="caption" class="in" type="text" maxlength="100"/></td>
+            </tr>
+            <tr>
+                <td><font color="red">*</font>商品品牌</td>
+                <td>
+                    <select v-model="brandId">
+                        <option value="">--选择品牌--</option>
+                        <option v-cloak v-for="e in brandList" :value="e.id">{{e.name}}</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td><font color="red">*</font>商品介绍</td>
+                <td><textarea rows="20" cols="50" v-model="introduction"></textarea></td>
+            </tr>
+            <tr>
+                <td>
+                    <del><font color="red">*</font>运费模板</del>
+                </td>
+                <td><select v-model="freightId">
+                    <option value="">--暂无此功能--</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td><font color="red">*</font>商品货号</td>
+                <td><input v-model="sn" class="in" type="text" placeholder="如不输入，系统将为您自动生成"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <del>服务保证</del>
+                </td>
+                <td>暂无此功能</td>
+            </tr>
+            <tr>
+                <td><input type="button" value="上一步，选择商品分类" @click="back()"></td>
+                <td align="center"><input type="button" value="下一步，填写商品属性" @click="next()"></td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    //声明数据库引用
+    db = openDatabase("com.example.web", "1.0", "", 10 * 1024 * 1024);
+
+    /*初始化brand信息铺陈*/
+    function initBrand() {
+        axios({
+            method: "get",
+            params: {
+                categoryId: v.category3Id
+            },
+            url: "/goods/brand/selectByCategoryId"
+        }).then(function (res) {
+
+            var data = res.data;
+            if (!data.flag) {
+                alert(data.message);
+                return
+            }
+
+            v.brandList = data.data;
+        })
+    }
+
+    /*初始化category信息铺陈, 和设置category3_id*/
+    function initCategory() {
+        db.transaction(function (tx) {
+            tx.executeSql("select * from tbl_goods_spu where id = 0", [], function (tx, resultSet) {
+
+                if (resultSet.rows.length > 0) {
+                    var i = resultSet.rows.item(0);
+
+                    if(i.name !== null){
+                        $("#category").html(i.category1_name + " -> " + i.category2_name + " -> " + i.category3_name);
+                        v.category3Id = i.category3_id;
+
+                        v.name = i.name;
+                        v.caption = i.caption;
+                        v.brandId = i.brand_id;
+                        v.introduction = i.introduction;
+                        v.freightId = i.freight_id;
+                        v.sn = i.sn;
+                        v.brandList = JSON.parse(i.brandList);
+
+                    } else {
+                        $("#category").html(i.category1_name + " -> " + i.category2_name + " -> " + i.category3_name);
+                        v.category3Id = i.category3_id;
+                        initBrand();
+                    }
+
+
+                } else {
+                    /*如果没有查到信息, 说明是直接绕过设置三级分类信息页面, 访问的此页面*/
+                    if (confirm("三级分类还没有选择, 要跳转到 分类信息选择 页面吗")) {
+                        window.location = "/goods/manage/goods/addCategory.html";
+                    }
+
+                }
+
+            })
+        })
+    }
+
+    var vue = new Vue({
+        el: "#body",
+        data: {
+            category3Id : "",
+            brandList: [],
+            name: "",
+            caption: "",
+            brandId: "",
+            introduction: "",
+            freightId: "",
+            sn: ""
+        },
+        methods: {
+            back: function () {
+                window.location = "/goods/manage/goods/addCategory.html";
+            },
+            next: function () {
+                v.name = $.trim(v.name);
+                v.caption = $.trim(v.caption);
+                v.brandId = $.trim(v.brandId);
+                v.introduction = $.trim(v.introduction);
+
+                v.freightId = $.trim(v.freightId);
+                v.sn = $.trim(v.sn);
+
+                var i = [v.name, v.caption, v.brandId, v.introduction];
+                if (i.includes("")){
+                    alert("请将重要信息全部填写，目前运费模板和货号可为空");
+                    return;
+                }
+
+                /*将此页面的信息存储到WebSQL中*/
+                db.transaction(function (tx) {
+                    tx.executeSql("update tbl_goods_spu set sn=?, name=?, caption=?, brand_id=?, introduction=?,freight_id=?, brandList=? where id = 0",
+                        [v.sn, v.name, v.caption, v.brandId, v.introduction,v.freightId ,JSON.stringify(v.brandList)]);
+
+                    //跳转到addSku
+                    window.location = "/goods/manage/goods/addSku.html";
+                })
+            }
+        },
+
+        mounted() {
+            v = this;
+
+            initCategory();
+
+        }
+    })
+</script>
+</body>
+</html>

@@ -23,21 +23,25 @@
         <module name="canal" />
         <module name="eureka10001" />
         <module name="user" />
+        <module name="gateway" />
         <module name="eureka10002" />
         <module name="order" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api" target="8" />
+      <module name="eureka-zuul" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="canal" options="-parameters" />
       <module name="content" options="-parameters" />
+      <module name="eureka-zuul" options="-parameters" />
       <module name="eureka10001" options="-parameters" />
       <module name="eureka10002" options="-parameters" />
       <module name="file" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="goods" options="-parameters" />
       <module name="order" options="-parameters" />
       <module name="pay" options="-parameters" />

@@ -6,18 +6,21 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>商品</title>
+    <title th:text="${sku.name}">商品</title>
 
-    <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
-    <script type="text/javascript" src="/js/vue.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
     <!--工具函数-->
-    <script type="text/javascript" src="/js/util.js"></script>
-
-    <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-
+    <script type="text/javascript" src="/static/js/util.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
     <!--页面头部样式-->
-    <link type="text/css" rel="stylesheet" href="/css/pageHead.css"/>
+    <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
+    <script type="text/javascript" src="/static/js/pageHead.js"></script>
+
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+
 
     <style type="text/css">
         .page {
@@ -101,10 +104,6 @@
 
         /* 图片放大模态窗口*/
         .imgModal{
-            position: absolute;
-            display: none;
-            top: 20px;
-            left: 365px;
             width: 900px;
             height: 900px;
             background-color: #2aabd2;
@@ -185,19 +184,22 @@
     <!--页面头部-->
     <div class="pageHead">
         <div class="optionArea">
+
             <!--引导-->
             <span class="optionDiv">
-                <a href="/user/login.html">你好，请登录</a>
+                <span id="user">
+                    <a id="login" href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+                </span>
                 &nbsp;
-                <a href="/user/registry.html" style="color: red">免费注册</a>
+                <a href="/static/user/registry.html" style="color: red">免费注册</a>
                 &nbsp;
-                <a href="/order/cart.html" target="main">我的购物车</a>
+                <a href="/static/order/cart.html" target="main">我的购物车</a>
                 &nbsp;
-                <a href="/manage/businessManagement.html" target="main">商家管理界面</a>
+                <a href="/static/manage/businessManagement.html" target="main">商家管理界面</a>
             </span>
         </div>
 
-        <a href="/"><img class="logo" title="返回首页" src="/img/logo.png"/></a>
+        <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
         <div class="searchInput">
             <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
@@ -255,20 +257,57 @@
             <input class="numInput" type="text" placeholder="数量" value="1" maxlength="10"/>
             <input onclick="add()" type="button" value="+"/>
             &nbsp;
-            <input type="button" value="加入购物车"/>
+            <input onclick="toCart()" type="button" value="加入购物车"/>
             <br>
             <font class="alertFont"></font>
         </div>
     </div>
 
-    <!--图片放大模态窗口-->
-    <div class="imgModal modal-content">
-        <img class="bigImg"/>
-        <input type="button" class="leftImgModal" value="<" onclick="toLeftImgModal()"/>
-        <div class="imgListModal">
-
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
         </div>
-        <input type="button" class="rightImgModal" value=">" onclick="toRightImgModal()"/>
+    </div>
+
+    <!--图片放大模态窗口-->
+    <div id="imgModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body imgModal">
+                    <img class="bigImg"/>
+                    <input type="button" class="leftImgModal" value="<" onclick="toLeftImgModal()"/>
+                    <input type="button" class="rightImgModal" value=">" onclick="toRightImgModal()"/>
+                    <div class="imgListModal">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -297,84 +336,6 @@
         }
     }
 
-    /* 渲染商品信息*/
-    function initGoodsMsg() {
-        // 型号
-        var skuList = $("#skuList");
-        var widthCount = 0;
-        var rowNum = 0;
-        for (var i = 0; i < v.skuList.length; i++){
-            var isCurrentSku = v.skuList[i].stringId === v.skuId;
-
-            var spec = JSON.parse(v.skuList[i].spec);
-            var specStr = "";
-
-            for (var specKey in spec) {
-                specStr += spec[specKey] + " ";
-            }
-
-            if (isCurrentSku) {
-                specStr += " √";
-                v.sku = v.skuList[i];
-            }
-
-            var html = "";
-            widthCount += getContentWidth(specStr, 2);
-            if (widthCount > 1000){
-                html += "<br>";
-                widthCount = 0;
-                rowNum++;
-            }
-            // 当前sku不触发事件
-            if (isCurrentSku){
-                html += "<input class='currentSku' type='button' value='"+ specStr +"'/>&nbsp;&nbsp;"
-            } else {
-                html += "<a href='/search/goods/"+ v.skuList[i].stringId +"'>" +
-                    "<input type='button' value='" + specStr + "'/>" +
-                    "</a>&nbsp;&nbsp;"
-            }
-
-            skuList.append(html);
-        }
-        changeTop([".cart"], 26, rowNum);
-
-
-        // 名字
-        $(".name").text(v.sku.name);
-        if (getContentWidth(v.sku.name) > 1180){
-            changeTop([".class"], 28);
-        }
-
-        // 价格
-        $(".price").text(v.sku.price);
-
-        // 页面标题
-        $("title").text(v.sku.name);
-    }
-    /* 初始化商品图片*/
-    function initGoodsImg() {
-        var big = $(".mainImg");
-        var list = $(".imgList");
-        var listModal = $(".imgListModal");
-
-        big.prop("src", v.sku.image);
-        v.images = v.sku.images.split(",");
-        for (var i = 0; i < v.images.length; i++){
-            list.append("<img onmouseover='changeMainImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>");
-            listModal.append("<img onclick='changeBigImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>")
-
-            if (i < v.images.length - 1) {
-                list.append("&nbsp;&nbsp;&nbsp;")
-                listModal.append("&nbsp;&nbsp;&nbsp;")
-            }
-
-            if (v.images[i] === v.sku.image){
-                v.currentImg = i;
-            }
-        }
-
-        imgInterval();
-    }
 
     /* 显示图片放大模态窗口*/
     function showImgModal(){
@@ -388,7 +349,7 @@
         }
 
         $(".bigImg").prop("src", src);
-        $(".imgModal").modal("show");
+        $("#imgModal").modal("show");
     }
     /* 模态窗口 更换大图图片*/
     function changeBigImg(src){
@@ -486,6 +447,12 @@
     }
     /* 添加到购物车*/
     function toCart(){
+        if (v.user === null){
+            $("#login").click();
+            $("#loginError").text("请先登录账号");
+            return;
+        }
+
         var val = $.trim($(".numInput").val());
         var alert = $(".alertFont");
         if (!checkNumFormat(val)){
@@ -500,7 +467,7 @@
         }
 
         $.ajax({
-            url: "/goods/cart/add",
+            url: "/order/cart/add",
             type: "post",
             data: {
                 "skuId": v.skuId,
@@ -513,14 +480,93 @@
                 }
 
                 if (confirm("已成功添加到购物车, 是否立即前去结算")){
-                    window.location = "/goods/cart.html";
+                    window.location = "/static/order/cart.html";
                 }
             }
         })
     }
 
 
+    /* 渲染商品信息*/
+    function initGoodsMsg() {
+        // 型号
+        var skuList = $("#skuList");
+        var widthCount = 0;
+        var rowNum = 0;
+        for (var i = 0; i < v.skuList.length; i++){
+            var isCurrentSku = v.skuList[i].stringId === v.skuId;
+
+            var spec = JSON.parse(v.skuList[i].spec);
+            var specStr = "";
+
+            for (var specKey in spec) {
+                specStr += spec[specKey] + " ";
+            }
+
+            if (isCurrentSku) {
+                specStr += " √";
+            }
+
+            var html = "";
+            widthCount += getContentWidth(specStr, 2);
+            if (widthCount > 1000){
+                html += "<br>";
+                widthCount = 0;
+                rowNum++;
+            }
+            // 当前sku不触发事件
+            if (isCurrentSku){
+                html += "<input class='currentSku' type='button' value='"+ specStr +"'/>&nbsp;&nbsp;"
+            } else {
+                html += "<a href='/search/goods/"+ v.skuList[i].stringId +"'>" +
+                    "<input type='button' value='" + specStr + "'/>" +
+                    "</a>&nbsp;&nbsp;"
+            }
+
+            skuList.append(html);
+        }
+        changeTop([".cart"], 26, rowNum);
+
+
+        // 名字
+        $(".name").text(v.sku.name);
+        if (getContentWidth(v.sku.name) > 1180){
+            changeTop([".class"], 28);
+        }
+
+        // 价格
+        $(".price").text(v.sku.price);
+
+        // 页面标题
+        $("title").text(v.sku.name);
+    }
+    /* 初始化商品图片*/
+    function initGoodsImg() {
+        var big = $(".mainImg");
+        var list = $(".imgList");
+        var listModal = $(".imgListModal");
+
+        big.prop("src", v.sku.image);
+        v.images = v.sku.images.split(",");
+        for (var i = 0; i < v.images.length; i++){
+            list.append("<img onmouseover='changeMainImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>");
+            listModal.append("<img onclick='changeBigImg(\""+ v.images[i] +"\")' class='imgItem pointer' src='"+ v.images[i] +"'/>")
+
+            if (i < v.images.length - 1) {
+                list.append("&nbsp;&nbsp;&nbsp;")
+                listModal.append("&nbsp;&nbsp;&nbsp;")
+            }
+
+            if (v.images[i] === v.sku.image){
+                v.currentImg = i;
+            }
+        }
+
+        imgInterval();
+    }
+
     function init(){
+        initUser();
         initGoodsMsg();
         initGoodsImg();
     }
@@ -528,10 +574,11 @@
     var vue = new Vue({
         el: ".page",
         data: {
+            user: [[${user}]],
             skuId: [[${skuId}]],
             spu: [[${goods.spu}]],
             skuList: [[${goods.skuList}]],
-            sku: undefined,
+            sku: [[${sku}]],
             images: [],
             currentImg: 0,
             currentImgModal: 0,

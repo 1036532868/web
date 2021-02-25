@@ -16,7 +16,7 @@
         </commentGenerator>
         <!--配置数据库连接信息-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://192.168.72.132:3306/web_user"
+                        connectionURL="jdbc:mysql://192.168.72.132:3306/web_order"
                         userId="admin"
                         password="123456">
             <!--解决mysql8.0以后重复生成所有表的问题,原因为表名称格式不符合标准-->
@@ -25,48 +25,72 @@
         <!--生成 domain , targetPackage 指定目标包名,
         targetProject 指定生成的 domain 放在哪个项目下
         此处为相对路径 表示 当前目录的 src/main/java 下的目标包, 可以自动创建包-->
-        <javaModelGenerator targetPackage="com.example.domain"
+        <javaModelGenerator targetPackage="com.example.orderApi.domain"
                             targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
             <property name="trimStrings" value="false"/>
         </javaModelGenerator>
         <!--生成 mapper.xml-->
-        <sqlMapGenerator targetPackage="com.example.mapperX"
+        <sqlMapGenerator targetPackage="com.example.order.mapperX"
                          targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
         <!--生成 mapper 接口-->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.example.mapper"
+                             targetPackage="com.example.order.mapper"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
         <!--数据库表名以及对应的 java domain类 名, 有几个表就要写几个-->
-        <table tableName="tb_address" domainObjectName="Address"
+        <table tableName="tb_category_report" domainObjectName="CategoryReport"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_areas" domainObjectName="Areas"
+        <table tableName="tb_order" domainObjectName="Order"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_cities" domainObjectName="Cities"
+        <table tableName="tb_order_config" domainObjectName="OrderConfig"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_provinces" domainObjectName="Provinces"
+        <table tableName="tb_order_item" domainObjectName="OrderItem"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false"/>
-        <table tableName="tb_user" domainObjectName="User"
+        <table tableName="tb_order_log" domainObjectName="OrderLog"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="tb_preferential" domainObjectName="Preferential"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="tb_return_cause" domainObjectName="ReturnCause"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="tb_return_order" domainObjectName="ReturnOrder"
+               enableCountByExample="false"
+               enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false"
+               selectByExampleQueryId="false"/>
+        <table tableName="tb_return_order_item" domainObjectName="ReturnOrderItem"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

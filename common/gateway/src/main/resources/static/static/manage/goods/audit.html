@@ -1,0 +1,696 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/1 14:30
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../../js/axios.js"></script>
+
+    <link href="../../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="../../js/component/pagination/pagination.js"></script>
+    <link type="text/css" rel="stylesheet" href="../../js/component/pagination/pagination.css"/>
+
+    <style type="text/css">
+        [v-cloak]{
+            display: none;
+        }
+
+        .page{
+            position: absolute;
+            left: 100px;
+            top: 0px;
+            width: 1500px;
+            background: #ce8483;
+        }
+
+        /*头部样式*/
+        .head{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 1500px;
+            height: 80px;
+            background: #f0ad4e;
+        }
+        .title{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .pageControl{
+            position: absolute;
+            right: 120px;
+            top: 25px;
+        }
+
+
+        /*体部样式*/
+        .body{
+            position: absolute;
+            top: 80px;
+            left: 0px;
+            width: 1500px;
+        }
+
+        /*条件查询设置*/
+        .searchDiv{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 1500px;
+            background: #66afe9;
+        }
+        .searchHead{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 1500px;
+            height: 80px;
+            background: #e1edf7;
+        }
+        .searchTitle{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .searchControl{
+            position: absolute;
+            right: 120px;
+            top: 25px;
+        }
+
+        .searchBody{
+            position: absolute;
+            top: 80px;
+            left: 0px;
+            width: 1500px;
+            height: 30px;
+            background: #e1edf7;
+        }
+        .nameSnDiv{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+        .category1Div{
+            position: absolute;
+            top: 0px;
+            left: 300px;
+        }
+        .category2Div{
+            position: absolute;
+            top: 0px;
+            left: 600px;
+        }
+        .category3Div{
+            position: absolute;
+            top: 0px;
+            left: 900px;
+        }
+        .brandDiv{
+            position: absolute;
+            top: 0px;
+            left: 1200px;
+        }
+
+        /*数据展示区*/
+        .underSearchDiv{
+            position: absolute;
+            top: 80px;
+            left: 0px;
+            height: 500px;
+            width: 1500px;
+        }
+
+        .spuHead{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 1500px;
+            height: 60px;
+            background: #c9e2b3;
+        }
+        .spuTitle{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .spuControl{
+            position: absolute;
+            right: 120px;
+            top: 25px;
+        }
+
+        .spuList{
+            position: absolute;
+            left: 0px;
+            top: 60px;
+            width: 1500px;
+            /*height: 200px;*/
+            background: #9d9d9d;
+        }
+        .spuImage{
+            width: 80px;
+            height: 80px;
+        }
+        /*单元格样式*/
+        .spuTd{
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        /*模态窗口样式*/
+        .auditModal-content{
+            position: absolute;
+            top: 200px;
+            left: 700px;
+            width: 400px;
+            height: 300px;
+            background: #f7ecb5;
+        }
+
+    </style>
+
+</head>
+<body>
+<!--主div-->
+<div class="page">
+    <div class="head">
+        <div class="title">
+            <h3>商品审核</h3>
+        </div>
+        <div class="pageControl">
+            <input @click="refresh()" type="button" value="刷新列表"/>
+        </div>
+    </div>
+    <div class="body">
+        <!--搜索栏-->
+        <div class="searchDiv">
+            <!--标题-->
+            <div class="searchHead">
+                <div class="searchTitle">
+                    <h3>筛选查询</h3>
+                </div>
+                <!--搜索栏操作项-->
+                <div class="searchControl">
+                    <a @click="showSearchBody()" id="showSearchBody" href="javascript:void(0)">展开筛选</a>
+                    <input onclick="pageList(parseInt($('#currentPageNum').val()) ,parseInt($('#currentPageSize').val()))" id="searchButton" type="button" value="查询结果"/>
+
+                    <!--用来存放查询条件的隐藏域-->
+                    <input id="nameSn" type="hidden"/>
+                    <input id="categoryId" type="hidden"/>
+                    <input id="brandId" type="hidden"/>
+                </div>
+            </div>
+
+            <!--搜索条件选择-->
+            <div class="searchBody" v-show="isSearchBodyShow">
+                <div class="nameSnDiv">
+                    输入搜索：<input v-model="nameSn" id="nameSnInput" type="text" placeholder="商品名称/商品货号"/>
+                </div>
+                <div class="category1Div">
+                    商品一级分类：<select @change="lv1Selected()" v-model="category1" id="category1">
+                    <option value="">选择商品一级分类</option>
+                    <option v-cloak v-for="e in category1List" :value="e.id">{{e.name}}</option>
+                </select>
+                </div>
+                <div class="category2Div">
+                    商品二级分类：<select @change="lv2Selected()" v-model="category2" id="category2">
+                    <option value="">选择商品二级分类</option>
+                    <option v-cloak v-for="e in category2List" :value="e.id">{{e.name}}</option>
+                </select>
+                </div>
+                <div class="category3Div">
+                    商品三级分类：<select @change="lv3Selected()" v-model="category3" id="category3">
+                    <option value="">选择商品三级分类</option>
+                    <option v-cloak v-for="e in category3List" :value="e.id">{{e.name}}</option>
+                </select>
+                </div>
+                <div class="brandDiv" v-show="isBrandShow">
+                    商品品牌：<select v-model="brand" id="brand">
+                    <option value="">选择商品品牌</option>
+                    <option v-cloak v-for="e in brandList" :value="e.id">
+                        {{e.name}}
+                    </option>
+                </select>
+                </div>
+            </div>
+        </div>
+
+        <!--searchDiv之下的图层-->
+        <div class="underSearchDiv">
+            <!--商品展示列表头部-->
+            <div class="spuHead">
+                <div class="spuTitle">
+                    <h3>数据列表</h3>
+                </div>
+
+                <div class="spuControl">
+                    <select v-model="orderBy" id="orderBy">
+                        <option value="">排序方式</option>
+                        <option value="id desc">编号↑</option>
+                        <option value="id asc">编号↓</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!--商品展示列表-->
+            <div class="spuList">
+                <table>
+                    <tr>
+                        <td><input onclick="clickCheckAll(1)" id="checkAll1" class="checkAll" type="checkbox"/>全选</td>
+                        <th><center>编号</center></th>
+                        <th><center>商品图片</center></th>
+                        <th><center>商品名称</center></th>
+                        <th><center>货号</center></th>
+                        <th><center>标签</center></th>
+                        <th><center>销量</center></th>
+                        <th><center>审核状态</center></th>
+                        <th><center>操作</center></th>
+                    </tr>
+                    <tbody id="spuTbody">
+                    <!--<tr>
+                    <td class='spuTd'><input type='checkbox' name='spuCheckbox'/></td>
+                    <td class='spuTd'>e.id</td>
+                    <td class='spuTd'><img :src='"+ e.image +"' class='spuImage'/></td>
+                    <td class='spuTd'>
+                        e.name
+                        <br>
+                        品牌：e.brand_name</td>
+                    <td class='spuTd'>货号：e.sn</td>
+                    <td class='spuTd'>上架: </td>
+                    <td class='spuTd'>e.sale_num</td>
+                    <td class='spuTd'>未审核</td>
+                    <td class='spuTd'>
+                        <a href='javascript:void(0)'>查看</a>
+                        <a href='javascript:void(0)'>审核</a></td>
+                    </tr>-->
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td>
+                            <input onclick="clickCheckAll(2)" id="checkAll2" class="checkAll" type="checkbox"/>全选
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td>
+                            批量操作:
+                            <input onclick="batchAudit(1)" type="button" value="通过"/>
+                            <input onclick="batchAudit(2)" type="button" value="拒绝"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="9">
+                            <div id="pagination" class="pagination">
+
+                            </div>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!--<input style="position: absolute; left: 200px; top: 500px; height: 100px;" type="button" onclick="showAudit()" value="test"/>-->
+    <!--审核模态窗口-->
+    <div id="auditModal" class="modal">
+        <input id="auditSpuId" type="hidden"/>
+        <div class="modal-content auditModal-content">
+            <table>
+                <tr>
+                    <td style="padding-right: 20px">商品名称</td>
+                    <td id="modalName"></td>
+                </tr>
+                <tr>
+                    <td style="padding-right: 20px">商品审核</td>
+                    <td>
+                        <input name="status" type="radio" value="1" checked/>审核通过
+                        <input name="status" type="radio" value="2"/>审核不通过
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-right: 20px">反馈详情</td>
+                    <td>
+                        <textarea cols="30" rows="10" maxlength="2000"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <center>
+                            <input type="button" value="取消" onclick="cancel()"/>
+                        </center>
+                    </td>
+                    <td>
+                        <center>
+                            <input type="button" value="确定" onclick="auditOne()"/>
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function Param(){
+        var nameSn;
+        var category3Id;
+        var brandId;
+        var isDelete;
+        var status;
+        var pageNum;
+        var pageSize;
+        var orderBy;
+    }
+
+    /*页面初始化*/
+    function init(){
+        initOption(0, 1);
+        pageList(1, 10);
+
+    }
+    /*初始化一级分类下拉框, lv-级别*/
+    function initOption (id, lv) {
+        /*如果没有数据, 执行新建流程*/
+        axios({
+            method: "get",
+            params: {
+                parentIds: id
+            },
+            url: "/goods/category/selectByParentId"
+        }).then(res => {
+
+            var data = res.data;
+            if (!data.flag){
+                alert(data.message);
+                return;
+            }
+
+            if (lv === 1) {
+                v.category1List = data.data;
+            }
+            if (lv === 2) {
+                v.category2List = data.data;
+            }
+            if (lv === 3) {
+                v.category3List = data.data;
+            }
+        })
+    }
+    /*选择第三级分类后, 初始化品牌下拉框*/
+    function initBrand () {
+        axios({
+            method: "get",
+            params: {
+                categoryId: v.category3
+            },
+            url: "/goods/brand/selectByCategoryId"
+        }).then(function(res) {
+
+            var data = res.data;
+            if (!data.flag) {
+                alert(data.message);
+                return
+            }
+
+            v.brandList = data.data;
+        })
+    }
+
+
+    /*初始化商品信息*/
+    function pageList(pageNum, pageSize){
+
+        if (pageSize < 1) pageSize = 10;
+
+        var category3Id = v.category3;
+        var brandId = v.brand;
+        if (category3Id !== ""){
+            category3Id = parseInt(category3Id);
+        }
+        if (brandId !== ""){
+            brandId = parseInt(brandId);
+        }
+
+        var param = new Param();
+        param.nameSn = v.nameSn;
+        param.category3Id = category3Id;
+        param.brandId = brandId;
+        param.isDelete = "0";
+        param.status = "0";
+        param.pageNum = pageNum;
+        param.pageSize = pageSize;
+        param.orderBy = v.orderBy;
+
+        $.ajax({
+            url: "/goods/spu/pageList",
+            type: "post",
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(param),
+            success: function(data){
+                if (!data.flag){
+                    alert(data.message);
+                    return;
+                }
+
+                var list = data.data.list;
+                var $tbody = $("#spuTbody");
+                $tbody.empty();
+
+                for (var i = 0; i < list.length; i++){
+                    var e = list[i];
+                    $tbody.append("<tr>" +
+                        "<td class='spuTd'><input onclick='clickCheckbox()' type='checkbox' value='"+ e.id +"' name='spuCheckbox'/></td>" +
+                        "<td class='spuTd'>"+ e.id +"</td>" +
+                        "<td class='spuTd'><img :src='"+ e.image +"' class='spuImage'/></td>" +
+                        "<td class='spuTd'>" +
+                        "    "+ e.name +
+                        "    <br>" +
+                        "    品牌："+ e.brand_name +"</td>" +
+                        "<td class='spuTd'>货号："+ e.sn +"</td>" +
+                        "<td class='spuTd'>上架: "+ (e.is_marketable === "1" ? "是" : "否") +"</td>" +
+                        "<td class='spuTd'>"+ e.sale_num +"</td>" +
+                        "<td class='spuTd' id='auditFont"+ e.id +"'>未审核</td>" +
+                        "<td class='spuTd'>" +
+                        "    <a href='javascript:void(0)' onclick='check(\""+ e.id +"\")'>查看</a>" +
+                        "    <a href='javascript:void(0)' onclick='showAudit(\""+ e.id +"\", \""+ e.name +"\")'>审核</a></td>" +
+                        "</tr>");
+                }
+
+                //分页插件
+                pagination({
+                    target: "#pagination",
+                    total: data.data.total,
+                    pageNum: pageNum,
+                    pageSize: pageSize,
+                    maxPageSize: 20,
+                    buttonCount: 5,
+                    callback: function (pageNum, pageSize) {
+                        pageList(pageNum, pageSize);
+                    },
+
+                    enablePageSize: true,
+                    enableJump: true
+                })
+
+                $(".checkAll").prop("checked", false);
+            }
+        })
+
+    }
+    /*查看spu详细信息, 暂无此功能*/
+    function check(id){
+        alert("暂无此功能");
+    }
+    //显示审核状态操作模态窗口
+    function showAudit(id, name){
+        $("#modalName").text(name);
+        $("#auditSpuId").val(id);
+        $("#auditModal").modal("show");
+    }
+    //关闭模态窗口
+    function cancel(){
+        $("#auditModal").modal("hide");
+    }
+
+    //单个更改审核状态
+    function auditOne(){
+        var data = "";
+        var id = $("#auditSpuId").val();
+        var status = $(":radio[name=status]:checked").val();
+
+        $.ajax({
+            url: "/goods/spu/audit",
+            type: "post",
+            data: {
+                "id" : id,
+                "status" : status
+            },
+            success: function(res){
+                if (!res.flag){
+                    alert(res.message);
+                    return;
+                }
+
+                $("#auditFont"+ id).text(res.message);
+                $("#auditModal").modal("hide");
+
+            }
+        })
+
+    }
+    //批量更改审核状态, 成功后重置所有多选框(通过全选框)
+    function batchAudit(status){
+        if (status === 2){
+            if(!confirm("确定要将所有被选中的商品设置为\"审核不通过\"吗")){
+                //alert(123);
+                return;
+            }
+        }
+
+        var params = "";
+        params += "status="+ status;
+
+        var $checkedCheckboxes = $(":checkbox[name=spuCheckbox]:checked");
+        for (var i = 0; i < $checkedCheckboxes.length; i++){
+            params += "&";
+            params += "id=" + $checkedCheckboxes[i].value;
+        }
+
+        $.ajax({
+            url: "/goods/spu/audit",
+            type: "post",
+            data: params,
+            dataType: "json",
+            success: function(res){
+                if (!res.flag){
+                    alert(res.message);
+                    return;
+                }
+
+                for (var i = 0; i < $checkedCheckboxes.length; i++){
+                    $("#auditFont"+ $checkedCheckboxes[i].value).text(res.message);
+                }
+            }
+        })
+
+    }
+
+    //多选框被点击
+    function clickCheckbox(){
+        var checkboxCount = $(":checkbox[name=spuCheckbox]").length;
+        var checkedCheckboxCount = $(":checkbox[name=spuCheckbox]:checked").length;
+        var checked = checkboxCount === checkedCheckboxCount;
+        $(".checkAll").prop("checked", checked);
+    }
+    //全选框被点击
+    function clickCheckAll(id){
+
+        var status = $("#checkAll"+ id)[0].checked;
+
+        $(":checkbox[name=spuCheckbox]").prop("checked", status);
+
+        //将另一个全选框的状态也更改了
+        $(".checkAll").prop("checked", status);
+
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            isSearchBodyShow: false,
+            isBrandShow: false,
+            nameSn: "",
+            category1: "",
+            category2: "",
+            category3: "",
+            category1List: [],
+            category2List: [],
+            category3List: [],
+            brand: "",
+            brandList: [],
+            orderBy: ""
+        },
+        methods: {
+            //刷新
+            refresh: function () {
+                var pageNum = parseInt($("#currentPageNum").val());
+                var pageSize = parseInt($("#currentPageSize").val());
+                pageList(pageNum, pageSize);
+            },
+            //展开筛选
+            showSearchBody: function() {
+                this.isSearchBodyShow = !this.isSearchBodyShow;
+                $("#showSearchBody").text(this.isSearchBodyShow ? "收起筛选" : "展开筛选");
+
+                /*
+                id="nameSn"
+                id="categoryId
+                id="brandId"
+                */
+
+                var $nameSn = $("#nameSn");
+                var $categoryId = $("#categoryId");
+                var $brandId = $("#brandId");
+                var $under = $(".underSearchDiv");
+
+                /*展开时, 将已有条件存入隐藏域
+                * 收起时, 清空隐藏域的值
+                *
+                * 都需要更改条件区域下的图层top*/
+                if (this.isSearchBodyShow){
+
+                    $nameSn.val($.trim(v.nameSn));
+                    $categoryId.val($.trim(v.category3));
+                    $brandId.val($.trim(v.brand));
+
+                    $under.css("top", 80 + 30 + "px");
+                } else {
+
+                    $nameSn.val("");
+                    $categoryId.val("");
+                    $brandId.val("");
+
+                    $under.css("top", "80px");
+                }
+            },
+            /* 在没有选中初始选项的情况下, 才会发送ajax*/
+            lv1Selected: function () {
+
+                if (v.category1 !== "") initOption(v.category1, 2);
+
+                v.category2 = "";
+                v.category3 = "";
+            },
+            /* 在没有选中初始选项的情况下, 才会发送ajax*/
+            lv2Selected: function () {
+                if (v.category2 !== "") initOption(v.category2, 3);
+
+                v.category3 = "";
+            },
+            /*只有选择完了三级分类, 才会初始化并显示品牌选项*/
+            lv3Selected: function () {
+                v.isBrandShow = !(v.category3 === "");
+                initBrand();
+            },
+
+        },
+        mounted(){
+            v = this;
+
+            init();
+        }
+    })
+</script>
+</body>
+</html>

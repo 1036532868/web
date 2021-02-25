@@ -1,0 +1,1044 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/2 12:51
+
+    此页面写的非常不好, 布局规划很差, 没有提前思考布局等, 导致某些步骤(如动态更改"top"样式)异常繁琐, 以后要注意
+    已优化
+-->
+<!--
+    动态生成sku  总结: 递归已选择规格, 用一个递增的下标变量向下递归
+    case 1:                                        失败
+        1.取得规格信息
+        2.遍历规格信息数组，取出name，和option
+          将option使用 String.split() 转换为数组, 存入specOptionList
+          使用innerHTML生成 多选框
+        3.同时直接为每一个多选框生成 删除链接
+
+        4.打算使用vue，在转换为数组时，将数组存入 specOptionList[][]，
+            并根据数组长度，在 specOptionStatusList[][] 同一位置生成同等长度相等的元素为boolean(false)的数组
+        5.将多选框的 selected 属性与 specOptionStatusList[][] 绑定， 并通过 v-show 绑定 specOptionStatusList的元素，
+            多选框被选中时 selected对应的boolean值变为true，对应 删除链接 也随之变化(显示)
+
+        原因：vue在使用一维数组作为条件值时，可以使用 vue.$set(数组， 下标， 值) 来改变数组中的值，才会被监听到变化，但是二维数组没办法做到
+
+    case 2:                                        成功
+        从case 1 的第 3 步继续
+
+        4.生成多选框时和对应的删除链接, 点击多选框后根据多选框的checked属性决定删除字段是否隐藏, 点击删除字段后取消对应的多选框的勾选
+        6.将选中多选框后对应的规格数据, 存入specCheckedList, 使用递归, 动态生成sku信息, 每点一个多选框都是清空然后重新生成
+            每条sku对应一个sku对象, 存入skuList
+            同时拼接spec的json串, 设置到sku的spec属性中
+
+
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../../js/axios.js"></script>
+
+    <link href="../../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+        .main {
+            position: absolute;
+            left: 100px;
+            top: 300px;
+            background: #4cae4c;
+            width: 1600px;
+            /*height: 1000px;*/
+        }
+
+        .step1 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 280px;
+            top: 108px;
+        }
+        .step2 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 676px;
+            top: 108px;
+        }
+        .step3 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 1072px;
+            top: 108px;
+        }
+
+        .spec {
+            position: absolute;
+            left: 330px;
+            top: 0px;
+            width: 800px;
+            /*height: 100px;*/
+            background: #afd9ee;
+        }
+        .specFont {
+            position: absolute;
+            left: 180px;
+            top: 0px;
+            background: #f0ad4e;
+        }
+
+        .underSpecList{
+            position: absolute;
+            left: 0px;
+            top: 100px;
+            width: 1600px;
+            /*height: 1000px;*/
+            /*background: #f0ad4e;*/
+        }
+        .skuColumn{
+            padding-right: 2px;
+            padding-left: 2px;
+        }
+        .skuList {
+            position: absolute;
+            left: 330px;
+            top: 0px;
+            width: 1270px;
+            background: #ce8483;
+        }
+        .underSkuList{
+            position: absolute;
+            left: 0px;
+            top: 50px;
+            width: 1600px;
+            height: 300px;
+            /*background: #dbdbdb;*/
+        }
+
+        /*spu图片*/
+        .spuAlbumFont {
+            position: absolute;
+            left: 180px;
+            top: 0px;
+            background: #f0ad4e;
+        }
+        .spuFileDiv {
+            position: absolute;
+            top: 0px;
+            left: 330px;
+            width: 1100px;
+            height: 220px;
+            background: #9d9d9d;
+        }
+        .spuFileCount {
+            position: absolute;
+            top: 220px;
+            left: 330px;
+        }
+        .spuImages {
+            width: 100px;
+        }
+
+        /*模态窗口*/
+        .skuFileUploadDiv {
+            position: absolute;
+            left: 550px;
+            top: 250px;
+            width: 400px;
+            height: 150px;
+            background: #f7ecb5;
+        }
+        .showUploadSpuFileModal {
+            position: absolute;
+            top: 70px;
+            left: 0px;
+        }
+
+        /*前进/返回*/
+        .stepController {
+            position: absolute;
+            top: 250px;
+            left: 330px;
+        }
+        .backButton {
+             position: absolute;
+             top: 0px;
+             left: 0px;
+         }
+        .nextButton {
+            position: absolute;
+            top: 0px;
+            left: 600px;
+        }
+    </style>
+</head>
+<body>
+<div id="body" class="body">
+    <!--流程图-->
+    <div class="step1"><h2 align="center">①选择商品分类</h2></div>
+    <div style="position: absolute; left: 740px; top: 152px">-----------></div>
+    <div class="step2"><h2 align="center">②填写商品信息</h2></div>
+    <div style="position: absolute; left: 1135px; top: 152px">-----------></div>
+    <div class="step3"><h2 align="center">③填写商品属性</h2></div>
+
+    <div class="main">
+        <div class="specFont">
+            <h1 align="center">商品参数</h1>
+        </div>
+        <div class="spec">
+            <table>
+                <tr>
+                    <td>规格参数组</td>
+                    <td v-cloak>&nbsp;<input type="text" id="templateName" readonly/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><font color="red">*</font>商品规格</td>
+                </tr>
+            </table>
+
+            <!--生成的参数列表-->
+            <table id="specBody">
+
+            </table>
+        </div>
+
+        <div class="underSpecList">
+            <div class="skuList">
+            <table>
+                <thead id="skuList"></thead>
+                <tbody id='skuListBody'></tbody>
+            </table>
+        </div>
+                <div class="underSkuList">
+                    <!--spu图片div标签-->
+                    <div id="spuAlbumFont" class="spuAlbumFont">
+                        <h1>商品相册</h1>
+                    </div>
+
+                    <!--spu图片-->
+                    <div id="spuFileDiv" class="spuFileDiv">
+
+                        <input id="showUploadSpuFileModal" class="showUploadSpuFileModal" type="button" @click="showUploadSpuFileModal"
+                               v-show="showSpuFileAddButton" value="上传图片"/>
+
+                    </div>
+
+                    <!--spu文件计数-->
+                    <div id="spuFileCount" class="spuFileCount" v-cloak>
+                        已上传<font color="red">{{spuImages.length}}</font>/5个文件
+
+                        <!--测试图片生成使用的按钮
+                        <input type="button" onclick="initSpuImageSpan()" value="initSpuImageSpan()"/>-->
+                    </div>
+
+                    <!--前进/返回-->
+                    <div id="stepController" class="stepController">
+                        <input class="backButton" type="button" onclick="back()" value="上一步，填写商品信息"/>
+                        <input class="nextButton" type="button" onclick="commit()" value="提交审核"/>
+                    </div>
+                </div>
+        </div>
+
+    </div>
+
+
+
+    <!--上传sku图片模态窗口-->
+    <div id="skuFileUploadModal" class="modal">
+        <div class="modal-content skuFileUploadDiv">
+            <table align="center">
+                <tr v-cloak>
+                    <td>商品名称</td>
+                    <td class="spuName"></td>
+                </tr>
+                <tr>
+                    <td>商品参数名称</td>
+                    <td id="skuSpecNameShow"></td>
+                </tr>
+                <tr>
+                    <td>商品参数</td>
+                    <td id="skuSpecValShow"></td>
+                </tr>
+
+                <!--用来存放当前上传对象的sku对象的skuCount-->
+                <input id="skuCountForFile" type="hidden"/>
+
+                <tr>
+                    <td colspan="2"><input id="skuFileInput" type="file"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><img/></td>
+                </tr>
+                <tr align="center">
+                    <td><input type="button" value="取消" @click="cancelUploadSkuFile"/></td>
+                    <td><input type="button" value="确定" @click="uploadSkuFile"/></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--上传spu图片模态窗口-->
+    <div id="spuFileUploadModal" class="modal">
+        <div class="modal-content skuFileUploadDiv">
+            <table align="center">
+                <tr v-cloak>
+                    <td>商品名称</td>
+                    <td class="spuName"></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"><input id="spuFileInput" type="file"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><img/></td>
+                </tr>
+                <tr align="center">
+                    <td><input type="button" value="取消" @click="cancelUploadSpuFile"/></td>
+                    <td><input type="button" value="确定" @click="uploadSpuFile"/></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+    db = openDatabase("com.example.web", "1.0", "", 10 * 1024 * 1024);
+    //实体类
+    function Sku() {
+        var id;
+        var sn;
+        var name;
+        var price;
+        var num;
+        var alertNum;
+        var image;
+        var images;
+        var weight;
+        var createTime;
+        var updateTime;
+        var spuId;
+        var categoryId;
+        var categoryName;
+        var brandName;
+        var spec;
+        var saleNum;
+        var commentNum;
+        var status;
+
+        this.id = null;
+        this.sn = null;
+        this.name = null;
+        this.price = null;
+        this.num = null;
+        this.alertNum = null;
+        this.image = null;
+        this.images = null;
+        this.weight = null;
+        this.createTime = null;
+        this.updateTime = null;
+        this.spuId = null;
+        this.categoryId = null;
+        this.categoryName = null;
+        this.brandName = null;
+        this.spec = null;
+        this.saleNum = null;
+        this.commentNum = null;
+        this.status = null;
+    }
+    function Spu() {
+        var id;
+        var sn;
+        var name;
+        var caption;
+        var brandId;
+        var category1Id;
+        var category2Id;
+        var category3Id;
+        var templateId;
+        var freightId;
+        var image;
+        var images;
+        var saleService;
+        var specItems;
+        var paraItems;
+        var saleNum;
+        var commentNum;
+        var isMarketable;
+        var isEnableSpec;
+        var isDelete;
+        var status;
+        var introduction;
+
+        this.id = null;
+        this.sn = null;
+        this.name = null;
+        this.caption = null;
+        this.brandId = null;
+        this.category1Id = null;
+        this.category2Id = null;
+        this.category3Id = null;
+        this.templateId = null;
+        this.freightId = null;
+        this.image = null;
+        this.images = null;
+        this.saleService = null;
+        this.specItems = null;
+        this.paraItems = null;
+        this.saleNum = null;
+        this.commentNum = null;
+        this.isMarketable = null;
+        this.isEnableSpec = null;
+        this.isDelete = null;
+        this.status = null;
+        this.introduction = null;
+    }
+    function Goods(spu, skuList){
+        var spu;
+        var skuList;
+
+        this.spu = spu;
+        this.skuList = skuList;
+    }
+
+    /*通过websql初始化信息*/
+    function init() {
+        db.transaction(function (tx) {
+            tx.executeSql("select * from tbl_goods_spu where id = 0", [], function (tx, resultSet) {
+                if (resultSet.rows.length > 0) {
+                    var row = resultSet.rows.item(0);
+
+                    //判断是否经历了前两步
+
+                    var spu = new Spu();
+                    spu.sn = row.sn;
+                    spu.name = row.name;
+                    spu.caption = row.caption;
+                    spu.brandId = row.brand_id;
+                    spu.category1Id = row.category1_id;
+                    spu.category2Id = row.category2_id;
+                    spu.category3Id = row.category3_id;
+                    spu.templateId = row.template_id;
+                    spu.introduction = row.introduction;
+
+                    v.spu = spu;
+
+                    $(".spuName").html(spu.name);
+
+                    initTemplate();
+                }
+            })
+        })
+    }
+
+    /*根据templateId查询template信息*/
+    function initTemplate() {
+        axios({
+            method: "get",
+            params: {
+                id: v.spu.templateId
+            },
+            url: "/goods/template/selectById"
+        }).then(res => {
+            var data = res.data;
+            if (!data.flag) {
+                alert(data.message);
+                return;
+            }
+
+            v.template = data.data;
+
+            $("#templateName").val(v.template.name);
+
+            initSpecList();
+        })
+    }
+
+    /*初始化规格*/
+    function initSpecList() {
+        axios({
+            method: "get",
+            params: {
+                templateId: v.spu.templateId
+            },
+            url: "/goods/spec/selectByTemplateId"
+        }).then(function (res) {
+            var data = res.data;
+            if (!data.flag) {
+                alert(data.message);
+                return;
+            }
+
+            v.specList = data.data;
+
+            mountedSpecList();
+        })
+    }
+
+    /*获得已被选中的 spec 的数量*/
+    function getSpecCheckedCount(){
+        var count = 0;
+
+        for (var i = 0; i < v.specCheckedList.length; i++){
+            count += v.specCheckedList[i].length;
+        }
+
+        return count;
+    }
+
+
+    /*初始化规格选择列表, 生成多选框, 生成表头*/
+    function mountedSpecList() {
+        var l = v.specList;
+
+        var $specBody = $("#specBody");
+
+        /*生成多选框*/
+        for (var i1 = 0; i1 < l.length; i1++) {
+
+            /*将specList的 "20英寸,50英寸,60英寸"属性, 转为数组对象, 并存入specOptionsList中*/
+            var val = l[i1].options.split(",");
+            v.specOptionList.push(val);
+
+            v.specCheckedList.push([]);
+
+            var html = "";
+            html += "<tr>" +
+                "<td>" + l[i1].name + "</td>" +
+                "<td>";
+
+            //遍历数组, 生成多选框, 和删除字段
+            for (var i2 = 0; i2 < val.length; i2++) {
+                /*
+                <tr>
+                    <td>尺码</td>
+                    <td>
+                        <input name='0' id='00' type='checkbox' onclick='chose(0, 0)' value='165'/>165&nbsp;
+
+                        <a href='javascript:void(0)' id='font00' onclick='clickFont(0, 0)' style='display: none'>
+                            <font color='red'>删除</font>
+                        </a>
+
+                        &nbsp;&nbsp;
+                        <input2 .>
+                        <input3 .>
+                     <td>
+                 <tr>
+                */
+                html += "<input name='" + i1 + "' id='" + i1 + i2 + "' type='checkbox' onclick='chose(" + i1 + ", " + i2 + ")' value='" + val[i2] + "'/>" + val[i2] + "&nbsp;" +
+                    "<a href='javascript:void(0)' id='font" + i1 + i2 + "' onclick='clickFont(" + i1 + ", " + i2 + ")' style='display: none'><font color='red'>删除</font></a>&nbsp;&nbsp;";
+
+            }
+
+            html += "</td>" +
+                "</tr>";
+
+            $specBody.append(html);
+        }
+
+        //生成表头
+        var $list = $("#skuList");
+        //生成表的字段
+        $list.append("<tr>");
+
+        //根据规格数量生成对应数量表格, 并填入名称
+        for (var i = 0; i < v.specOptionList.length; i++) {
+            $list.append("<th class='skuColumn'><center>" + v.specList[i].name + "</center></th>")
+        }
+
+        //生成固定的表格
+        $list.append("<th class='skuColumn'><center><font color='red'>*</font>销售价格</center></th>" +
+            "<th class='skuColumn'><center><font color='red'>*</font>商品库存</center></th>" +
+            "<th class='skuColumn'><center><font color='red'>*</font>库存预警值</center></th>" +
+            "<th class='skuColumn'><center>sku编号</center></th>" +
+            "<th class='skuColumn'><center>操作</center></th>");
+
+        //更改underSpecList的top样式
+        var topIncr = l.length * 22;
+        $(".underSpecList").css("top", 100 + topIncr + "px");
+    }
+
+    //点击多选框
+    function chose(i1, i2) {
+        l = v.specCheckedList;
+        specs = v.specList;
+
+        var $box = $("#" + i1 + i2);
+        var $font = $("#font" + i1 + i2);
+        var chosen = $box[0].checked;
+
+        //根据是否选中多选框, 决定是否显示 删除链接
+        $font.css("display", chosen ? "inline" : "none");
+
+        //清空 specCheckedList 的 元素数组 的数据, 然后获得所有被选中的多选框,
+        //根据class指定的分组, 将规格插入 specCheckedList 的对应下标的数组
+        for (var i = 0; i < l.length; i++) {
+            l[i] = [];
+        }
+        var $checked = $(":checkbox:checked");
+        for (var i = 0; i < $checked.length; i++) {
+
+            var type = $checked[i].name;
+            var index = parseInt(type);
+
+            //alert($checked[i].value);
+            l[index].push($checked[i].value);
+
+        }
+
+        /*开始生成sku列表, 清空列表, 重置sku计数, 每次都是重新生成, -1是为了方便+1后正好和skuList的下标对应*/
+        var $body = $("#skuListBody");
+        $body.empty();
+
+        /*如果没有选中任何规格, 清空skuList之后直接结束*/
+        if (getSpecCheckedCount() === 0){
+            //alert(getSpecCheckedCount())
+            return;
+        }
+
+        skuCount = -1;
+        var endIndex = l.length - 1;
+
+        insert(0, endIndex, "", "");
+
+        /*var demo = [
+           ["a1", "a2", "a3"],
+           []
+        ]*/
+
+        //****递归方法, 动态根据选择的参数生成sku列表, 并生成json
+        function insert(i, endIndex, lastHtml, lastJson) {
+            var $body = $("#skuListBody");
+            var currentHtml = lastHtml;
+            var currentJson = lastJson;
+            var len = l[i].length;
+
+            //如果当前种类没有值, 生成空内容.
+            // 如果没有值, 无法进入for循环, 所以将 isEndIndex() 提取出来
+            if (len === 0) {
+                var val = "<td></td>";
+                currentHtml += val;
+                var j = "\"" + specs[i].name + "\"" + ":" + "\"" + "" + "\"" + ",";
+                currentJson += j;
+
+                /*检查是否是最后一个种类, 以决定是否继续递归*/
+                isEndIndex(currentHtml, currentJson);
+            }
+
+            /*遍历当前种类的被选中的值的数组*/
+            for (var currentIndex = 0; currentIndex < len; currentIndex++) {
+                currentHtml = lastHtml;
+                currentJson = lastJson;
+
+                var val = l[i][currentIndex] === undefined ? "" : l[i][currentIndex];
+                currentHtml += "<td align='center'>" + val + "</td>";
+
+                currentJson += "\"" + specs[i].name + "\"" + ":" + "\"" + val + "\"" + ",";
+
+                isEndIndex(currentHtml, currentJson);
+            }
+
+
+            /*最后一步, 检查是否是最后一个种类*/
+            function isEndIndex(currentHtml, currentJson) {
+                //如果不是最后一个种类, 递归到第二种类, 从第一个元素开始
+                if (i != endIndex) {
+                    insert(i + 1, endIndex, currentHtml, currentJson);
+                }
+
+                //如果当前元素属于最后一个种类, 插入</tr>
+                if (i === endIndex) {
+                    skuCount++;
+
+                    /*生成其余的固定表格*/
+                    currentHtml += "<td><input class='sku" + skuCount + "' type='text' maxLength='30'/></td>";
+                    currentHtml += "<td><input class='sku" + skuCount + "' type='text' maxLength='30'/></td>";
+                    currentHtml += "<td><input class='sku" + skuCount + "' type='text' maxLength='30'/></td>";
+                    currentHtml += "<td><input class='sku" + skuCount + "' type='text' maxLength='30'/></td>";
+                    currentHtml += "<td>&nbsp;&nbsp;<a href='javascript:void(0)' onclick='deleteSku(" + skuCount + ")'><font color='red'>删除</font></a>" +
+                        "&nbsp;" +
+                        "<a href='javascript:void(0)' onclick='showUploadSkuFileDiv(" + skuCount + ")'>上传图片</a>" +
+                        "</td>";
+                    //将开头的<tr>补上
+                    $body.append("<tr id='tr" + skuCount + "'>" + currentHtml + "</tr>");
+                    //alert(currentHtml);
+
+                    //去除最后一个 ,
+                    currentJson = currentJson.substring(0, currentJson.length - 1);
+                    currentJson += "}";
+                    var sku = new Sku();
+                    //将开头的{补上
+                    currentJson = "{" + currentJson;
+                    sku.spec = currentJson;
+                    //alert(currentJson);
+
+                    /*将sku对象放入集合*/
+                    v.skuList[skuCount] = sku;
+                }
+            }
+        }
+
+        //最后需要更改underSkuList下展现的元素的top值, +1 是表头
+        var topIncr = (skuCount + 1) * 26;
+        $(".underSkuList").css("top", 50 + topIncr + "px");
+    }
+
+    //点击删除字段
+    function clickFont(i1, i2) {
+        var $box = $("#" + i1 + i2);
+        $box.click();
+    }
+
+    //点击sku删除字段
+    function deleteSku(skuIndex) {
+        if (confirm("确定要删除这件商品吗")) {
+            // v.skuList.splice(skuCount, 1); 会导致后边的元素自动向前位移一位, 导致其他的skuCount无效
+            //alert(v.skuList[skuCount].spec);
+
+            v.skuList[skuIndex] = undefined;
+            $("#tr" + skuIndex).remove();
+
+            skuCount--;
+        }
+
+    }
+
+    //点击上传文件字段
+    function showUploadSkuFileDiv(skuCount) {
+
+        //初始化商品参数
+        var sku = v.skuList[skuCount];
+        var spec = sku.spec.replace(/{/, "").replace(/}/, "").split(","); //['"1":"1"','"2":""']
+
+        var specName = "";
+        var specVal = "";
+        for (var i = 0; i < spec.length; i++) {
+            var temp = spec[i].split(":");
+            if (temp[1] !== "\"\"") {
+                specName += temp[0];
+                specVal += temp[1];
+
+                if (i < spec.length - 1) {
+                    specName += ",";
+                    specVal += ",";
+                }
+
+            }
+        }
+        specName = specName.replace(/\"/g, "");
+        specVal = specVal.replace(/\"/g, "");
+
+        $("#skuSpecNameShow").text(specName);
+        $("#skuSpecValShow").text(specVal);
+
+        $("#skuCountForFile").val(skuCount);
+
+        $("#skuFileUploadModal").modal("show");
+    }
+
+    //根据v.spuImages生成图片
+    function initSpuImageSpan() {
+        var $spuFileDiv = $("#spuFileDiv");
+
+        //使用div和span会错乱, 直接铺图片
+        var images = v.spuImages;
+        $spuFileDiv.empty();
+        var $show = $("#showUploadSpuFileModal");
+
+        for (var i = 0; i < images.length; i++) {
+
+            $spuFileDiv.append("<img style='position: absolute; width: 160px; height: 160px; top: 0px; left: " + (170 * i + 5) + "px' src='" + images[i] + "'/>");
+            $spuFileDiv.append("<br/>");
+
+            //如果此图片为主图, 更改样式
+            if (images.includes(v.spu.image)) {
+                $spuFileDiv.append("<font style='color: red; position: absolute; left: " + (170 * i + 20) + "px; top: 180px;'  id='setMainImage" + i + "' >商品主图</font>");
+            } else {
+                $spuFileDiv.append("<a style='position: absolute; left: " + (170 * i + 20) + "px; top: 180px;' href='javascript:void(0)' id='setMainImage" + i + "' onclick='setSpuMainImage(" + i + ")'>设为主图</a>");
+            }
+
+            $spuFileDiv.append("<a style='position: absolute; left: " + (170 * i + 80) + "px; top: 180px;' href='javascript:void(0)' onclick='delSpuImage(" + i + ")'>删除图片</a>");
+        }
+
+        $show.css("left", 170 * images.length + "px");
+        //alert(images.length);
+    }
+
+    //设置v.spu.image属性
+    function setSpuMainImage(i) {
+        v.spu.image = v.spuImages[i];
+        //重新生成图片
+        initSpuImageSpan();
+    }
+
+    //删除spuImages指定下标的元素
+    function delSpuImage(i) {
+        v.spuImages.splice(i, 1);
+        //重新生成图片
+        initSpuImageSpan();
+    }
+
+    //发送ajax, 提交
+    function commit() {
+
+        if (getSpecCheckedCount() === 0){
+            alert("规格为必选项，请先选择");
+            return;
+        }
+
+        /*
+        * 1.遍历skuList, 如果元素不是 undefined, 即没有被删除, 获得该元素下标对应的文本域的值, 如果关键字段不为空, 赋值
+        * 2.再次遍历, 将是 undefined 的元素去除
+        * 3.将spuImages以 i1,i2... 格式赋值给spu
+        * 4.ajax
+        * 5.成功后清除WebSQL中 tbl_goods_spu 的数据
+        */
+        /*
+        <input class='sku" + skuCount + "' type='text' maxLength='30'/> *price
+        <input class='sku" + skuCount + "' type='text' maxLength='30'/> *num
+        <input class='sku" + skuCount + "' type='text' maxLength='30'/> *alert_num
+        <input class='sku" + skuCount + "' type='text' maxLength='30'/> sn
+        * */
+        for (var i = 0; i < v.skuList.length; i++) {
+            if (v.skuList[i] !== undefined) {
+                var $inputs = $(".sku" + i);
+
+                for (var i2 = 0; i2 < $inputs.length; i2++) {
+                    var sku = v.skuList[i];
+                    var val = $.trim($inputs[i2].value);
+
+                    if (i2 < 3) {
+                        if (val === "") {
+                            alert("关键字段不得为空");
+                            return;
+                        }
+                    }
+
+                    switch (i2) {
+                        case 0 :
+                            sku.price = parseFloat(val);
+                            break;
+                        case 1 :
+                            sku.num = parseInt(val);
+                            break;
+                        case 2 :
+                            sku.alertNum = parseInt(val);
+                            break;
+                        case 3 :
+                            sku.sn = val;
+                            break;
+                    }
+                }
+
+            }
+        }
+
+        for (var i = 0; i < v.skuList.length; i++) {
+            if (v.skuList[i] === undefined) {
+                v.skuList.splice(i, 1);
+
+                //元素被移除后, 原先的下一个下标的元素会成为当前元素的下标, 如果不-1, 这个元素就会被略过了
+                i--;
+            }
+        }
+
+        v.spu.images = v.spuImages.join(",");
+
+        //spec_items字段 {"column":["el", "el"], "column2":["el", 'el"]}
+        var specItems = "{";
+        for (var i = 0; i < v.specList.length; i++){
+            specItems += '"'+ v.specList[i].name +'"';
+            specItems += ":";
+            specItems += "[";
+
+            for (var i2 = 0; i2 < v.specCheckedList[i].length; i2++){
+                specItems += '"'+ v.specCheckedList[i][i2] +'"'
+                if (i2 < v.specCheckedList[i].length - 1){
+                    specItems += ","
+                }
+            }
+
+            specItems += "]";
+            if (i < v.specList.length - 1){
+                specItems += ",";
+            }
+        }
+        specItems += "}";
+        v.spu.specItems = specItems;
+
+        var goods = new Goods(v.spu, v.skuList);
+        $.ajax({
+            url: "/goods/spu/add",
+            type: "post",
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(goods),
+            success: function (res) {
+                if (!res.flag) {
+                    alert(res.message);
+                }
+
+                if (res.flag) {
+                    db.transaction(function (tx) {
+                        tx.executeSql("delete from tbl_goods_spu");
+
+                        if (confirm("添加商品成功, 要继续添加吗")) {
+                            window.location = "/goods/manage/goods/addCategory.html";
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    //返回上一页
+    function back() {
+        window.location = "/goods/manage/goods/addSpu.html";
+    }
+
+    var vue = new Vue({
+        el: "#body",
+        data: {
+            spu: {
+                name: "华为"
+            },
+            template: {
+                "id": 42,
+                "name": "手机",
+                "specNum": null,
+                "paraNum": null
+            },
+            specList: [
+                {
+                    "id": 26,
+                    "name": "尺码",
+                    "options": "165,170,175",
+                    "seq": null,
+                    "templateId": 43
+                },
+                {
+                    "id": 33,
+                    "name": "电视屏幕尺寸",
+                    "options": "20英寸,50英寸,60英寸",
+                    "seq": null,
+                    "templateId": 43
+                },
+                {
+                    "id": 37,
+                    "name": "电视音响效果",
+                    "options": "立体声,环绕,小影院",
+                    "seq": null,
+                    "templateId": 43
+                }
+            ],
+            specOptionList: [],
+            specCheckedList: [],
+            skuList: [],
+            spuImages: [],
+            showSpuFileAddButton: true
+        },
+        methods: {
+            cancelUploadSkuFile: function () {
+                $("#skuFileInput")[0].files[0] = undefined;
+                $("#skuFileUploadModal").modal("hide");
+            },
+            // 点击sku文件模态窗口中的确定
+            uploadSkuFile: function () {
+
+                var formData = new FormData();
+                var fileInput = $("#skuFileInput")[0];
+                var file = fileInput.files[0];
+
+                if (file === undefined) {
+                    alert("没有检测到任何要上传的文件");
+                    return;
+                }
+
+                //使用ajax上传文件
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/file/upload",
+                    type: "post",
+                    data: formData,
+                    dataType: "json",
+                    success: function (res) {
+                        if (!res.flag) {
+                            alert(res.message);
+                            return;
+                        }
+                        //将返回的地址根据#skuCountForFile的值赋给skuList对应下标的sku对象
+                        var index = parseInt($("#skuCountForFile").val());
+                        v.skuList[index].image = res.data;
+
+                        fileInput.files[0] = undefined;
+                        $("#skuFileUploadModal").modal("hide");
+                    }
+                })
+            },
+            showUploadSpuFileModal: function () {
+                $("#spuFileUploadModal").modal("show");
+            },
+            // 点击spu文件模态窗口中的确定
+            uploadSpuFile: function () {
+
+                var formData = new FormData();
+                var fileInput = $("#spuFileInput")[0];
+                var file = fileInput.files[0];
+
+                if (file === undefined) {
+                    alert("没有检测到任何要上传的文件");
+                    return;
+                }
+
+                //使用ajax上传文件
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/file/upload",
+                    type: "post",
+                    data: formData,
+                    dataType: "json",
+                    success: function (res) {
+                        if (!res.flag) {
+                            alert(res.message);
+                            return;
+                        }
+                        //将返回的地址赋值给spu的images
+                        v.spuIamges = [];
+                        v.spuIamges.push(res.data);
+
+                        initSpuImageSpan();
+
+                        //根据已上传文件计数, 决定要不要显示上传按钮
+                        v.showSpuFileAddButton = v.spuIamges.length <= 5;
+
+
+                        //清空file域
+                        fileInput.files[0] = undefined;
+                        $("#skuFileUploadModal").modal("hide");
+                    }
+                })
+            },
+            cancelUploadSpuFile: function () {
+                $("#spuFileInput")[0].files[0] = undefined;
+                $("#spuFileUploadModal").modal("hide");
+            }
+        },
+        mounted() {
+            v = this;
+
+            init();
+        }
+    })
+</script>
+</body>
+</html>

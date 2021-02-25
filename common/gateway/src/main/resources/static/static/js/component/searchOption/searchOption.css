@@ -1,0 +1,60 @@
+/**
+ * @author gong_da_kai
+ * @version 1.0.0
+ * @date 2021/2/20 14:40
+ * @since 1.0.0
+ */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.insertOption_titleDiv{
+    position: absolute;
+    left: 0px;
+    width: 150px;
+    background: #66afe9;
+}
+.insertOption_optionDiv{
+    position: absolute;
+    left: 150px;
+    top: 0px;
+    width: 1480px;
+    background: #f7ecb5;
+}
+.insertOption_operationButtonDiv{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 21px;
+    width: 200px;
+    background: #67b168;
+}
+/*moreButtonClass multiButtonClass*/
+.insertOption_operationButton{
+    position: absolute;
+    top: 0px;
+    height: 21px;
+    width: 60px;
+}
+.insertOption_moreButton{
+    left: 30px;
+}
+.insertOption_multiButton{
+    right: 30px;
+}
+.insertOption_confirmButton{
+    display:none;
+    position: absolute;
+    left: 600px
+}
+.insertOption_cancelButton{
+    position: absolute;
+    right: 600px;
+}
+.insertOption_h21px{
+    height: 21px;
+}

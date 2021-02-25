@@ -1,0 +1,347 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/1 14:29
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="../../js/vue.js"></script>
+    <script type="text/javascript" src="../../js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../../js/axios.js"></script>
+
+    <!--
+        三级分类, 级联查询, 最后将属性保存到WebSQL中
+    -->
+
+    <style type="text/css">
+        [v-cloak] {
+            display: none;
+        }
+
+        .body{
+            position: absolute;
+            left: 200px;
+            top: 0px;
+            width: 900px;
+            height: 800px;
+        }
+
+        select {
+            width: 200px;
+        }
+
+        .step1 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 80px;
+            top: 108px;
+        }
+
+        .step2 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 476px;
+            top: 108px;
+        }
+
+        .step3 {
+            background: #4cae4c;
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            left: 872px;
+            top: 108px;
+        }
+
+        .main {
+            width: 1150px;
+            height: 300px;
+            position: absolute;
+            left: 0px;
+            top: 350px;
+        }
+    </style>
+</head>
+<body>
+<div id="body" class="body">
+    <!--流程图-->
+    <div class="step1"><h2 align="center">①选择商品分类</h2></div>
+    <div style="position: absolute; left: 340px; top: 152px">-----------></div>
+    <div class="step2"><h2 align="center">②填写商品信息</h2></div>
+    <div style="position: absolute; left: 735px; top: 152px">-----------></div>
+    <div class="step3"><h2 align="center">③填写商品属性</h2></div>
+
+    <!--主体-->
+    <div class="main">
+        <h1 align="center">选择商品分类</h1>
+        <center>
+            <table>
+                <tr>
+                    <td>一级分类</td>
+                    <td>二级分类</td>
+                    <td>三级分类</td>
+                </tr>
+                <tr>
+                    <td>
+                        <select id="lv1" @change="lv1Selected" v-model="category1">
+                            <option value="">---选择一级分类---</option>
+                            <option v-cloak v-for="(e, i) in categoryList1" :value="e.id">{{e.name}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="lv2" @change="lv2Selected" v-model="category2">
+                            <option value="">---选择二级分类---</option>
+                            <option v-cloak v-for="(e, i) in categoryList2" :value="e.id">{{e.name}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="lv3" @change="lv3Selected" v-model="category3">
+                            <option value="">---选择三级分类---</option>
+                            <option v-cloak v-for="(e, i) in categoryList3" :value="e.id" :id="i">{{e.name}}</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            您当前选择的分类是: <span v-show="hasLv1" v-cloak><font color="red">{{categoryName1}}</font></span>
+            <span v-show="hasLv2" v-cloak><font color="red">&nbsp;->&nbsp;{{categoryName2}}</font></span>
+            <span v-show="hasLv3" v-cloak><font color="red">&nbsp;->&nbsp;{{categoryName3}}</font></span>
+            <br>
+            <input type="button" value="下一步，填写商品信息" @click="next"/>
+        </center>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    /*开启webSQL*/
+    db = openDatabase("com.example.web", "1.0", "", 10 * 1024 * 1024);
+
+    /*创建tbl_goods_spu, 多加3个字段, categoryName*/
+    db.transaction(function (tx) {
+        //tx.executeSql("drop table if exists tbl_goods_spu");
+        tx.executeSql("create table if not exists tbl_goods_spu (id unique" +
+            ",sn" +
+            ",name" +
+            ",caption" +
+            ",brand_id" +
+            ",category1_id" +
+            ",category2_id" +
+            ",category3_id" +
+            ",template_id" +
+            ",freight_id" +
+            ",image" +
+            ",images" +
+            ",sale_service" +
+            ",introduction" +
+            ",spec_items" +
+            ",para_items" +
+            ",sale_num" +
+            ",comment_num" +
+            ",is_marketable" +
+            ",is_enable_spec" +
+            ",is_delete" +
+            ",status" +
+            ",category1_name" +
+            ",category2_name" +
+            ",category3_name" +
+            ",categoryList1" +
+            ",categoryList2" +
+            ",categoryList3" +
+            ",brandList)");
+
+        //删除tbl_goods_spu中所有数据
+        //tx.executeSql("delete from tbl_goods_spu");
+    })
+
+    /*初始化下拉框, lv-级别*/
+    function initOption(id, lv, isFirstInit) {
+        if (isFirstInit){
+            //查看websql中是否已经有数据, 当返回修改的情况下
+            db.transaction(function (tx) {
+                tx.executeSql("select * from tbl_goods_spu where id = 0", [], function (tx, resultSet){
+
+                    if (resultSet.rows.length === 1){
+
+                        var row = resultSet.rows.item(0);
+
+                        v.category1 = row.category1_id;
+                        v.category2 = row.category2_id;
+                        v.category3 = row.category3_id;
+
+                        v.categoryList1 = JSON.parse(row.categoryList1);
+                        v.categoryList2 = JSON.parse(row.categoryList2);
+                        v.categoryList3 = JSON.parse(row.categoryList3);
+
+                        v.categoryName1 = row.category1_name;
+                        v.categoryName2 = row.category2_name;
+                        v.categoryName3 = row.category3_name;
+
+                        v.hasLv1 = true;
+                        v.hasLv2 = true;
+                        v.hasLv3 = true;
+                        v.templateId = row.template_id;
+                    } else {
+                        /*新建状态初始化*/
+                        initOption(0, 1, false);
+                    }
+
+                })
+            })
+        } else {
+            /*如果没有数据, 执行新建流程*/
+            axios({
+                method: "get",
+                params: {
+                    parentIds: id
+                },
+                url: "/goods/category/selectByParentId"
+            }).then(res => {
+
+                var data = res.data;
+                if (!data.flag){
+                    alert(data.message);
+                    return;
+                }
+
+                if (lv === 1) {
+                    v.categoryList1 = data.data;
+                }
+                if (lv === 2) {
+                    v.categoryList2 = data.data;
+                }
+                if (lv === 3) {
+                    v.categoryList3 = data.data;
+                }
+            })
+        }
+
+
+    }
+
+    var vue = new Vue({
+        el: "#body",
+        data: {
+            categoryList1: [],
+            categoryList2: [],
+            categoryList3: [],
+            category1: "",
+            category2: "",
+            category3: "",
+            categoryName1: "",
+            categoryName2: "",
+            categoryName3: "",
+            hasLv1: false,
+            hasLv2: false,
+            hasLv3: false,
+            templateId: ""
+        },
+        methods: {
+            /* 清空c2, 初始化c2下拉框, 清空c3和下拉框, 防止更改c1, c3还是原来的下拉框*/
+            lv1Selected: function () {
+
+                v.hasLv1 = v.category1 !== "";
+
+                if (v.hasLv1) {
+                    v.categoryName1 = $("#lv1 > option:selected").text();
+                    initOption(v.category1, 2, false);
+                    $("#lv3").html("<option value=\"\">---选择三级分类---</option>");
+                } else {
+                    v.categoryName1 = "";
+                }
+
+                v.category2 = "";
+                v.category3 = "";
+                v.categoryName2 = "";
+                v.categoryName3 = "";
+                v.hasLv2 = v.category2 !== "";
+                v.hasLv3 = v.category3 !== "";
+
+            },
+
+            /* 清空c3, 初始化c3下拉框*/
+            lv2Selected: function () {
+
+                v.hasLv2 = v.category2 !== "";
+
+                //如果是选择了"初始选项", 设置name为初始值
+                if (v.hasLv2) {
+                    v.categoryName2 = $("#lv2 > option:selected").text();
+                    initOption(v.category2, 3, false);
+                } else {
+                    v.categoryName2 = "";
+                }
+
+
+                v.category3 = ""
+                v.categoryName3 = "";
+                v.hasLv3 = v.category3 !== "";
+            },
+
+            /*c3*/
+            lv3Selected: function () {
+
+                v.hasLv3 = v.category3 !== "";
+
+                if (v.hasLv3) {
+                    v.categoryName3 = $("#lv3 > option:selected").text();
+                } else {
+                    v.categoryName3 = "";
+                }
+
+            },
+
+            /*向webSQL中设置分类数据, 跳转到商品信息设置页*/
+            next: function () {
+                //如果没有选完三级分类,不放行
+                if (!(v.hasLv1 && v.hasLv2 && v.hasLv3)) {
+                    alert("请先选择完三级分类");
+                    return;
+                }
+
+                /*获得被选中的三级分类, 通过它的id(下标), 从categoryList3中找到对应的category对象, 取到template_id*/
+                var id = $("#lv3 > option:selected")[0].id;
+                v.templateId = v.categoryList3[parseInt(id)].templateId;
+
+                db.transaction(function (tx) {
+                    //清空可能存在的旧有数据
+                    tx.executeSql("delete from tbl_goods_spu");
+
+                    //插入一条spu记录
+                    tx.executeSql("insert into tbl_goods_spu" +
+                        "(id, " +
+                        "category1_id, category2_id, category3_id, " +
+                        "category1_name, category2_name, category3_name, " +
+                        "template_id, " +
+                        "categoryList1, categoryList2, categoryList3) " +
+                        "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        [0,
+                            v.category1, v.category2, v.category3,
+                            v.categoryName1, v.categoryName2, v.categoryName3,
+                            v.templateId,
+                            JSON.stringify(v.categoryList1), JSON.stringify(v.categoryList2), JSON.stringify(v.categoryList3)]);
+
+
+                    //跳转到商品信息设置页
+                    window.location = "/goods/manage/goods/addSpu.html";
+                })
+
+            }
+        },
+        mounted() {
+            v = this;
+            //初始化一级分类
+            initOption(0, 1, true);
+        }
+    })
+</script>
+
+</body>
+</html>

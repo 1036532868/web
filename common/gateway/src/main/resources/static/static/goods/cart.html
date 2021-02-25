@@ -1,0 +1,250 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/1/31 15:14
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="../js/vue.js"></script>
+
+    <link href="../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+    <!--工具函数-->
+    <script type="text/javascript" src="../js/util.js"></script>
+    <script type="text/javascript" src="../js/jQuery.MD5.js"></script>
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="../css/pageHead.css"/>
+    <script type="text/javascript" src="../js/pageHead.js"></script>
+    <link href="../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        /*设置超链接不显示下划线*/
+        a{
+            text-decoration:none;
+        }
+        [v-cloak] {
+            display: none;
+        }
+
+        .page {
+        position: absolute;
+        left: 150px;
+        top: 0px;
+        width: 1630px;
+        }
+
+        .pageBody{
+            position: absolute;
+            top: 100px;
+            left: 0px;
+            width: 1630px;
+            background-color: #f7ecb5;
+        }
+        .numInput{
+            width: 30px;
+        }
+        .buyButton{
+            color: white;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!--页面头部-->
+    <div class="pageHead">
+        <div class="optionArea">
+            <!--引导-->
+            <span class="optionDiv">
+            <span id="user">
+                <a href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+            </span>
+            &nbsp;
+            <a href="..stry.html" style="color: red">免费注册</a>
+            &nbsp;
+            <a href="../order/cart.html" target="main">我的购物车</a>
+            &nbsp;
+            <a href="..sinessManagement.html" target="main">商家管理界面</a>
+        </span>
+        </div>
+
+        <a href="/"><img class="logo" title="返回首页" src="../img/logo.png"/></a>
+
+        <div class="searchInput">
+            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
+        </div>
+
+        <hr class="headHr">
+    </div>
+
+    <!--pageBody-->
+    <div class="pageBody">
+        <table>
+            <tr align="center">
+                <td><input id="checkAll1" onclick="clickCheckAll(1)" class="checkAll" type="checkbox"/>全选</td>
+                <td>商品</td>
+                <td>单价</td>
+                <td>数量</td>
+                <td>小计</td>
+                <td>操作</td>
+            </tr>
+
+            <tr v-for="e in skuList" v-cloak>
+                <td><input name="checkbox" type="checkbox"/></td>
+                <td>{{e.name}}</td>
+                <td>{{e.price}}</td>
+                <td>
+                    <input onclick="minus()" type="button" value="-"/>
+                    <input class="numInput" type="text" placeholder="数量" :value="e.num" maxlength="10"/>
+                    <input onclick="add()" type="button" value="+"/>
+                </td>
+                <td>{{e.price * e.num}}</td>
+                <td><a href="javascript:void(0)" @click="deleteSku(e.stringId)">删除</a></td>
+            </tr>
+
+            <tr>
+                <td><input id="checkAll2" onclick="clickCheckAll(2)" class="checkAll" type="checkbox"/>全选</td>
+                <td><a href="javascript:void(0)" @click="deleteSkuMulti()">删除</a></td>
+                <td>清理购物车</td>
+                <td>已选择&nbsp;<font id="total" color="red"></font>&nbsp;件商品</td>
+                <td>总价&nbsp;<font color="red">￥</font><font id="totalMoney" color="red"></font></td>
+                <td align="center"><input class="buyButton" type="button" value="去结算"/></td>
+            </tr>
+        </table>
+    </div>
+
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // 根据现有条件进行搜索
+    function search() {
+        var url = "/search?";
+        url += "pageNum=1";
+        if (v.userIn !== null) url += "&userIn=" + v.userIn;
+
+        window.location = url;
+    }
+    // 点击搜索以 userIn 和分页数据 查询
+    function searchButton(){
+        var val = $.trim($("#searchInput").val());
+        if (val === "") return;
+
+        v.userIn = val;
+
+        search();
+    }
+    // 搜索输入域点击回车
+    function searchKeyDown(event){
+        if (event.keyCode === 13){
+            $("#searchButton").click();
+        }
+    }
+
+    /* 检查输入的数量是不是数字*/
+    function checkNumFormat(val){
+        var regex = /[0-9]+/;
+        return regex.test(val);
+    }
+    /* 加商品数量*/
+    function add(){
+        var input = $(".numInput");
+        var val = $.trim(input.val());
+        if (!checkNumFormat(val)) return;
+
+        var newVal = parseInt(val);
+        input.val(++newVal);
+    }
+    /* 减商品数量*/
+    function minus(){
+        var input = $(".numInput");
+        var val = $.trim(input.val());
+        if (!checkNumFormat(val)) return;
+
+        var newVal = parseInt(val);
+        if (newVal <= 1) return;
+
+        input.val(--newVal);
+
+    }
+
+    /* 删除一个*/
+    function deleteSku(id){
+
+    }
+    /* 删除多个*/
+    function deleteSkuMulti(){
+
+    }
+
+    function initCart(){
+        $.ajax({
+            url: "/order/cart",
+            type: "get",
+            success: function (res) {
+                if (!res.flag){
+                    alert(res.message);
+                    return;
+                }
+
+                v.cart = res.data;
+            }
+        })
+    }
+
+    function init(){
+        staticPageInitUser();
+        initCart();
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            userIn: null,
+            cart: []
+        },
+        mounted(){
+            v = this;
+
+            init();
+        }
+    })
+</script>
+</body>
+</html>

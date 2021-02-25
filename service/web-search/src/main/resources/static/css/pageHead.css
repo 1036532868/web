@@ -53,3 +53,12 @@
     width: 1630px;
     color: #66afe9;
 }
+.loginModal {
+    position: absolute;
+    display: none;
+    top: 220px;
+    left: 615px;
+    width: 400px;
+    height: 300px;
+    background-color: #ce8483;
+}

@@ -8,30 +8,25 @@
     <meta charset="UTF-8">
     <title>搜索</title>
 
-    <!--<script type="text/javascript" src="../static/js/jQuery-3.5.1.js"></script>
-    <script type="text/javascript" src="../static/js/vue.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
 
-    &lt;!&ndash;自己写的分页插件&ndash;&gt;
-    <script type="text/javascript" src="../static/js/component/pagination/pagination.js"></script>
-    <link type="text/css" rel="stylesheet" href="../static/js/component/pagination/pagination.css"/>
-
-    &lt;!&ndash;自己写的选项卡插件&ndash;&gt;
-    <script type="text/javascript" src="../static/js/component/searchOption/searchOption.js"></script>
-    <link type="text/css" rel="stylesheet" href="../static/js/component/searchOption/searchOption.css"/>-->
-
-    <script type="text/javascript" src="/js/jQuery-3.5.1.js"></script>
-    <script type="text/javascript" src="/js/vue.js"></script>
+    <!--工具函数-->
+    <script type="text/javascript" src="/static/js/util.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
     <!--页面头部样式-->
-    <link type="text/css" rel="stylesheet" href="/css/pageHead.css"/>
+    <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
+    <script type="text/javascript" src="/static/js/pageHead.js"></script>
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript" src="/js/util.js"></script>
     <!--自己写的分页插件-->
-    <script type="text/javascript" src="/js/component/pagination/pagination.js"></script>
-    <link type="text/css" rel="stylesheet" href="/js/component/pagination/pagination.css"/>
+    <script type="text/javascript" src="/static/js/component/pagination/pagination.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/js/component/pagination/pagination.css"/>
 
     <!--自己写的选项卡插件-->
-    <script type="text/javascript" src="/js/component/searchOption/searchOption.js"></script>
-    <link type="text/css" rel="stylesheet" href="/js/component/searchOption/searchOption.css"/>
+    <script type="text/javascript" src="/static/js/component/searchOption/searchOption.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/js/component/searchOption/searchOption.css"/>
 
     <style type="text/css">
         .page {
@@ -145,17 +140,19 @@
         <div class="optionArea">
             <!--引导-->
             <span class="optionDiv">
-                <a href="/user/login.html">你好，请登录</a>
+                <span id="user">
+                    <a id="login" href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+                </span>
                 &nbsp;
-                <a href="/user/registry.html" style="color: red">免费注册</a>
+                <a href="/static/user/registry.html" style="color: red">免费注册</a>
                 &nbsp;
-                <a href="/order/cart.html" target="main">我的购物车</a>
+                <a href="/static/order/cart.html" target="main">我的购物车</a>
                 &nbsp;
-                <a href="/manage/businessManagement.html" target="main">商家管理界面</a>
+                <a href="/static/manage/businessManagement.html" target="main">商家管理界面</a>
             </span>
         </div>
 
-        <a hred="/"><img class="logo" title="返回首页" src="../static/img/logo.png"/></a>
+        <a hred="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
         <div class="searchInput">
             <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
@@ -234,6 +231,38 @@
         </div>
 
     </div>
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script type="text/javascript" th:inline="javascript">
@@ -414,6 +443,7 @@
     /**
      * 初始化品牌、分类列表/规格列表、商品陈列区、分页插件、已选择条件*/
     function init() {
+        initUser();
         initCondition();
         if (v.brandList !== null) initBrandList();
         if (v.categoryMap !== null) initCategoryMap();
@@ -425,6 +455,8 @@
         initPagination();
 
     }
+
+
     // 初始化已选择的条件
     function initCondition() {
         // 搜索栏输入内容
@@ -650,6 +682,7 @@
     var vue = new Vue({
         el: ".page",
         data: {
+            user: [[${user}]],
             userIn: [[${userIn}]],
 
             pageNum: [[${pageNum}]],

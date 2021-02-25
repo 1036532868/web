@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class SearchController {
     * @since 1.0.0
     */
     @GetMapping
-    public String search(Integer pageNum, String userIn, String spec, String categoryId, String brandName,  Model model){
+    public String search(Integer pageNum, String userIn, String spec, String categoryId, String brandName,  Model model, HttpSession session){
         String[] nameArray = userIn.split("\\s");
 
         Map<String, Object> params = new HashMap<>();
@@ -86,6 +88,8 @@ public class SearchController {
         params.put("categoryId", categoryId);
         params.put("userIn", userIn);
         model.addAllAttributes(params);
+        model.addAttribute("user", session.getAttribute("user"));
+        System.err.println(session.getAttribute("user"));
         return "search";
 
     }
@@ -100,7 +104,7 @@ public class SearchController {
     * @since 1.0.0
     */
     @GetMapping("/goods/{skuId}")
-    public String goods(@PathVariable("skuId") Long skuId, Model model) throws CRUDException {
+    public String goods(@PathVariable("skuId") Long skuId, Model model, HttpServletRequest request) throws CRUDException {
 
         Result<Sku> res1 = skuFeign.selectById(skuId);
         if (!res1.isFlag()) throw new CRUDException(res1.getMessage());
@@ -111,8 +115,10 @@ public class SearchController {
         if (!res2.isFlag()) throw new CRUDException(res2.getMessage());
 
         model.addAttribute("skuId", String.valueOf(skuId));
+        model.addAttribute("sku", sku);
         model.addAttribute("goods", res2.getData());
-
+        model.addAttribute("user", request.getSession().getAttribute("user"));
+        System.err.println(request.getSession().getAttribute("user"));
         return "goods";
     }
 
