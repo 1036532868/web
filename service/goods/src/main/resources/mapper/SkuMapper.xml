@@ -326,6 +326,10 @@
         where spu_id = #{spuId}
     </select>
 
-
+    <update id="sale">
+        update web_goods.tb_sku
+        set num = num - #{num}
+        where id = #{skuId} and num - #{num} >= 0
+    </update>
 
 </mapper>

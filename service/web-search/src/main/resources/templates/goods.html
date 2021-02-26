@@ -193,9 +193,9 @@
                 &nbsp;
                 <a href="/static/user/registry.html" style="color: red">免费注册</a>
                 &nbsp;
-                <a href="/static/order/cart.html" target="main">我的购物车</a>
+                <a href="/static/order/cart.html" target="_self">我的购物车</a>
                 &nbsp;
-                <a href="/static/manage/businessManagement.html" target="main">商家管理界面</a>
+                <a href="/static/manage/businessManagement.html" target="_self">商家管理界面</a>
             </span>
         </div>
 
@@ -431,6 +431,7 @@
         if (!checkNumFormat(val)) return;
 
         var newVal = parseInt(val);
+        if (newVal < 0) newVal = 0;
         input.val(++newVal);
     }
     /* 减商品数量*/

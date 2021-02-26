@@ -1,11 +1,13 @@
 package com.example.goods.service.impl;
 
+import com.example.exception.CRUDException;
 import com.example.goods.mapper.*;
 import com.example.goods.service.SkuService;
 import com.example.goodsApi.domain.*;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.*;
@@ -17,6 +19,7 @@ import java.util.*;
  * @since 1.0.0
  */
 @Service
+@Transactional(rollbackFor = CRUDException.class)
 public class SkuServiceImpl implements SkuService {
 
     @Autowired
@@ -255,11 +258,18 @@ public class SkuServiceImpl implements SkuService {
         return getSearchOption(skuList, pageNum, pageSize);
     }
 
+
+
+
     @Override
     public Sku selectById(Long skuId) {
         return skuMapper.selectByPrimaryKey(skuId);
     }
 
+    @Override
+    public void sale(Long skuId, Integer num) throws CRUDException {
+        if (skuMapper.sale() != 1) throw new CRUDException("商品库存不足");
+    }
 
 
 }

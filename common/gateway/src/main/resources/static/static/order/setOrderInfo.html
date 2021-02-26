@@ -1,0 +1,249 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/2/25 21:43
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>订单结算页</title>
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
+
+    <link href="../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <!--工具函数-->
+    <script type="text/javascript" src="/static/js/util.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
+    <script type="text/javascript" src="/static/js/pageHead.js"></script>
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        /*设置超链接不显示下划线*/
+        a{
+            text-decoration:none;
+        }
+        [v-cloak] {
+            display: none;
+        }
+
+        .page {
+            position: absolute;
+            left: 150px;
+            top: 0px;
+            width: 1630px;
+        }
+        .pageBody{
+            position: absolute;
+            left: 0px;
+            top: 80px;
+            width: 1630px;
+            background-color: #f7ecb5;
+            height: 200px;
+        }
+        .commit{
+            color: white;
+            background-color: red;
+        }
+        .skuImg{
+            width: 60px;
+            height: 60px;
+        }
+        td{
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+        .skuNameTd{
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!--页面头部-->
+    <div class="pageHead">
+        <div class="optionArea">
+            <!--引导-->
+            <span class="optionDiv">
+                <span id="user">
+                    <a id="login" href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+                </span>
+                &nbsp;
+                <a href="/static/user/registry.html" style="color: red">免费注册</a>
+                &nbsp;
+                <a href="/static/order/cart.html" target="_self">我的购物车</a>
+                &nbsp;
+                <a href="/static/manage/businessManagement.html" target="_self">商家管理界面</a>
+            </span>
+
+            <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+        </div>
+    </div>
+
+    <div class="pageBody">
+        <table align="center">
+            <tr align="center">
+                <td>商品</td>
+                <td>单价</td>
+                <td>数量</td>
+                <td>小计</td>
+            </tr>
+
+            <tbody id="tbody">
+            <tr v-for="(e, i) in cart" v-cloak align="center" :id="e.id">
+                <td class="skuNameTd"><img class="skuImg" :src="e.image"/>&nbsp;{{e.name}}</td>
+                <td>￥{{e.price}}</td>
+                <td>
+                    <font color="red">×{{e.num}}</font>
+                </td>
+                <td><font color="red">￥</font><font color="red">{{e.money}}</font></td>
+            </tr>
+            <tr align="center">
+                <td colspan="4">
+                    <a href="/static/order/cart.html">返回修改购物车</a>
+                    &nbsp;&nbsp;
+                    <input @click="prepay()" class="commit" type="button" value="提交订单"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    db = openDatabase("com.example.web", "1.0", "", 1024 * 1024);
+
+    function OrderItem() {
+        var id;
+        var categoryId1;
+        var categoryId2;
+        var categoryId3;
+        var spuId;
+        var skuId;
+        var orderId;
+        var name;
+        var price;
+        var num;
+        var money;
+        var payMoney;
+        var image;
+        var weight;
+        var postFee;
+        var isReturn;
+    }
+
+    function initChosenSkus(){
+        db.transaction(function(tx){
+            tx.executeSql("select * from tbl_order_item", [], function (tx, resultSet) {
+                var len = resultSet.rows.length;
+                if (len < 1) return;
+
+                for (var i = 0; i < len; i++){
+                    var item = resultSet.rows.item(i);
+                    var orderItem = new OrderItem();
+                    orderItem.id = item.id;
+                    orderItem.categoryId1 = item.category_id1;
+                    orderItem.categoryId2 = item.category_id2;
+                    orderItem.categoryId3 = item.category_id3;
+                    orderItem.spuId = item.spu_id;
+                    orderItem.skuId = item.sku_id;
+                    orderItem.orderId = item.order_id;
+                    orderItem.name = item.name;
+                    orderItem.price = item.price;
+                    orderItem.num = item.num;
+                    orderItem.money = item.money;
+                    orderItem.payMoney = item.pay_money;
+                    orderItem.image = item.image;
+                    orderItem.weight = item.weight;
+                    orderItem.postFee = item.post_fee;
+                    orderItem.isReturn = item.is_return;
+
+                    v.cart.push(orderItem);
+                }
+            })
+        })
+    }
+
+    function init() {
+        staticPageInitUser();
+        initChosenSkus();
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            cart: [],
+            user: null
+        },
+        methods: {
+            prepay(){
+                var param = "";
+                for (var i = 0; i < v.cart.length; i++){
+                    param += "skuId=" + v.cart[i].id;
+                    if (i < v.cart.length - 1){
+                        param += "&";
+                    }
+                }
+
+                $.ajax({
+                    url: "/order/add",
+                    type: "post",
+                    data: param,
+                    success: function (res) {
+                        if (res.flag){
+                            alert(res.message);
+                        }
+                        // 返回orderId
+                        //alert(res.data);
+
+
+                    }
+                })
+            }
+        },
+        mounted(){
+            v = this;
+
+            init();
+        }
+    })
+</script>
+</body>
+</html>

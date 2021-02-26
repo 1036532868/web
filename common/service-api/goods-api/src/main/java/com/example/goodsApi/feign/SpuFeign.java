@@ -1,6 +1,7 @@
 package com.example.goodsApi.feign;
 
 import com.example.goodsApi.domain.Goods;
+import com.example.goodsApi.domain.Spu;
 import com.example.util.Result;
 import com.github.pagehelper.PageInfo;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -17,6 +18,9 @@ import java.util.Map;
 @FeignClient("goods-server")
 @RequestMapping("/goods/spu")
 public interface SpuFeign {
+
+    @GetMapping("/get")
+    Result<Spu> get(@RequestParam("spuId") Long spuId);
 
     /**
      * @Description TODO 新增商品, 传入json格式参数

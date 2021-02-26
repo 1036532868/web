@@ -122,7 +122,7 @@
 
 <script type="text/javascript">
     /*开启webSQL*/
-    db = openDatabase("com.example.web", "1.0", "", 10 * 1024 * 1024);
+    db = openDatabase("com.example.web", "1.0", "", 1024 * 1024);
 
     /*创建tbl_goods_spu, 多加3个字段, categoryName*/
     db.transaction(function (tx) {

@@ -2,6 +2,7 @@ package com.example.goods.service;
 
 import com.example.exception.CRUDException;
 import com.example.goodsApi.domain.Goods;
+import com.example.goodsApi.domain.Spu;
 import com.github.pagehelper.PageInfo;
 
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Map;
  * @since 1.0.0
  */
 public interface SpuService {
+    Spu get(Long spuId);
+
     void add(Goods goods) throws CRUDException;
 
     PageInfo<Map<String, Object>> pageList(Map param);

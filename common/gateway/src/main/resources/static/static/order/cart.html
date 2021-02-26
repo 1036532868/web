@@ -1,0 +1,450 @@
+<!--
+    @Author: gong_da_kai
+    @Date: 2021/1/31 15:14
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
+
+    <link href="../css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <!--工具函数-->
+    <script type="text/javascript" src="/static/js/util.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
+    <script type="text/javascript" src="/static/js/pageHead.js"></script>
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        /*设置超链接不显示下划线*/
+        a{
+            text-decoration:none;
+        }
+        [v-cloak] {
+            display: none;
+        }
+
+        .page {
+        position: absolute;
+        left: 150px;
+        top: 0px;
+        width: 1630px;
+        }
+
+        .pageBody{
+            position: absolute;
+            top: 100px;
+            left: 0px;
+            width: 1630px;
+            background-color: #f7ecb5;
+        }
+        .numInput{
+            width: 30px;
+        }
+        .buyButton{
+            color: white;
+            background-color: red;
+        }
+        .skuImg{
+            width: 60px;
+            height: 60px;
+        }
+        td{
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+        .skuNameTd{
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <!--页面头部-->
+    <div class="pageHead">
+        <div class="optionArea">
+            <!--引导-->
+            <span class="optionDiv">
+                <span id="user">
+                    <a id="login" href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+                </span>
+                &nbsp;
+                <a href="/static/user/registry.html" style="color: red">免费注册</a>
+                &nbsp;
+                <a href="/static/order/cart.html" target="_self">我的购物车</a>
+                &nbsp;
+                <a href="/static/manage/businessManagement.html" target="_self">商家管理界面</a>
+            </span>
+        </div>
+
+        <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+
+        <div class="searchInput">
+            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
+        </div>
+
+        <hr class="headHr">
+    </div>
+
+    <!--pageBody-->
+    <div class="pageBody">
+        <table>
+            <tr align="center">
+                <td><input id="checkAll1" onclick="clickCheckAll(1)" class="checkAll" type="checkbox"/>全选</td>
+                <td>商品</td>
+                <td>单价</td>
+                <td>数量</td>
+                <td>小计</td>
+                <td>操作</td>
+            </tr>
+
+            <tbody id="tbody">
+                <tr v-for="(e, i) in cart" v-cloak align="center" :id="e.id">
+                    <td><input onclick="clickCheckbox()" :value="e.id" name="checkbox" type="checkbox"/></td>
+                    <td class="skuNameTd"><img class="skuImg" :src="e.image"/>&nbsp;{{e.name}}</td>
+                    <td>￥{{e.price}}</td>
+                    <td>
+                        <input @click="minus(e.id, i)" type="button" value="-"/>
+                        <input :id="e.id + 'Num'" class="numInput" type="text" placeholder="数量" :value="e.num" maxlength="10"/>
+                        <input @click="add(e.id, i)" type="button" value="+"/>
+                        <input :id="e.id + 'Timer'" type="hidden"/>
+                        <br>
+                        0.2秒没有再更改才会发送请求
+                    </td>
+                    <td><font color="red">￥</font><font :id="e.id + 'Money'" color="red">{{e.money}}</font></td>
+                    <td><a href="javascript:void(0)" @click='deleteSku(e.id)'>删除</a></td>
+                </tr>
+            </tbody>
+
+            <tr>
+                <td><input id="checkAll2" onclick="clickCheckAll(2)" class="checkAll" type="checkbox"/>全选</td>
+                <td><a href="javascript:void(0)" @click="deleteSkuMulti()">删除</a></td>
+                <td>清理购物车</td>
+                <td>已选择&nbsp;<font id="totalNum" color="red"></font>&nbsp;件商品</td>
+                <td>总价&nbsp;<font color="red">￥</font><font id="totalMoney" color="red"></font></td>
+                <td align="center"><input @click="setOrderInfo()" class="buyButton" type="button" value="去结算"/></td>
+            </tr>
+        </table>
+    </div>
+
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    db = openDatabase("com.example.web", "1.0", "", 1024 * 1024);
+
+    db.transaction(function (tx) {
+        tx.executeSql("drop table if exists tbl_order_item");
+        tx.executeSql("create table if not exists tbl_order_item(id unique" +
+            ",category_id1" +
+            ",category_id2" +
+            ",category_id3" +
+            ",spu_id" +
+            ",sku_id" +
+            ",order_id" +
+            ",name" +
+            ",price" +
+            ",num" +
+            ",money" +
+            ",pay_money" +
+            ",image" +
+            ",weight" +
+            ",post_fee" +
+            ",is_return)")
+    })
+
+    // 根据现有条件进行搜索
+    function search() {
+        var url = "/search?";
+        url += "pageNum=1";
+        if (v.userIn !== null) url += "&userIn=" + v.userIn;
+
+        window.location = url;
+    }
+    // 点击搜索以 userIn 和分页数据 查询
+    function searchButton(){
+        var val = $.trim($("#searchInput").val());
+        if (val === "") return;
+
+        v.userIn = val;
+
+        search();
+    }
+    // 搜索输入域点击回车
+    function searchKeyDown(event){
+        if (event.keyCode === 13){
+            $("#searchButton").click();
+        }
+    }
+
+    /* 检查输入的数量是不是数字*/
+    function checkNumFormat(val){
+        var regex = /[0-9]+/;
+        var regex2 = /^0+$/;
+        if (regex.test(val)){
+            return !regex2.test(val);
+        }
+        return false;
+    }
+
+
+    function getNumAndMoney() {
+        v.num = 0;
+        v.totalMoney = 0;
+        for (var i = 0; i < v.cart.length; i++) {
+            if (v.cart[i] === null) continue;
+
+            v.num += v.cart[i].num;
+            var money = v.cart[i].price * v.cart[i].num;
+
+            v.totalMoney += money;
+        }
+
+        $("#totalNum").text(v.num);
+        $("#totalMoney").text(v.totalMoney);
+    }
+
+    function initCart(){
+        $.ajax({
+            url: "/order/cart/get",
+            type: "get",
+            success: function (res) {
+                if (!res.flag){
+                    return;
+                }
+
+                v.cart = res.data;
+
+                if (v.cart.length === 0){
+                    $("#tbody").append("<tr align='center'><td colspan='6'><a href='/'>购物车中还没有商品, 现在去添加</a></td></tr>")
+                }
+
+                getNumAndMoney();
+            }
+        })
+    }
+
+    function init(){
+        staticPageInitUser();
+
+        initCart();
+    }
+
+    // 改变数量时开启/重置计时
+    function numTimerInvoker(skuId){
+        // 如果上个任务还在, 清除
+        var note = $("#" + skuId + "Timer")
+        var lastInterVal = note.val();
+        if (lastInterVal !== "") clearInterval(parseInt(lastInterVal));
+
+        // 开启新的定时
+        var tag = setInterval(numTimer(skuId), 200);
+
+        // 记录新的定时
+        note.val(tag);
+    }
+    // 计时任务
+    function numTimer(skuId){
+        var num = $("#" + skuId + "Num").val();
+        var note = $("#" + skuId + "Timer")
+
+        // 清除定时, 只执行一次
+        clearInterval(parseInt(note.val()));
+        note.val("");
+
+        // 不符合规则, 结束
+        if (!checkNumFormat(num)) {
+            return;
+        }
+
+        // 符合规则, 发送
+        $.ajax({
+            url: "/order/cart/set",
+            type: "post",
+            data: {
+                "skuId": skuId,
+                num: num
+            },
+            success: function (res) {
+                if (!res.flag){
+                    alert(res.message);
+                }
+            }
+        })
+    }
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            userIn: null,
+            cart: [],
+            user: null,
+            num: 0,
+            totalMoney: 0
+        },
+        methods: {
+            /* 删除一个*/
+            deleteSku(skuId){
+
+                $.ajax({
+                    url: "/order/cart/delete",
+                    type: "post",
+                    data: {
+                        "skuId": skuId
+                    },
+                    success: function (res) {
+                        if (res.flag){
+                            $("#"+ skuId).remove();
+                            for (var i = 0; i < v.cart.length; i++){
+                                if (v.cart[i].id === skuId){
+                                    v.cart[i] = null;
+                                }
+                            }
+                            getNumAndMoney();
+                        }
+                    }
+                })
+            },
+            /* 删除多个*/
+            deleteSkuMulti(){
+                var skuIds = $(":checkbox[name=checkbox]:checked");
+                var param = "";
+                for (var i = 0; i < skuIds.length; i++){
+                    param += "skuId="+ skuIds[i].value;
+                    if (i < skuIds.length - 1){
+                        param += "&";
+                    }
+                }
+
+                $.ajax({
+                    url: "/order/cart/delete",
+                    type: "post",
+                    data: param,
+                    success: function(res){
+                        if (res.flag) {
+                            for (var i = 0; i < skuIds.length; i++) {
+                                $("#"+ skuIds[i].value).remove();
+                                for (var i1 = 0; i1 < v.cart.length; i1++){
+                                    if (v.cart[i1].id === skuIds[i].value){
+                                        v.cart[i1] = null;
+                                        break;
+                                    }
+                                }
+                                getNumAndMoney();
+                            }
+                        }
+                    }
+                })
+            },
+            /* 加商品数量*/
+            add(id, i){
+                var input = $("#" + id + "Num");
+                var money = $("#"+ id +"Money")
+                var val = $.trim(input.val());
+                if (!checkNumFormat(val)) return;
+
+                var newVal = parseInt(val);
+                input.val(++newVal);
+
+                v.cart[i].num++;
+                money.text(v.cart[i].num * v.cart[i].price);
+                getNumAndMoney();
+
+                numTimerInvoker(id);
+            },
+            /* 减商品数量*/
+            minus(id, i){
+                var input = $("#" + id + "Num");
+                var money = $("#"+ id +"Money")
+                var val = $.trim(input.val());
+                if (!checkNumFormat(val)) return;
+
+                var newVal = parseInt(val);
+                if (newVal <= 1) return;
+
+                input.val(--newVal);
+
+                v.cart[i].num--;
+                money.text(v.cart[i].num * v.cart[i].price);
+                getNumAndMoney();
+
+                numTimerInvoker(id);
+            },
+            setOrderInfo(){
+                var target = $(":checkbox[name=checkbox]:checked");
+                if (target.length < 1) return;
+
+                for (var i = 0; i < v.cart.length; i++){
+                    var item = v.cart[i];
+                    if (item === null) continue;
+
+                    // 将被选中多选框的商品存入webSql
+                    for (var i1 = 0; i1 < target.length; i1++){
+
+                        var skuId = target[i1].value;
+                        if (skuId === item.id){
+                            // 将已经被存入过的条件删除, 减少遍历次数
+                            target.splice(i1, 1);
+
+                            db.transaction(function (tx) {
+
+                                tx.executeSql("insert into tbl_order_item(id, category_id1, category_id2, category_id3, spu_id, sku_id, order_id, name, price, num, money, pay_money, image, weight, post_fee, is_return) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                                    [item.id, item.categoryId1, item.categoryId2, item.categoryId3, item.spuId, item.skuId, item.orderId,
+                                        item.name, item.price, item.num, item.money, item.payMoney, item.image, item.weight, item.postFee, item.isReturn])
+
+                                window.location = "/static/order/setOrderInfo.html";
+                            })
+
+                        }
+                    }
+                }
+
+            }
+        },
+        mounted(){
+            v = this;
+
+            init();
+        }
+    })
+</script>
+</body>
+</html>

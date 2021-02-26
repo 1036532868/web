@@ -14,4 +14,8 @@ public interface CartService {
     void add(Long skuId, Integer num, String username) throws CRUDException;
 
     List<Object> get(String username);
+
+    void delete(Long[] skuId, String username) throws CRUDException;
+
+    void set(Long skuId, Integer num, String username);
 }

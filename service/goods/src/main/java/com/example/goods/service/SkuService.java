@@ -1,5 +1,6 @@
 package com.example.goods.service;
 
+import com.example.exception.CRUDException;
 import com.example.goodsApi.domain.Sku;
 
 import java.util.Map;
@@ -14,4 +15,6 @@ public interface SkuService {
     Map<String, Object> search(Map<String, Object> params);
 
     Sku selectById(Long skuId);
+
+    void sale(Long skuId, Integer num) throws CRUDException;
 }

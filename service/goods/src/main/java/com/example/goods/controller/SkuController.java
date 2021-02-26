@@ -1,5 +1,6 @@
 package com.example.goods.controller;
 
+import com.example.exception.CRUDException;
 import com.example.goods.service.SkuService;
 import com.example.goodsApi.domain.Sku;
 import com.example.util.Result;
@@ -70,5 +71,20 @@ public class SkuController {
     public Result<Sku> selectById(@PathVariable("skuId") Long skuId){
         Sku sku = skuService.selectById(skuId);
         return new Result<>(true, StatusCode.OK, "", sku);
+    }
+
+    /**
+    * @description TODO 商品减库存
+    * @param skuId
+    * @param num
+    * @return com.example.util.Result
+    * @author gong_da_kai
+    * @date 2021/2/26 11:33
+    * @since 1.0.0
+    */
+    @PostMapping("/sale")
+    public Result sale(Long skuId, Integer num) throws CRUDException {
+        skuService.sale(skuId, num);
+        return new Result();
     }
 }

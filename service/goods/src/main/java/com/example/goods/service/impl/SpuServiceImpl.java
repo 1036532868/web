@@ -47,6 +47,11 @@ public class SpuServiceImpl implements SpuService {
     ObjectMapper objectMapper;
 
     @Override
+    public Spu get(Long spuId) {
+        return spuMapper.selectByPrimaryKey(spuId);
+    }
+
+    @Override
     public void add(Goods goods) throws CRUDException {
 
         Spu spu = goods.getSpu();

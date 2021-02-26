@@ -47,4 +47,16 @@ public interface SkuFeign {
      */
     @GetMapping("/{skuId}")
     Result<Sku> selectById(@PathVariable("skuId") Long skuId);
+
+    /**
+     * @description TODO 商品减库存
+     * @param skuId
+     * @param num
+     * @return com.example.util.Result
+     * @author gong_da_kai
+     * @date 2021/2/26 11:33
+     * @since 1.0.0
+     */
+    @PostMapping("/sale")
+    Result sale(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num);
 }

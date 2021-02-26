@@ -1,3 +1,18 @@
+function staticPageInitUser() {
+    $.ajax({
+        url: "/user/get",
+        type: "get",
+        success: function(res){
+            if (!res.flag){
+                showLoginModal();
+                $("#loginError").text(res.message);
+            }
+
+            v.user = res.data;
+            initUser();
+        }
+    })
+}
 function initUser() {
     if (v.user === null) return;
     $("#user").html(v.user.username + "&nbsp;<a href='javascript:void(0)' onclick='logout()' style='color: red'>登出</a>")

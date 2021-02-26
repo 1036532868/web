@@ -3,6 +3,7 @@ package com.example.goods.controller;
 import com.example.exception.CRUDException;
 import com.example.goods.service.SpuService;
 import com.example.goodsApi.domain.Goods;
+import com.example.goodsApi.domain.Spu;
 import com.example.util.Result;
 import com.example.util.StatusCode;
 import com.github.pagehelper.PageInfo;
@@ -23,6 +24,12 @@ public class SpuController {
 
     @Autowired
     SpuService spuService;
+
+    @GetMapping("/get")
+    public Result<Spu> get(Long spuId){
+        Spu spu = spuService.get(spuId);
+        return new Result<>(true, StatusCode.OK, "", spu);
+    }
 
     /**
     * @Description TODO 新增商品, 传入json格式参数

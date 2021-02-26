@@ -21,4 +21,6 @@ public interface SkuMapper {
     List<Sku> search(Map<String, Object> params);
 
     List<Sku> selectBySpuId(Long spuId);
+
+    int sale();
 }

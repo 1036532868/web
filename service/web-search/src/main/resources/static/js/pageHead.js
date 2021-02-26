@@ -11,7 +11,7 @@ function hideLoginModal(){
     $("#password").val("");
 }
 function login(){
-    var username = $.trim( $("#username").val());
+    var username = $.trim($("#username").val());
     var password = $.trim($("#password").val());
 
     if (username === "" || password === "") return;

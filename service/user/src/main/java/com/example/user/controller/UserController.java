@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -30,26 +29,30 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public Result login(String username, String password, HttpServletRequest request) throws CRUDException {
-        request.getSession().setAttribute("user", null);
+    public Result login(String username, String password, HttpSession session) throws CRUDException {
+        session.setAttribute("user", null);
         User user = userService.login(username, password);
 
-        request.getSession().setAttribute("user", user);
-        System.err.println(request.getSession().getId());
+        session.setAttribute("user", user);
         return new Result(true, StatusCode.OK, "", user);
     }
 
     @GetMapping("/logout")
     @ResponseBody
     public Result logout(HttpSession session){
-        session = null;
+        session.setAttribute("user", null);
 
         return new Result();
     }
 
     @GetMapping("/get")
     @ResponseBody
-    public Result getCurrentUser(HttpSession session){
-        return new Result(true, StatusCode.OK, "", session.getAttribute("user"));
+    public Result getCurrentUser(HttpSession session) throws CRUDException {
+        User user = (User) session.getAttribute("user");
+        if (user == null){
+            throw new CRUDException("需要登录");
+        }
+
+        return new Result<>(true, StatusCode.OK, "", session.getAttribute("user"));
     }
 }
