@@ -23,6 +23,9 @@
 
 
     <style type="text/css">
+        [v-cloak]{
+            display: none;
+        }
         .page {
             position: absolute;
             left: 150px;
@@ -199,10 +202,10 @@
             </span>
         </div>
 
-        <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+        <a href="/static/index.html"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
         <div class="searchInput">
-            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input placeholder="目前 多个关键词以空格隔开" onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
             <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
         </div>
 
@@ -258,6 +261,8 @@
             <input onclick="add()" type="button" value="+"/>
             &nbsp;
             <input onclick="toCart()" type="button" value="加入购物车"/>
+            &nbsp;&nbsp;
+            <font v-cloak>库存 {{sku.num}} 件</font>
             <br>
             <font class="alertFont"></font>
         </div>

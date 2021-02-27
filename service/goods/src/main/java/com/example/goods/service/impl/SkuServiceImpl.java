@@ -247,9 +247,12 @@ public class SkuServiceImpl implements SkuService {
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
 
+
         String name = (String) params.get("name");
-        String[] nameArray = name.split(",");
-        params.put("name", nameArray);
+        if (name != null && !"".equals(name)) {
+            String[] nameArray = name.split(",");
+            params.put("name", nameArray);
+        }
 
         List<Sku> firstSkuList = skuMapper.search(params);
 
@@ -268,7 +271,7 @@ public class SkuServiceImpl implements SkuService {
 
     @Override
     public void sale(Long skuId, Integer num) throws CRUDException {
-        if (skuMapper.sale() != 1) throw new CRUDException("商品库存不足");
+        if (skuMapper.sale(skuId, num) != 1) throw new CRUDException("商品库存不足");
     }
 
 

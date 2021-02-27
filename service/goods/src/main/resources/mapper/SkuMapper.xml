@@ -288,9 +288,15 @@
         </if>
 
         <where>
-
+            <if test="status != null and status != ''">
+                sku.status = #{status}
+            </if>
+            <if test="num != null">
+                and sku.num > #{num}
+            </if>
             /*遍历nameArray, 每个元素都检查是否包含*/
             <if test="name != null and name != ''">
+                and
                 <foreach collection="name" open="(" close=")" separator=" or " item="n">
                     sku.name like '%' #{n} '%'
                     or sku.category_name like '%' #{n} '%'
@@ -299,15 +305,11 @@
                 </foreach>
             </if>
 
+
             <if test="brandName != null and brandName != ''">
                 and sku.brand_name = #{brandName}
             </if>
-            <if test="num != null and num != ''">
-                and sku.num > #{num}
-            </if>
-            <if test="status != null and status != ''">
-                and sku.status = #{status}
-            </if>
+
             /*分类不为空时, 同时设定分类条件*/
             <if test="categoryId != null">
                 and

@@ -80,7 +80,7 @@
         <table align="center">
             <tr>
                 <td><font color="red">*</font>商品分类</td>
-                <td><font id="category"></font>&nbsp;<a href="/goods/manage/goods/addCategory.html">编辑</a></td>
+                <td><font id="category"></font>&nbsp;<a href="/static/manage/goods/addCategory.html">编辑</a></td>
             </tr>
             <tr>
                 <td><font color="red">*</font>商品名称</td>
@@ -185,7 +185,7 @@
                 } else {
                     /*如果没有查到信息, 说明是直接绕过设置三级分类信息页面, 访问的此页面*/
                     if (confirm("三级分类还没有选择, 要跳转到 分类信息选择 页面吗")) {
-                        window.location = "/goods/manage/goods/addCategory.html";
+                        window.location = "/static/manage/goods/addCategory.html";
                     }
 
                 }
@@ -208,7 +208,7 @@
         },
         methods: {
             back: function () {
-                window.location = "/goods/manage/goods/addCategory.html";
+                window.location = "/static/manage/goods/addCategory.html";
             },
             next: function () {
                 v.name = $.trim(v.name);
@@ -231,7 +231,7 @@
                         [v.sn, v.name, v.caption, v.brandId, v.introduction,v.freightId ,JSON.stringify(v.brandList)]);
 
                     //跳转到addSku
-                    window.location = "/goods/manage/goods/addSku.html";
+                    window.location = "/static/manage/goods/addSku.html";
                 })
             }
         },

@@ -84,10 +84,10 @@
             </span>
         </div>
 
-        <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+        <a href="/static/index.html"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
         <div class="searchInput">
-            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input placeholder="目前 多个关键词以空格隔开" onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
             <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
         </div>
 
@@ -98,7 +98,7 @@
     <div class="pageBody">
         <table>
             <tr align="center">
-                <td><input id="checkAll1" onclick="clickCheckAll(1)" class="checkAll" type="checkbox"/>全选</td>
+                <td><input checked id="checkAll1" onclick="clickCheckAll(1)" class="checkAll" type="checkbox"/>全选</td>
                 <td>商品</td>
                 <td>单价</td>
                 <td>数量</td>
@@ -108,7 +108,7 @@
 
             <tbody id="tbody">
                 <tr v-for="(e, i) in cart" v-cloak align="center" :id="e.id">
-                    <td><input onclick="clickCheckbox()" :value="e.id" name="checkbox" type="checkbox"/></td>
+                    <td><input checked onclick="clickCheckbox()" :value="e.id" name="checkbox" type="checkbox"/></td>
                     <td class="skuNameTd"><img class="skuImg" :src="e.image"/>&nbsp;{{e.name}}</td>
                     <td>￥{{e.price}}</td>
                     <td>
@@ -125,7 +125,7 @@
             </tbody>
 
             <tr>
-                <td><input id="checkAll2" onclick="clickCheckAll(2)" class="checkAll" type="checkbox"/>全选</td>
+                <td><input checked id="checkAll2" onclick="clickCheckAll(2)" class="checkAll" type="checkbox"/>全选</td>
                 <td><a href="javascript:void(0)" @click="deleteSkuMulti()">删除</a></td>
                 <td>清理购物车</td>
                 <td>已选择&nbsp;<font id="totalNum" color="red"></font>&nbsp;件商品</td>
@@ -263,7 +263,7 @@
     }
 
     function init(){
-        staticPageInitUser();
+        staticPageInitUser(true);
 
         initCart();
     }

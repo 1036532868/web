@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.user.mapper.AreasMapper">
+  <resultMap id="BaseResultMap" type="com.example.userApi.domain.Areas">
+    <id column="areaid" jdbcType="VARCHAR" property="areaid" />
+    <result column="area" jdbcType="VARCHAR" property="area" />
+    <result column="cityid" jdbcType="VARCHAR" property="cityid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    areaid, area, cityid
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_user.tb_areas
+    where areaid = #{areaid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from web_user.tb_areas
+    where areaid = #{areaid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.example.userApi.domain.Areas">
+    insert into web_user.tb_areas (areaid, area, cityid
+      )
+    values (#{areaid,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, #{cityid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.userApi.domain.Areas">
+    insert into web_user.tb_areas
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="areaid != null">
+        areaid,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="cityid != null">
+        cityid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="areaid != null">
+        #{areaid,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        #{cityid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.userApi.domain.Areas">
+    update web_user.tb_areas
+    <set>
+      <if test="area != null">
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        cityid = #{cityid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where areaid = #{areaid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.userApi.domain.Areas">
+    update web_user.tb_areas
+    set area = #{area,jdbcType=VARCHAR},
+      cityid = #{cityid,jdbcType=VARCHAR}
+    where areaid = #{areaid,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -64,11 +64,14 @@ public class OrderServiceImpl implements OrderService {
         Integer totalNum = 0;
         Integer totalMoney = 0;
         for (Long id : skuId) {
+            Long itemId = idWorker.nextId();
             OrderItem item = (OrderItem) redis.opsForHash().get(redisKey, id);
             Result<Sku> res1 = skuFeign.selectById(id);
             Sku sku = res1.getData();
             if (sku == null) throw new CRUDException(res1.getMessage());
+            if (item == null) throw new CRUDException("购物车中没有这件商品了");
 
+            item.setId(itemId.toString());
             item.setOrderId(orderId.toString());
             item.setPrice(sku.getPrice());
             item.setMoney(item.getPrice() * item.getNum());
@@ -78,9 +81,11 @@ public class OrderServiceImpl implements OrderService {
             totalNum += item.getNum();
             totalMoney += item.getMoney();
 
-            skuFeign.sale(id, item.getNum());
+            Result res2 = skuFeign.sale(id, item.getNum());
+            if (!res2.isFlag()) throw new CRUDException(res2.getMessage());
             if (orderItemMapper.insertSelective(item) != 1) throw new CRUDException("生成订单失败");
         }
+
 
         order.setTotalNum(totalNum);
         order.setTotalMoney(totalMoney);
@@ -88,10 +93,17 @@ public class OrderServiceImpl implements OrderService {
         if (orderMapper.insertSelective(order) != 1) throw new CRUDException("生成订单失败");
 
         amqp.convertAndSend("ex.order.timeout", "order.timeout", orderId);
-        redis.opsForHash().put("order", orderId, order);
+        redis.opsForHash().put("order", orderId.toString(), order);
         // 清除购物车中已生成订单的商品
         redis.opsForHash().delete(redisKey, skuId);
 
         return orderId.toString();
+    }
+
+    @Override
+    public String payStatus(String orderId) throws CRUDException {
+        Order order = (Order) redis.opsForHash().get("order", orderId);
+        if (order == null) throw new CRUDException("订单已超时");
+        return order.getPayStatus();
     }
 }

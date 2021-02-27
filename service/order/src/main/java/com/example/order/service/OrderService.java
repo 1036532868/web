@@ -10,4 +10,6 @@ import com.example.exception.CRUDException;
  */
 public interface OrderService {
     String add(Long[] skuId, String username) throws CRUDException;
+
+    String payStatus(String orderId) throws CRUDException;
 }

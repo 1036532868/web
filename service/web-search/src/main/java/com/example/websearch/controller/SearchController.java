@@ -47,21 +47,25 @@ public class SearchController {
     */
     @GetMapping
     public String search(Integer pageNum, String userIn, String spec, String categoryId, String brandName,  Model model, HttpSession session){
-        String[] nameArray = userIn.split("\\s");
-
         Map<String, Object> params = new HashMap<>();
-        // 处理 userIn 为 name
-        StringBuilder name = new StringBuilder();
-        for (int i = 0; i < nameArray.length; i++) {
-            name.append(nameArray[i]);
-            if (i < nameArray.length - 1) {
-                name.append(",");
-            }
-        }
 
+        if (userIn != null) {
+            String[] nameArray = userIn.split("\\s");
+
+            // 处理 userIn 为 name
+            StringBuilder name = new StringBuilder();
+            for (int i = 0; i < nameArray.length; i++) {
+                name.append(nameArray[i]);
+                if (i < nameArray.length - 1) {
+                    name.append(",");
+                }
+            }
+
+            params.put("name", name.toString());
+        }
+        if (pageNum == null) pageNum = 1;
         params.put("pageNum", pageNum);
         params.put("pageSize", 60);
-        params.put("name", name.toString());
         params.put("spec", spec);
         params.put("brandName", brandName);
         params.put("num", 0);
@@ -88,9 +92,8 @@ public class SearchController {
         params.put("userIn", userIn);
         model.addAllAttributes(params);
         model.addAttribute("user", session.getAttribute("user"));
-        System.err.println(session.getAttribute("user"));
-        return "search";
 
+        return "search";
     }
 
     /**

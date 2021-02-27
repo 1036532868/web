@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.order.mapper.OrderItemMapper">
+  <resultMap id="BaseResultMap" type="com.example.orderApi.domain.OrderItem">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="category_id1" jdbcType="INTEGER" property="categoryId1" />
+    <result column="category_id2" jdbcType="INTEGER" property="categoryId2" />
+    <result column="category_id3" jdbcType="INTEGER" property="categoryId3" />
+    <result column="spu_id" jdbcType="BIGINT" property="spuId" />
+    <result column="sku_id" jdbcType="BIGINT" property="skuId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="money" jdbcType="INTEGER" property="money" />
+    <result column="pay_money" jdbcType="INTEGER" property="payMoney" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="weight" jdbcType="INTEGER" property="weight" />
+    <result column="post_fee" jdbcType="INTEGER" property="postFee" />
+    <result column="is_return" jdbcType="CHAR" property="isReturn" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, category_id1, category_id2, category_id3, spu_id, sku_id, order_id, name, price, 
+    num, money, pay_money, image, weight, post_fee, is_return
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_order.tb_order_item
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from web_order.tb_order_item
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.example.orderApi.domain.OrderItem">
+    insert into web_order.tb_order_item (id, category_id1, category_id2,
+      category_id3, spu_id, sku_id, 
+      order_id, name, price, 
+      num, money, pay_money, 
+      image, weight, post_fee, 
+      is_return)
+    values (#{id,jdbcType=VARCHAR}, #{categoryId1,jdbcType=INTEGER}, #{categoryId2,jdbcType=INTEGER}, 
+      #{categoryId3,jdbcType=INTEGER}, #{spuId,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, 
+      #{orderId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=INTEGER}, 
+      #{num,jdbcType=INTEGER}, #{money,jdbcType=INTEGER}, #{payMoney,jdbcType=INTEGER}, 
+      #{image,jdbcType=VARCHAR}, #{weight,jdbcType=INTEGER}, #{postFee,jdbcType=INTEGER}, 
+      #{isReturn,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.orderApi.domain.OrderItem">
+    insert into web_order.tb_order_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="categoryId1 != null">
+        category_id1,
+      </if>
+      <if test="categoryId2 != null">
+        category_id2,
+      </if>
+      <if test="categoryId3 != null">
+        category_id3,
+      </if>
+      <if test="spuId != null">
+        spu_id,
+      </if>
+      <if test="skuId != null">
+        sku_id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="payMoney != null">
+        pay_money,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="weight != null">
+        weight,
+      </if>
+      <if test="postFee != null">
+        post_fee,
+      </if>
+      <if test="isReturn != null">
+        is_return,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryId1 != null">
+        #{categoryId1,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId2 != null">
+        #{categoryId2,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId3 != null">
+        #{categoryId3,jdbcType=INTEGER},
+      </if>
+      <if test="spuId != null">
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null">
+        #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=INTEGER},
+      </if>
+      <if test="payMoney != null">
+        #{payMoney,jdbcType=INTEGER},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="isReturn != null">
+        #{isReturn,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.orderApi.domain.OrderItem">
+    update web_order.tb_order_item
+    <set>
+      <if test="categoryId1 != null">
+        category_id1 = #{categoryId1,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId2 != null">
+        category_id2 = #{categoryId2,jdbcType=INTEGER},
+      </if>
+      <if test="categoryId3 != null">
+        category_id3 = #{categoryId3,jdbcType=INTEGER},
+      </if>
+      <if test="spuId != null">
+        spu_id = #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null">
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=INTEGER},
+      </if>
+      <if test="payMoney != null">
+        pay_money = #{payMoney,jdbcType=INTEGER},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null">
+        weight = #{weight,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        post_fee = #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="isReturn != null">
+        is_return = #{isReturn,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.orderApi.domain.OrderItem">
+    update web_order.tb_order_item
+    set category_id1 = #{categoryId1,jdbcType=INTEGER},
+      category_id2 = #{categoryId2,jdbcType=INTEGER},
+      category_id3 = #{categoryId3,jdbcType=INTEGER},
+      spu_id = #{spuId,jdbcType=BIGINT},
+      sku_id = #{skuId,jdbcType=BIGINT},
+      order_id = #{orderId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      price = #{price,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      money = #{money,jdbcType=INTEGER},
+      pay_money = #{payMoney,jdbcType=INTEGER},
+      image = #{image,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=INTEGER},
+      post_fee = #{postFee,jdbcType=INTEGER},
+      is_return = #{isReturn,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+  <select id="selectByOrderId" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from web_order.tb_order_item
+    where order_id = #{orderId}
+  </select>
+</mapper>

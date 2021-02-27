@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.user.mapper.ProvincesMapper">
+  <resultMap id="BaseResultMap" type="com.example.userApi.domain.Provinces">
+    <id column="provinceid" jdbcType="VARCHAR" property="provinceid" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    provinceid, province
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_user.tb_provinces
+    where provinceid = #{provinceid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from web_user.tb_provinces
+    where provinceid = #{provinceid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.example.userApi.domain.Provinces">
+    insert into web_user.tb_provinces (provinceid, province)
+    values (#{provinceid,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.userApi.domain.Provinces">
+    insert into web_user.tb_provinces
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="provinceid != null">
+        provinceid,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="provinceid != null">
+        #{provinceid,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.userApi.domain.Provinces">
+    update web_user.tb_provinces
+    <set>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where provinceid = #{provinceid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.userApi.domain.Provinces">
+    update web_user.tb_provinces
+    set province = #{province,jdbcType=VARCHAR}
+    where provinceid = #{provinceid,jdbcType=VARCHAR}
+  </update>
+</mapper>

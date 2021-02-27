@@ -1,22 +1,257 @@
 <!--
     @Author: gong_da_kai
-    @Date: 2021/1/31 12:49
+    @Date: 2021/2/27 16:14
 -->
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>web首页</title>
+
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
+
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <!--工具函数-->
+    <script type="text/javascript" src="/static/js/util.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
+    <!--页面头部样式-->
+    <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
+    <script type="text/javascript" src="/static/js/pageHead.js"></script>
+    <link href="/static/css/bootstrap.min.css" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <style type="text/css">
+        [v-cloak]{
+            display: none;
+        }
+        .page {
+            position: absolute;
+            left: 150px;
+            top: 0px;
+            width: 1630px;
+        }
+        .pageBody{
+            position: absolute;
+            top: 100px;
+            left: 0px;
+            width: 1630px;
+            /*height: 100px;
+            background-color: #2aabd2;*/
+        }
+
+        /*分类导航列表*/
+        .mainMenu{
+            width: 200px;
+            height: 600px;
+            background: #c9e2b3;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .childMenu{
+            background: #f7ecb5;
+            position: absolute;
+            left: 200px;
+            top: 0px;
+            width: 500px;
+        }
+        .category1Div{
+            background: #dbdbdb;
+            width: 100%;
+            height: 25px;
+        }
+        .otherArea{
+            background: #2b542c;
+            position : absolute;
+            left : 200px;
+            top : 0px;
+            width : 1080px;
+            height : 1980px;
+        }
+    </style>
 </head>
+<body>
+    <div class="page">
+        <!--页面头部-->
+        <div class="pageHead">
+            <div class="optionArea">
+                <!--引导-->
+                <span class="optionDiv">
+                    <span id="user">
+                        <a id="login" href="javascript:void(0)" onclick="showLoginModal()">你好，请登录</a>
+                    </span>
+                    &nbsp;
+                    <a href="/static/user/registry.html" style="color: red">免费注册</a>
+                    &nbsp;
+                    <a href="/static/order/cart.html" target="_self">我的购物车</a>
+                    &nbsp;
+                    <a href="/static/manage/businessManagement.html" target="_self">商家管理界面</a>
+                </span>
+            </div>
 
-<frameset rows="5%,10%,85%">
-    <frame name="top" src="../static/top.html"/>
-    <frame name="search" src="../static/search.html">
-    <frameset cols="15%,70%,15%">
-        <frame name="left" src="../static/left.html"/>
-        <frame name="main" src="../static/main.html">
-        <frame name="right" src="../static/right.html">
-    </frameset>
-</frameset>
+            <a href="/static/index.html"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
+            <div class="searchInput">
+                <input placeholder="目前 多个关键词以空格隔开" onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+                <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
+            </div>
+
+            <hr class="headHr">
+        </div>
+
+        <!--页面体部-->
+        <div v-cloak class="pageBody">
+            <!--其他区域, 当鼠标移动到这种地方时, 不显示子分类列表-->
+            <div class="otherArea" @mouseover="hideChildCategoryMenu()"></div>
+
+            <!--分类列表-->
+            <div id="categoryMenu" class="mainMenu">
+                <div v-for="e in category1List" :id="e.id" class="category1Div"
+                     @mouseover="showChildCategoryMenu(e.id)">
+                    <a :href="'/search?categoryId=' + e.id + ',' + e.name">
+                        <font color="#8a2be2">{{e.name}}</font>
+                    </a>
+                </div>
+            </div>
+
+            <!--子分类列表-->
+            <div id="childCategoryMenu" class="childMenu">
+                <div v-for="e in category2List">
+                    <a :href="'/search?categoryId=' + e.id + ',' + e.name">
+                        <h5 style="color: black">{{e.name}}</h5>
+                    </a>
+                    <div :id="e.id"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--登录窗口-->
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <table style="top: 50px;" align="center">
+                        <tr align="center">
+                            <td colspan="2">
+                                用户名:zs 密码:123<br>
+                                <input id="username" type="text" value="zs" placeholder="用户名" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr align="center">
+                            <td colspan="2">
+                                <input id="password" type="password" value="123" placeholder="密码" maxlength="30"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <font id="loginError" color="red"></font>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" value="取消" onclick="hideLoginModal()"/>
+                    <input type="button" value="登录" onclick="login()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    function getCategoryList(ids, type){
+        var param = "";
+        for (var i = 0; i < ids.length; i++){
+            param += "parentIds=" + ids[i];
+            if (i < ids.length - 1) param += "&";
+        }
+
+        $.ajax({
+            url: "/goods/category/selectByParentId",
+            data: param,
+            type: "get",
+            success: function (res) {
+                switch (type){
+                    case 1:
+                        v.category1List = res.data;
+                        break;
+                    case 2:
+                        v.category2List = res.data;
+                        var category2Ids = [];
+                        for (var i = 0; i < v.category2List.length; i++){
+                            category2Ids.push(v.category2List[i].id);
+                        }
+
+                        // 根据二级分类 请求 三级分类列表
+                        getCategoryList(category2Ids, 3);
+                        break;
+                    case 3:
+                        // 每个二级分类的div 都填入一个对应的总宽度
+                        var widthSums = [];
+                        for (var a = 0; a < ids.length; a++){
+                            $("#"+ ids[a]).empty();
+                            widthSums.push(0);
+                        }
+
+                        // 将三级分类根据 parentId 分别填入对应的 二级分类的div
+                        v.category3List = res.data;
+                        for(var i = 0; i < v.category3List.length; i++){
+                            var c3 = v.category3List[i];
+
+                            for (var i2 = 0; i2 < ids.length; i2++){
+                                var target = $("#"+ ids[i2]);
+
+                                if (c3.parentId === ids[i2]){
+                                    var width = getContentWidth(c3.name, 1);
+                                    widthSums[i2] += width;
+                                    if (widthSums[i2] > 500){
+                                        target.append("<br>");
+                                        widthSums[i2] = width;
+                                    }
+
+                                    target.append("<a href='/search?categoryId="+ c3.id +","+ c3.name +"'>"+ c3.name +"</a>&nbsp;&nbsp;")
+                                    break;
+                                }
+                            }
+                        }
+                }
+            }
+        })
+    }
+
+
+    var vue = new Vue({
+        el: ".page",
+        data: {
+            user: null,
+            category1List : [],
+            category2List : [],
+            category3List : [],
+        },
+        methods: {
+            //请求子分类div的数据并铺陈
+            showChildCategoryMenu : function(id){
+                //请求类型1对应的类型2
+                getCategoryList([id], 2);
+            },
+            hideChildCategoryMenu : function(){
+
+                v.category2List = [];
+                v.category3List = [];
+
+            }
+        },
+        mounted(){
+            v = this;
+            staticPageInitUser(false);
+
+            getCategoryList([0], 1);
+        }
+    })
+</script>
+</body>
 </html>

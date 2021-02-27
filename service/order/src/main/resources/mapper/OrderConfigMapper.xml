@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.order.mapper.OrderConfigMapper">
+  <resultMap id="BaseResultMap" type="com.example.orderApi.domain.OrderConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_timeout" jdbcType="INTEGER" property="orderTimeout" />
+    <result column="seckill_timeout" jdbcType="INTEGER" property="seckillTimeout" />
+    <result column="take_timeout" jdbcType="INTEGER" property="takeTimeout" />
+    <result column="service_timeout" jdbcType="INTEGER" property="serviceTimeout" />
+    <result column="comment_timeout" jdbcType="INTEGER" property="commentTimeout" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_timeout, seckill_timeout, take_timeout, service_timeout, comment_timeout
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_order.tb_order_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from web_order.tb_order_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.orderApi.domain.OrderConfig">
+    insert into web_order.tb_order_config (id, order_timeout, seckill_timeout,
+      take_timeout, service_timeout, comment_timeout
+      )
+    values (#{id,jdbcType=INTEGER}, #{orderTimeout,jdbcType=INTEGER}, #{seckillTimeout,jdbcType=INTEGER}, 
+      #{takeTimeout,jdbcType=INTEGER}, #{serviceTimeout,jdbcType=INTEGER}, #{commentTimeout,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.orderApi.domain.OrderConfig">
+    insert into web_order.tb_order_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderTimeout != null">
+        order_timeout,
+      </if>
+      <if test="seckillTimeout != null">
+        seckill_timeout,
+      </if>
+      <if test="takeTimeout != null">
+        take_timeout,
+      </if>
+      <if test="serviceTimeout != null">
+        service_timeout,
+      </if>
+      <if test="commentTimeout != null">
+        comment_timeout,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderTimeout != null">
+        #{orderTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="seckillTimeout != null">
+        #{seckillTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="takeTimeout != null">
+        #{takeTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="serviceTimeout != null">
+        #{serviceTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="commentTimeout != null">
+        #{commentTimeout,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.orderApi.domain.OrderConfig">
+    update web_order.tb_order_config
+    <set>
+      <if test="orderTimeout != null">
+        order_timeout = #{orderTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="seckillTimeout != null">
+        seckill_timeout = #{seckillTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="takeTimeout != null">
+        take_timeout = #{takeTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="serviceTimeout != null">
+        service_timeout = #{serviceTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="commentTimeout != null">
+        comment_timeout = #{commentTimeout,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.orderApi.domain.OrderConfig">
+    update web_order.tb_order_config
+    set order_timeout = #{orderTimeout,jdbcType=INTEGER},
+      seckill_timeout = #{seckillTimeout,jdbcType=INTEGER},
+      take_timeout = #{takeTimeout,jdbcType=INTEGER},
+      service_timeout = #{serviceTimeout,jdbcType=INTEGER},
+      comment_timeout = #{commentTimeout,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.order.mapper.ReturnOrderMapper">
+  <resultMap id="BaseResultMap" type="com.example.orderApi.domain.ReturnOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="apply_time" jdbcType="TIMESTAMP" property="applyTime" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_account" jdbcType="VARCHAR" property="userAccount" />
+    <result column="linkman" jdbcType="VARCHAR" property="linkman" />
+    <result column="linkman_mobile" jdbcType="VARCHAR" property="linkmanMobile" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="return_money" jdbcType="INTEGER" property="returnMoney" />
+    <result column="is_return_freight" jdbcType="CHAR" property="isReturnFreight" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="dispose_time" jdbcType="TIMESTAMP" property="disposeTime" />
+    <result column="return_cause" jdbcType="INTEGER" property="returnCause" />
+    <result column="evidence" jdbcType="VARCHAR" property="evidence" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_id, apply_time, user_id, user_account, linkman, linkman_mobile, type, return_money, 
+    is_return_freight, status, dispose_time, return_cause, evidence, description, remark, 
+    admin_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_order.tb_return_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from web_order.tb_return_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.example.orderApi.domain.ReturnOrder">
+    insert into web_order.tb_return_order (id, order_id, apply_time,
+      user_id, user_account, linkman, 
+      linkman_mobile, type, return_money, 
+      is_return_freight, status, dispose_time, 
+      return_cause, evidence, description, 
+      remark, admin_id)
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{applyTime,jdbcType=TIMESTAMP}, 
+      #{userId,jdbcType=BIGINT}, #{userAccount,jdbcType=VARCHAR}, #{linkman,jdbcType=VARCHAR}, 
+      #{linkmanMobile,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{returnMoney,jdbcType=INTEGER}, 
+      #{isReturnFreight,jdbcType=CHAR}, #{status,jdbcType=CHAR}, #{disposeTime,jdbcType=TIMESTAMP}, 
+      #{returnCause,jdbcType=INTEGER}, #{evidence,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{adminId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.orderApi.domain.ReturnOrder">
+    insert into web_order.tb_return_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
+      <if test="applyTime != null">
+        apply_time,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userAccount != null">
+        user_account,
+      </if>
+      <if test="linkman != null">
+        linkman,
+      </if>
+      <if test="linkmanMobile != null">
+        linkman_mobile,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="returnMoney != null">
+        return_money,
+      </if>
+      <if test="isReturnFreight != null">
+        is_return_freight,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="disposeTime != null">
+        dispose_time,
+      </if>
+      <if test="returnCause != null">
+        return_cause,
+      </if>
+      <if test="evidence != null">
+        evidence,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="adminId != null">
+        admin_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="applyTime != null">
+        #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userAccount != null">
+        #{userAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null">
+        #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="linkmanMobile != null">
+        #{linkmanMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=CHAR},
+      </if>
+      <if test="returnMoney != null">
+        #{returnMoney,jdbcType=INTEGER},
+      </if>
+      <if test="isReturnFreight != null">
+        #{isReturnFreight,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="disposeTime != null">
+        #{disposeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="returnCause != null">
+        #{returnCause,jdbcType=INTEGER},
+      </if>
+      <if test="evidence != null">
+        #{evidence,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adminId != null">
+        #{adminId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.orderApi.domain.ReturnOrder">
+    update web_order.tb_return_order
+    <set>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="applyTime != null">
+        apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userAccount != null">
+        user_account = #{userAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="linkman != null">
+        linkman = #{linkman,jdbcType=VARCHAR},
+      </if>
+      <if test="linkmanMobile != null">
+        linkman_mobile = #{linkmanMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=CHAR},
+      </if>
+      <if test="returnMoney != null">
+        return_money = #{returnMoney,jdbcType=INTEGER},
+      </if>
+      <if test="isReturnFreight != null">
+        is_return_freight = #{isReturnFreight,jdbcType=CHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="disposeTime != null">
+        dispose_time = #{disposeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="returnCause != null">
+        return_cause = #{returnCause,jdbcType=INTEGER},
+      </if>
+      <if test="evidence != null">
+        evidence = #{evidence,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="adminId != null">
+        admin_id = #{adminId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.orderApi.domain.ReturnOrder">
+    update web_order.tb_return_order
+    set order_id = #{orderId,jdbcType=BIGINT},
+      apply_time = #{applyTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=BIGINT},
+      user_account = #{userAccount,jdbcType=VARCHAR},
+      linkman = #{linkman,jdbcType=VARCHAR},
+      linkman_mobile = #{linkmanMobile,jdbcType=VARCHAR},
+      type = #{type,jdbcType=CHAR},
+      return_money = #{returnMoney,jdbcType=INTEGER},
+      is_return_freight = #{isReturnFreight,jdbcType=CHAR},
+      status = #{status,jdbcType=CHAR},
+      dispose_time = #{disposeTime,jdbcType=TIMESTAMP},
+      return_cause = #{returnCause,jdbcType=INTEGER},
+      evidence = #{evidence,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      admin_id = #{adminId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

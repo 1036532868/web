@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.user.mapper.AddressMapper">
+  <resultMap id="BaseResultMap" type="com.example.userApi.domain.Address">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="provinceid" jdbcType="VARCHAR" property="provinceid" />
+    <result column="cityid" jdbcType="VARCHAR" property="cityid" />
+    <result column="areaid" jdbcType="VARCHAR" property="areaid" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="is_default" jdbcType="VARCHAR" property="isDefault" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, username, provinceid, cityid, areaid, phone, address, contact, is_default, alias
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_user.tb_address
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from web_user.tb_address
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.userApi.domain.Address">
+    insert into web_user.tb_address (id, username, provinceid,
+      cityid, areaid, phone, 
+      address, contact, is_default, 
+      alias)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{provinceid,jdbcType=VARCHAR}, 
+      #{cityid,jdbcType=VARCHAR}, #{areaid,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{isDefault,jdbcType=VARCHAR}, 
+      #{alias,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.userApi.domain.Address">
+    insert into web_user.tb_address
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="provinceid != null">
+        provinceid,
+      </if>
+      <if test="cityid != null">
+        cityid,
+      </if>
+      <if test="areaid != null">
+        areaid,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="contact != null">
+        contact,
+      </if>
+      <if test="isDefault != null">
+        is_default,
+      </if>
+      <if test="alias != null">
+        alias,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceid != null">
+        #{provinceid,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        #{cityid,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null">
+        #{areaid,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+        #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        #{alias,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.userApi.domain.Address">
+    update web_user.tb_address
+    <set>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceid != null">
+        provinceid = #{provinceid,jdbcType=VARCHAR},
+      </if>
+      <if test="cityid != null">
+        cityid = #{cityid,jdbcType=VARCHAR},
+      </if>
+      <if test="areaid != null">
+        areaid = #{areaid,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contact != null">
+        contact = #{contact,jdbcType=VARCHAR},
+      </if>
+      <if test="isDefault != null">
+        is_default = #{isDefault,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.userApi.domain.Address">
+    update web_user.tb_address
+    set username = #{username,jdbcType=VARCHAR},
+      provinceid = #{provinceid,jdbcType=VARCHAR},
+      cityid = #{cityid,jdbcType=VARCHAR},
+      areaid = #{areaid,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      is_default = #{isDefault,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

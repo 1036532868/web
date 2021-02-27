@@ -22,5 +22,5 @@ public interface SkuMapper {
 
     List<Sku> selectBySpuId(Long spuId);
 
-    int sale();
+    int sale(Long skuId, Integer num);
 }

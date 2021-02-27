@@ -152,10 +152,10 @@
             </span>
         </div>
 
-        <a hred="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+        <a href="/static/index.html"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
 
         <div class="searchInput">
-            <input onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
+            <input placeholder="目前 多个关键词以空格隔开" onkeydown="searchKeyDown(event)" id="searchInput" type="text" maxlength="30"/>
             <input id="searchButton" onclick="searchButton()" class="searchButton" type="button" value="搜索"/>
         </div>
 
@@ -460,8 +460,8 @@
     // 初始化已选择的条件
     function initCondition() {
         // 搜索栏输入内容
-        if (v.userIn !== null || v.userIn !== "") {
-            var keyword = $("#keyword")
+        var keyword = $("#keyword")
+        if (v.userIn !== null && v.userIn !== "") {
             keyword.text("> \"" + v.userIn + "\"");
         }
 
@@ -666,6 +666,7 @@
      *      3. 将html中 可能存在的keyword 字段全部替换为 带有样式的字段
      * */
     function initSkuName(){
+        if(v.name === null) return;
         var a = $("a[name=skuName]");
         for(var i = 0; i < a.length; i++){
             var html = a[i].innerHTML;

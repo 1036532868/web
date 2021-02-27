@@ -16,6 +16,8 @@
     <!--工具函数-->
     <script type="text/javascript" src="/static/js/util.js"></script>
     <script type="text/javascript" src="/static/js/jQuery.MD5.js"></script>
+    <!--二维码-->
+    <script type="text/javascript" src="/static/js/qrious.js"></script>
     <!--页面头部样式-->
     <link type="text/css" rel="stylesheet" href="/static/css/pageHead.css"/>
     <script type="text/javascript" src="/static/js/pageHead.js"></script>
@@ -80,12 +82,15 @@
                 <a href="/static/manage/businessManagement.html" target="_self">商家管理界面</a>
             </span>
 
-            <a href="/"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
+            <a href="/static/index.html"><img class="logo" title="返回首页" src="/static/img/logo.png"/></a>
         </div>
     </div>
 
-    <div class="pageBody">
+    <div id="body1" class="pageBody">
         <table align="center">
+            <tr align="center">
+                <td colspan="4"><h3 style="color: #8a6d3b;">订单详情</h3></td>
+            </tr>
             <tr align="center">
                 <td>商品</td>
                 <td>单价</td>
@@ -113,6 +118,25 @@
         </table>
     </div>
 
+    <div id="body2" style="display: none;" class="pageBody">
+        <center>
+            <h3 style="color: green;">微信支付</h3>
+            <h4 style="color: red;">价格写死为0.01元</h4>
+            <br>
+            <img id="qrious"/>
+            <br>
+            <font id="payRes">每两秒查询一次支付状态</font>
+        </center>
+    </div>
+
+    <div id="body3" style="display: none;" class="pageBody">
+        <center>
+            <h3 style="color: green;">支付成功</h3>
+            <br>
+            <a href="/static/order/cart.html">返回购物车</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="/static/index.html">继续购物</a>
+        </center>
+    </div>
 
     <!--登录窗口-->
     <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -201,8 +225,28 @@
         })
     }
 
+    function checkPayStatus() {
+        $.ajax({
+            url: "/order/payStatus",
+            type: "get",
+            data: {
+                orderId: v.orderId
+            },
+            success: function (res) {
+                $("#payRes").text(res.data);
+                if (res.data !== "未支付"){
+                    clearInterval(v.intervalToken);
+                    if (res.data === "已支付"){
+                        $("#body2").css("display", "none");
+                        $("#body3").css("display", "inline")
+                    }
+                }
+            }
+        })
+    }
+
     function init() {
-        staticPageInitUser();
+        staticPageInitUser(true);
         initChosenSkus();
     }
 
@@ -210,7 +254,9 @@
         el: ".page",
         data: {
             cart: [],
-            user: null
+            user: null,
+            orderId: "",
+            intervalToken: undefined
         },
         methods: {
             prepay(){
@@ -227,12 +273,46 @@
                     type: "post",
                     data: param,
                     success: function (res) {
-                        if (res.flag){
+                        if (!res.flag){
                             alert(res.message);
+                            return;
                         }
-                        // 返回orderId
-                        //alert(res.data);
 
+                        v.orderId = res.data;
+
+                        // 得到orderId
+                        $.ajax({
+                            url: "/pay/qrious",
+                            data: {
+                                orderId: res.data
+                            },
+                            type: "get",
+                            success: function (res) {
+                                if (!res.flag){
+                                    alert(res.message);
+                                    return;
+                                }
+
+                                $("#body1").css("display", "none");
+                                $("#body2").css("display", "inline");
+
+                                // 得到二维码链接
+                                var qr = new QRious({
+                                    element :　$("#qrious")[0],//二维码显示的位置
+                                    //以下都是默认值
+                                    background : "white",//背景颜色
+                                    foreground : "black",//前景颜色
+                                    level : "L",//误差校正级别(二维码缺失一部分依然能识别), L(low)、M、Q、H(high)
+                                    mime : "image/png",//二维码输出为图片时的格式
+                                    size : 100,//二维码的边长, 正方形
+
+                                    value : res.data//值
+                                })
+
+                                // 设置定时任务, 每隔两秒查询一次支付状态
+                                v.intervalToken = setInterval(checkPayStatus, 2000);
+                            }
+                        })
 
                     }
                 })

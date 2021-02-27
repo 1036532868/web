@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.order.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.example.orderApi.domain.Order">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="total_num" jdbcType="INTEGER" property="totalNum" />
+    <result column="total_money" jdbcType="INTEGER" property="totalMoney" />
+    <result column="pre_money" jdbcType="INTEGER" property="preMoney" />
+    <result column="post_fee" jdbcType="INTEGER" property="postFee" />
+    <result column="pay_money" jdbcType="INTEGER" property="payMoney" />
+    <result column="pay_type" jdbcType="VARCHAR" property="payType" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="close_time" jdbcType="TIMESTAMP" property="closeTime" />
+    <result column="shipping_name" jdbcType="VARCHAR" property="shippingName" />
+    <result column="shipping_code" jdbcType="VARCHAR" property="shippingCode" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="buyer_message" jdbcType="VARCHAR" property="buyerMessage" />
+    <result column="buyer_rate" jdbcType="CHAR" property="buyerRate" />
+    <result column="receiver_contact" jdbcType="VARCHAR" property="receiverContact" />
+    <result column="receiver_mobile" jdbcType="VARCHAR" property="receiverMobile" />
+    <result column="receiver_address" jdbcType="VARCHAR" property="receiverAddress" />
+    <result column="source_type" jdbcType="CHAR" property="sourceType" />
+    <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
+    <result column="order_status" jdbcType="CHAR" property="orderStatus" />
+    <result column="pay_status" jdbcType="CHAR" property="payStatus" />
+    <result column="consign_status" jdbcType="CHAR" property="consignStatus" />
+    <result column="is_delete" jdbcType="CHAR" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, total_num, total_money, pre_money, post_fee, pay_money, pay_type, create_time,
+    update_time, pay_time, consign_time, end_time, close_time, shipping_name, shipping_code, 
+    username, buyer_message, buyer_rate, receiver_contact, receiver_mobile, receiver_address, 
+    source_type, transaction_id, order_status, pay_status, consign_status, is_delete
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from web_order.tb_order
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from web_order.tb_order
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.example.orderApi.domain.Order">
+    insert into web_order.tb_order (id, total_num, total_money,
+      pre_money, post_fee, pay_money, 
+      pay_type, create_time, update_time, 
+      pay_time, consign_time, end_time, 
+      close_time, shipping_name, shipping_code, 
+      username, buyer_message, buyer_rate, 
+      receiver_contact, receiver_mobile, receiver_address, 
+      source_type, transaction_id, order_status, 
+      pay_status, consign_status, is_delete
+      )
+    values (#{id,jdbcType=VARCHAR}, #{totalNum,jdbcType=INTEGER}, #{totalMoney,jdbcType=INTEGER}, 
+      #{preMoney,jdbcType=INTEGER}, #{postFee,jdbcType=INTEGER}, #{payMoney,jdbcType=INTEGER}, 
+      #{payType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{payTime,jdbcType=TIMESTAMP}, #{consignTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{closeTime,jdbcType=TIMESTAMP}, #{shippingName,jdbcType=VARCHAR}, #{shippingCode,jdbcType=VARCHAR}, 
+      #{username,jdbcType=VARCHAR}, #{buyerMessage,jdbcType=VARCHAR}, #{buyerRate,jdbcType=CHAR}, 
+      #{receiverContact,jdbcType=VARCHAR}, #{receiverMobile,jdbcType=VARCHAR}, #{receiverAddress,jdbcType=VARCHAR}, 
+      #{sourceType,jdbcType=CHAR}, #{transactionId,jdbcType=VARCHAR}, #{orderStatus,jdbcType=CHAR}, 
+      #{payStatus,jdbcType=CHAR}, #{consignStatus,jdbcType=CHAR}, #{isDelete,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.orderApi.domain.Order">
+    insert into web_order.tb_order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="totalNum != null">
+        total_num,
+      </if>
+      <if test="totalMoney != null">
+        total_money,
+      </if>
+      <if test="preMoney != null">
+        pre_money,
+      </if>
+      <if test="postFee != null">
+        post_fee,
+      </if>
+      <if test="payMoney != null">
+        pay_money,
+      </if>
+      <if test="payType != null">
+        pay_type,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="payTime != null">
+        pay_time,
+      </if>
+      <if test="consignTime != null">
+        consign_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="closeTime != null">
+        close_time,
+      </if>
+      <if test="shippingName != null">
+        shipping_name,
+      </if>
+      <if test="shippingCode != null">
+        shipping_code,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="buyerMessage != null">
+        buyer_message,
+      </if>
+      <if test="buyerRate != null">
+        buyer_rate,
+      </if>
+      <if test="receiverContact != null">
+        receiver_contact,
+      </if>
+      <if test="receiverMobile != null">
+        receiver_mobile,
+      </if>
+      <if test="receiverAddress != null">
+        receiver_address,
+      </if>
+      <if test="sourceType != null">
+        source_type,
+      </if>
+      <if test="transactionId != null">
+        transaction_id,
+      </if>
+      <if test="orderStatus != null">
+        order_status,
+      </if>
+      <if test="payStatus != null">
+        pay_status,
+      </if>
+      <if test="consignStatus != null">
+        consign_status,
+      </if>
+      <if test="isDelete != null">
+        is_delete,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="totalNum != null">
+        #{totalNum,jdbcType=INTEGER},
+      </if>
+      <if test="totalMoney != null">
+        #{totalMoney,jdbcType=INTEGER},
+      </if>
+      <if test="preMoney != null">
+        #{preMoney,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="payMoney != null">
+        #{payMoney,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null">
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consignTime != null">
+        #{consignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closeTime != null">
+        #{closeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shippingName != null">
+        #{shippingName,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCode != null">
+        #{shippingCode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerMessage != null">
+        #{buyerMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerRate != null">
+        #{buyerRate,jdbcType=CHAR},
+      </if>
+      <if test="receiverContact != null">
+        #{receiverContact,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverMobile != null">
+        #{receiverMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverAddress != null">
+        #{receiverAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        #{sourceType,jdbcType=CHAR},
+      </if>
+      <if test="transactionId != null">
+        #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null">
+        #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="payStatus != null">
+        #{payStatus,jdbcType=CHAR},
+      </if>
+      <if test="consignStatus != null">
+        #{consignStatus,jdbcType=CHAR},
+      </if>
+      <if test="isDelete != null">
+        #{isDelete,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.orderApi.domain.Order">
+    update web_order.tb_order
+    <set>
+      <if test="totalNum != null">
+        total_num = #{totalNum,jdbcType=INTEGER},
+      </if>
+      <if test="totalMoney != null">
+        total_money = #{totalMoney,jdbcType=INTEGER},
+      </if>
+      <if test="preMoney != null">
+        pre_money = #{preMoney,jdbcType=INTEGER},
+      </if>
+      <if test="postFee != null">
+        post_fee = #{postFee,jdbcType=INTEGER},
+      </if>
+      <if test="payMoney != null">
+        pay_money = #{payMoney,jdbcType=INTEGER},
+      </if>
+      <if test="payType != null">
+        pay_type = #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payTime != null">
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consignTime != null">
+        consign_time = #{consignTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closeTime != null">
+        close_time = #{closeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shippingName != null">
+        shipping_name = #{shippingName,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCode != null">
+        shipping_code = #{shippingCode,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerMessage != null">
+        buyer_message = #{buyerMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerRate != null">
+        buyer_rate = #{buyerRate,jdbcType=CHAR},
+      </if>
+      <if test="receiverContact != null">
+        receiver_contact = #{receiverContact,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverMobile != null">
+        receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverAddress != null">
+        receiver_address = #{receiverAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null">
+        source_type = #{sourceType,jdbcType=CHAR},
+      </if>
+      <if test="transactionId != null">
+        transaction_id = #{transactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null">
+        order_status = #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="payStatus != null">
+        pay_status = #{payStatus,jdbcType=CHAR},
+      </if>
+      <if test="consignStatus != null">
+        consign_status = #{consignStatus,jdbcType=CHAR},
+      </if>
+      <if test="isDelete != null">
+        is_delete = #{isDelete,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.orderApi.domain.Order">
+    update web_order.tb_order
+    set total_num = #{totalNum,jdbcType=INTEGER},
+      total_money = #{totalMoney,jdbcType=INTEGER},
+      pre_money = #{preMoney,jdbcType=INTEGER},
+      post_fee = #{postFee,jdbcType=INTEGER},
+      pay_money = #{payMoney,jdbcType=INTEGER},
+      pay_type = #{payType,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      pay_time = #{payTime,jdbcType=TIMESTAMP},
+      consign_time = #{consignTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      close_time = #{closeTime,jdbcType=TIMESTAMP},
+      shipping_name = #{shippingName,jdbcType=VARCHAR},
+      shipping_code = #{shippingCode,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      buyer_message = #{buyerMessage,jdbcType=VARCHAR},
+      buyer_rate = #{buyerRate,jdbcType=CHAR},
+      receiver_contact = #{receiverContact,jdbcType=VARCHAR},
+      receiver_mobile = #{receiverMobile,jdbcType=VARCHAR},
+      receiver_address = #{receiverAddress,jdbcType=VARCHAR},
+      source_type = #{sourceType,jdbcType=CHAR},
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      order_status = #{orderStatus,jdbcType=CHAR},
+      pay_status = #{payStatus,jdbcType=CHAR},
+      consign_status = #{consignStatus,jdbcType=CHAR},
+      is_delete = #{isDelete,jdbcType=CHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

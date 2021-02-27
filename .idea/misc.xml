@@ -20,6 +20,7 @@
         <option value="$PROJECT_DIR$/service/web-search/pom.xml" />
         <option value="$PROJECT_DIR$/common/zuul/pom.xml" />
         <option value="$PROJECT_DIR$/common/gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/common/service-api/pay-api/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

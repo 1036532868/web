@@ -8,9 +8,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <script type="text/javascript" src="../../js/vue.js"></script>
-    <script type="text/javascript" src="../../js/jQuery-3.5.1.js"></script>
-    <script type="text/javascript" src="../../js/axios.js"></script>
+    <script type="text/javascript" src="/static/js/vue.js"></script>
+    <script type="text/javascript" src="/static/js/jQuery-3.5.1.js"></script>
+    <script type="text/javascript" src="/static/js/axios.js"></script>
 
     <!--
         三级分类, 级联查询, 最后将属性保存到WebSQL中
@@ -81,6 +81,7 @@
     <!--主体-->
     <div class="main">
         <h1 align="center">选择商品分类</h1>
+        <h4 align="center" style="color: red">数据不全, 建议选择家用电器 -> 大家电 -> 平板电视</h4>
         <center>
             <table>
                 <tr>
@@ -330,7 +331,7 @@
 
 
                     //跳转到商品信息设置页
-                    window.location = "/goods/manage/goods/addSpu.html";
+                    window.location = "/static/manage/goods/addSpu.html";
                 })
 
             }

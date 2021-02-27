@@ -10,8 +10,10 @@
         <module name="web-search" />
         <module name="goods" />
         <module name="pay" />
+        <module name="pay-api" />
         <module name="zuul" />
         <module name="order-api" />
+        <module name="demo" />
         <module name="content" />
         <module name="goods-api" />
         <module name="seckill-api" />
@@ -30,6 +32,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="api" target="8" />
+      <module name="demo" target="1.8" />
       <module name="eureka-zuul" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -37,6 +40,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="canal" options="-parameters" />
       <module name="content" options="-parameters" />
+      <module name="demo" options="-parameters" />
       <module name="eureka-zuul" options="-parameters" />
       <module name="eureka10001" options="-parameters" />
       <module name="eureka10002" options="-parameters" />
