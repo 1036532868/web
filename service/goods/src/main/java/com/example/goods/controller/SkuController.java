@@ -46,13 +46,7 @@ public class SkuController {
     @PostMapping("/search")
     public Result<Map<String, Object>> search(@RequestBody Map<String, Object> params) {
 
-        String name = (String)params.get("name");
-        Integer categoryId = (Integer) params.get("categoryId");
-
-        Map<String, Object> result = null;
-        if ((name != null && !"".equals(name)) || categoryId != null) {
-            result = skuService.search(params);
-        }
+        Map<String, Object> result = skuService.search(params);
 
         //System.err.println(result);
 

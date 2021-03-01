@@ -198,9 +198,10 @@ function insertOption(o) {
             type === "map" ? text = list[i].name : text = list[i];
             type === "map" ? val = list[i].id : val = list[i];
 
-            // 多选
             if (enableMulti) widthSum += 13;
-            widthSum += getContentWidth(text, spaceNum, regex === undefined ? undefined : regex) + extraOptionWidth;
+            // 多选
+            var width = getContentWidth(text, spaceNum, regex === undefined ? undefined : regex) + extraOptionWidth;
+            widthSum += width;
 
             if (!hasMoreDiv) {
                 //长度超过警戒值时, 生成 "更多"div
@@ -209,7 +210,7 @@ function insertOption(o) {
                     html += "<div id='moreDiv"+ title +"' class='"+ optionDivClass +"' style='top: "+ rowHeight +"px; display: none;'>";
 
                     hasMoreDiv = true;
-                    widthSum = 0;
+                    widthSum = width;
                     moreDivRowNum++;
                 }
             } else {

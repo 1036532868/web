@@ -304,7 +304,7 @@
         params.name = v.name;
         params.brandName = v.brandName;
         params.spec = v.spec;
-        params.categoryId = v.categoryId;
+        params.categoryId = parseInt(v.categoryId.split(",")[0]);
         params.status = "1";
         params.num = 0;
 
@@ -319,9 +319,11 @@
                     return;
                 }
                 var data = res.data;
-                v.skuList = data.skuList;
 
+                v.pageInfo = data.pageInfo;
                 v.pageNum = pageNum;
+
+                changeTop(["#pagination"], -455, v.trCount);
 
                 initSkuList();
                 initPagination();
@@ -595,7 +597,7 @@
         var skuArea = $("#skuArea");
         skuArea.empty();
 
-        var trCount = 0;
+        v.trCount = 0;
         var html = "";
         html += "<tr>";
         html += "   <td>";
@@ -604,7 +606,7 @@
             var skuNameId = JSON.stringify("skuName"+ i);
             var brandNameId = JSON.stringify("brandName"+ i);
 
-            html += "<span class='skuSpan' style='position: absolute; top: " + trCount * 455 + "px; left: " + (i % 5) * 250 + "px;'>";
+            html += "<span class='skuSpan' style='position: absolute; top: " + v.trCount * 455 + "px; left: " + (i % 5) * 250 + "px;'>";
             html += "    <div class='skuSpanItem'>";
             html += "        <a href='/search/goods/"+ sku.stringId +"' ><img src='" + sku.image + "' title='"+ sku.name +"' class=\"skuImg\"/></a>";
             html += "    </div>";
@@ -625,19 +627,19 @@
             if (i % 5 === 4) {
                 html += "</td></tr>";
                 html += "<tr><td>";
-                trCount++;
+                v.trCount++;
             }
 
         }
         // 最后一行不满五个时, 手动添加一行
-        if (size % 5 !== 0) trCount++;
+        if (size % 5 !== 0) v.trCount++;
 
         html += "    </td>";
         html += "</tr>";
 
         skuArea.append(html);
 
-        changeTop(["#pagination"], 455, trCount);
+        changeTop(["#pagination"], 455, v.trCount);
     }
     function initPagination() {
         //自己写的分页插件
@@ -685,6 +687,7 @@
         data: {
             user: [[${user}]],
             userIn: [[${userIn}]],
+            trCount: 0,
 
             pageNum: [[${pageNum}]],
             pageSize: [[${pageSize}]],

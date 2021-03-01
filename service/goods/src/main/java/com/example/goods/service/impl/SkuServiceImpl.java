@@ -202,7 +202,7 @@ public class SkuServiceImpl implements SkuService {
 
         Integer startIndex = pageNum * pageSize - pageSize;
         Integer endIndex = startIndex + pageSize;
-
+        System.err.println(startIndex + "---pageSize---" + endIndex);
         //防止sku数量少于endIndex时, 出现下标越界异常
         if (endIndex > skuList.size()) endIndex = skuList.size();
 
@@ -214,7 +214,7 @@ public class SkuServiceImpl implements SkuService {
         pageInfo.setSize(pageSize);
         pageInfo.setStartRow(startIndex);
         pageInfo.setEndRow(endIndex);
-
+        System.err.println("查询出的商品数量" + limitSkuList.size());
         result.put("pageInfo", pageInfo);
 
         return result;

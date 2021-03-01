@@ -1,0 +1,123 @@
+<resources>
+    <resource>
+        <directory>src/main/java</directory><!--所在的目录-->
+        <includes><!--包括目录下的.properties,.xml文件都会扫描到-->
+            <include>**/*.properties</include>
+            <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+    </resource>
+</resources>
+------------------------------------------------------------
+$.ajax({
+    url : "",
+    type : "",
+    data : {},
+    dataType : "json",
+    success : function (data){
+
+    }
+})
+---------------------------------------------------------
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
+
+//给日期文本框设置日历控件
+$(".time").datetimepicker({
+    minView: "month",
+    language: 'zh-CN',
+    format: 'yyyy-mm-dd',
+    autoclose: true,
+    todayBtn: true,
+    pickerPosition: "bottom-left"/"top-left"
+});
+------------------------------------------------------------
+//自己写的分页插件
+<script type="text/javascript" src="/goods/resources/js/pagination.js"></script>
+<link type="text/css" rel="stylesheet" href="/goods/resources/js/pagination.css"/>
+
+//自己写的分页插件
+//分页插件
+pagination({
+    target: "#pagination",
+    total: data.data.total,
+    pageNum: pageNum,
+    pageSize: pageSize,
+    maxPageSize: 20,
+    buttonCount: 5,
+    callback: function (pageNum, pageSize) {
+        pageList(pageNum, pageSize);
+    }
+})
+
+$(".checkAll").prop("checked", false);
+
+//第一个参数,操作后停留在当前页
+//第二个参数,维持已经设置好的pageSize
+pageList(parseInt($("#currentPageNum").val())
+        ,parseInt($("#currentPageSize").val()));
+
+
+
+<link rel="stylesheet" type="text/css" href="../../../static/resources/js/component/bs_pagination/jquery.bs_pagination.min.css">
+<script type="text/javascript" src="../../../static/resources/js/component/bs_pagination/jquery.bs_pagination.min.js"></script>
+<script type="text/javascript" src="../../../static/resources/js/component/bs_pagination/en.js"></script>
+
+//分页插件
+$("#activityPage").bs_pagination({
+    currentPage: pageNum, // 页码
+    rowsPerPage: pageSize, // 每页显示的记录条数
+    maxRowsPerPage: 20, // 每页最多显示的记录条数
+    totalPages: Math.ceil(data.total/pageSize),
+    // 总页数 错误---Number.parseInt(data.total/pageSize)
+    totalRows: data.total, // 总记录条数
+
+    visiblePageLinks: 3, // 显示几个卡片
+
+    showGoToPage: true,
+    showRowsPerPage: true,
+    showRowsInfo: true,
+    showRowsDefaultInfo: true,
+
+    onChangePage : function(event, data){
+    pageList(data.currentPage , data.rowsPerPage);
+    //设置全选选项为未选中
+    $("#checkAll").prop("checked", false);
+    }
+});
+
+//第一个参数,操作后停留在当前页
+//第二个参数,维持已经设置好的pageSize
+pageList($("#activityPage").bs_pagination('getOption', 'currentPage')
+        ,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
+
+----------------------------------------------------------------------
+//设置市场详细信息列表的备注生成按钮的动画效果
+$("#remarkBody").on("mouseover",".remarkDiv",function(){
+    $(this).children("div").children("div").show();
+})
+$("#remarkBody").on("mouseout",".remarkDiv",function(){
+    $(this).children("div").children("div").hide();
+})
+
+-------------------------------------------------------------------
+<script type="text/javascript" src="jquery/bs_typeahead/bootstrap3-typeahead.min.js"></script>
+
+// 自动补全插件,data只能是一个String数组,没有那么智能
+$("#create-customerName").typeahead({
+    source: function (query, process) {
+        $.get(
+            "workbench/transaction/getCustomerName.do",
+            { "name" : query },
+            function (data) {
+                //alert(data);
+                process(data);
+            },
+            "json"
+        );
+    },
+    // 输入完毕,xxx毫秒之后开始查询
+    delay: 1500
+});
