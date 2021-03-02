@@ -64,7 +64,7 @@
             height: 25px;
         }
         .otherArea{
-            background: #2b542c;
+            background: #9acfea;
             position : absolute;
             left : 200px;
             top : 0px;
@@ -105,7 +105,9 @@
         <!--页面体部-->
         <div v-cloak class="pageBody">
             <!--其他区域, 当鼠标移动到这种地方时, 不显示子分类列表-->
-            <div class="otherArea" @mouseover="hideChildCategoryMenu()"></div>
+            <div class="otherArea" @mouseover="hideChildCategoryMenu()">
+                <h3 align="center">广告投放区域</h3>
+            </div>
 
             <!--分类列表-->
             <div id="categoryMenu" class="mainMenu">

@@ -39,43 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Cacheable("normal")
     public List<Category> selectByParentId(Integer[] parentIds) throws CRUDException {
-
-        /*if (parentIds == null || parentIds.length == 0) throw new CRUDException("没有得到任何parentId");
-
-        //从redis中查数据
-        StringBuffer key = new StringBuffer(30);
-        key.append("category_");
-        for (int i : parentIds) {
-            key.append(i);
-        }
-
-        List<Category> l = (List<Category>) redis.opsForValue().get(key.toString());
-
-        if (l == null){
-            l = getCategoryList(parentIds, l);
-
-            //将数据缓存到redis
-            redis.opsForValue().set(key.toString(), l);
-        }
-
-        if (l == null){
-            // 如果没有结果, 返回一个空集合, 设置redis数据的生命
-            l = new ArrayList<>(0);
-
-            redis.expire(key.toString(), 60, TimeUnit.SECONDS);
-        }*/
-        List<Category> l = null;
-
-        int len = parentIds.length;
-        if (len == 1) {
-            l = categoryMapper.selectByParentId(parentIds[0]);
-        }
-
-        if (len > 1) {
-            l = categoryMapper.selectByParentIds(parentIds);
-
-        }
-        return l;
+        return categoryMapper.selectByParentIds(parentIds);
     }
 
     @Override

@@ -69,7 +69,7 @@ public class CategoryController {
         }
 
         List<Category> l = (List<Category>) redis.opsForValue().get(key);
-
+        System.err.println("redis中的:" + l);
         if (l == null) {
             l = categoryService.selectByParentId(parentIds);
             //将数据缓存到redis
