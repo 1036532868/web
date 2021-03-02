@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Cacheable("normal")
-    public List<Category> selectByParentId(Integer[] parentIds) throws CRUDException {
+    public List<Category> selectByParentId(Integer[] parentIds){
         return categoryMapper.selectByParentIds(parentIds);
     }
 
