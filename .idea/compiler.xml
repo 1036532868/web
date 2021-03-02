@@ -17,6 +17,7 @@
         <module name="content" />
         <module name="goods-api" />
         <module name="seckill-api" />
+        <module name="eureka9001" />
         <module name="file" />
         <module name="user-api" />
         <module name="shiro" />
@@ -42,8 +43,8 @@
       <module name="content" options="-parameters" />
       <module name="demo" options="-parameters" />
       <module name="eureka-zuul" options="-parameters" />
-      <module name="eureka10001" options="-parameters" />
-      <module name="eureka10002" options="-parameters" />
+      <module name="eureka9001" options="-parameters" />
+      <module name="eureka9002" options="-parameters" />
       <module name="file" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="goods" options="-parameters" />

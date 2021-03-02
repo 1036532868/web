@@ -72,6 +72,7 @@ public class CategoryController {
         System.err.println("redis中的:" + l);
         if (l == null) {
             l = categoryService.selectByParentId(parentIds);
+            System.err.println("数据库查出来的:" + l);
             //将数据缓存到redis
             redis.opsForValue().set(key, l);
             redis.expire(key, 30, TimeUnit.SECONDS);

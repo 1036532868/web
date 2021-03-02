@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/service/goods/src/main/resources/mapper/CategoryMapper.xml" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/../../../项目初始化/数据库脚本/changgou_business.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../项目初始化/数据库脚本/changgou_config.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/../../../项目初始化/数据库脚本/changgou_content.sql" dialect="MySQL" />
