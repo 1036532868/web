@@ -17,6 +17,7 @@
         <module name="content" />
         <module name="goods-api" />
         <module name="seckill-api" />
+        <module name="eureka9002" />
         <module name="eureka9001" />
         <module name="file" />
         <module name="user-api" />

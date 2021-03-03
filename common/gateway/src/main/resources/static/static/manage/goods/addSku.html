@@ -759,7 +759,7 @@
             $spuFileDiv.append("<br/>");
 
             //如果此图片为主图, 更改样式
-            if (images.includes(v.spu.image)) {
+            if (images[i] === v.spu.image) {
                 $spuFileDiv.append("<font style='color: red; position: absolute; left: " + (170 * i + 20) + "px; top: 180px;'  id='setMainImage" + i + "' >商品主图</font>");
             } else {
                 $spuFileDiv.append("<a style='position: absolute; left: " + (170 * i + 20) + "px; top: 180px;' href='javascript:void(0)' id='setMainImage" + i + "' onclick='setSpuMainImage(" + i + ")'>设为主图</a>");

@@ -10,7 +10,6 @@
     <modules>
         <module>common</module>
         <module>service</module>
-        <module>service-api/pay-api</module>
     </modules>
     <packaging>pom</packaging>
 
