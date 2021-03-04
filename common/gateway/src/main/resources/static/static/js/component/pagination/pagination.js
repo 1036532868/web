@@ -70,7 +70,6 @@ function pagination(o){
     }
 
 
-
     // 总页数
     var pageCount = Math.ceil(total/pageSize);
 
@@ -81,12 +80,7 @@ function pagination(o){
     *               高于阈值时, 页码显示样例 -> 5 6 7 8 9 ...
     *           2. 高于阈值时, 第 "中间值" 个页码按钮为 当前页 的页码按钮
     * */
-    var middleButtonCount;
-    if (buttonCount % 2 === 0){
-        middleButtonCount = buttonCount/2;
-    } else {
-        middleButtonCount = Math.ceil(buttonCount/2);
-    }
+    var middleButtonCount = Math.ceil(buttonCount/2);
 
     // 页码按钮的页数
     var firstPage = pageNum - middleButtonCount + 1;
@@ -122,32 +116,32 @@ function pagination(o){
             "&nbsp;" )
     }
 
+
     // 页码按钮
     // 当前页小于等于中间值时, 正常展示页码按钮, 在小于总页数的前提下
-    if (pageNum <= middleButtonCount){
+    if (pageNum <= middleButtonCount) {
+        // alert(1)
+        for (var i = 1; i <= buttonCount && i <= pageCount; i++) {
+            initButton(i, pageNum, target);
+        }
 
-        for (var i = 1; i <= buttonCount && i <= pageCount; i++){
-            //为当前页的页码按钮更改样式
-            if (i === pageNum){
-                target.append(
-                    "<input id='currentPageNum' class='pagination_currentPageNum' type='button' value='"+ pageNum +"'/>" +
-                    "&nbsp;");
-            } else {
-                target.append(
-                    "<input onclick='callback("+ i +")' type='button' value='"+ i +"'/>" +
-                    "&nbsp;");
-            }
-
+    }else if(pageNum > middleButtonCount && pageNum >= pageCount - middleButtonCount){
+        // alert(2)
+        for (var i = 0; i < buttonCount; i++){
+            var pageNumInFor = pageCount - buttonCount + i + 1;
+            initButton(pageNumInFor, pageNum, target);
         }
 
     } else {
+        // alert(3)
         // 当前页大于中间值时, 以当前页 和 buttonCount 为参考, 生成页码按钮, 中间值对应的按钮为当前页按钮
         target.append(
             "<input id='currentPageNum' class='pagination_currentPageNum' type='button' value='"+ pageNum +"'/>" +
             "&nbsp;");
-        var currentPageButton = $(".currentPage");
+        var currentPageButton = $(".pagination_currentPageNum");
 
         // 以当前页码为参照, 向前添加 n 个页码按钮
+
         for (var i = firstPage; i < pageNum; i++){
             currentPageButton.before(
                 "<input onclick='callback("+ i +")' type='button' value='"+ i +"'/>" +
@@ -187,6 +181,25 @@ function pagination(o){
             target.append("跳转到<input id='jump' class='pagination_enter' type='text' maxlength='20'/>页" +
                 "<input onclick='jump()' type='button' value='确定'/>")
         }
+    }
+}
+
+/**
+ * 生成页码按钮
+ * @param pageNumInFor
+ * @param currentPageNum
+ * @param target
+ */
+function initButton(pageNumInFor, currentPageNum, target) {
+    //为当前页的页码按钮更改样式
+    if (pageNumInFor === currentPageNum) {
+        target.append(
+            "<input id='currentPageNum' class='pagination_currentPageNum' type='button' value='" + currentPageNum + "'/>" +
+            "&nbsp;");
+    } else {
+        target.append(
+            "<input onclick='callback(" + pageNumInFor + ")' type='button' value='" + pageNumInFor + "'/>" +
+            "&nbsp;");
     }
 }
 

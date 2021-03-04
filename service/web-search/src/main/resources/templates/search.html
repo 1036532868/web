@@ -304,7 +304,7 @@
         params.name = v.name;
         params.brandName = v.brandName;
         params.spec = v.spec;
-        params.categoryId = parseInt(v.categoryId.split(",")[0]);
+        if (v.categoryId !== null) params.categoryId = parseInt(v.categoryId.split(",")[0]);
         params.status = "1";
         params.num = 0;
 
