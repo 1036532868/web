@@ -186,9 +186,9 @@ function pagination(o){
 
 /**
  * 生成页码按钮
- * @param pageNumInFor
- * @param currentPageNum
- * @param target
+ * @param pageNumInFor 循环中得到的页码
+ * @param currentPageNum 当前页码
+ * @param target 目标元素
  */
 function initButton(pageNumInFor, currentPageNum, target) {
     //为当前页的页码按钮更改样式
